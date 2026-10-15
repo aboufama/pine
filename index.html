@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Pine</title>
 <meta name="description" content="Pine builds EXO-1, a wearable that helps you move and, in return, records how people move. The physical world needs its own internet.">
-<link rel="icon" href="mark.svg" type="image/svg+xml">
+<link rel="icon" href="mark-c2.svg" type="image/svg+xml">
 <link rel="preload" href="poster.jpg" as="image">
 <style>
 @font-face { font-family: "Michelangelus"; src: url("Michelangelus-Regular.ttf") format("truetype"); font-display: swap; }
@@ -85,29 +85,45 @@ h1 {
   <div class="text">
     <svg class="mark" viewBox="-64 -4 128 126.4" role="img" aria-label="Pine">
       <defs>
-        <!-- Liquid metal, kept subtle. Chrome shows its surroundings, not a colour: a soft cool "sky" above,
-             a crisp horizon a little below centre where sky meets ground, and a faint bounce underneath.
-             Each piece reflects its own horizon (objectBoundingBox). -->
-        <linearGradient id="metal" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0" stop-color="#3d4043"/>
-          <stop offset="0.55" stop-color="#26282a"/>
-          <stop offset="0.62" stop-color="#1c1e20"/>
-          <stop offset="1" stop-color="#2a2c2e"/>
+        <!-- Bead-blasted aluminium "button": a flat top face with a filleted rim, space grey.
+             Height map: the blurred silhouette pushed through a quarter-circle transfer curve, so the inside is a
+             flat plateau and only a thin band at the edge rolls down like a fillet (not a pillow).
+             Light: one soft light from the upper left on that height map; the fillet catches it on the upper-left
+             rim and turns away on the lower right, while the face stays even.
+             Grain: fine isotropic noise used twice, as a bump lit by the same light and as a faint albedo speckle,
+             so it reads as blasted texture that belongs to the surface.
+             Face gradient: one subtle top-to-bottom environment across both pieces. -->
+        <linearGradient id="alu" gradientUnits="userSpaceOnUse" x1="-30" y1="0" x2="30" y2="120">
+          <stop offset="0" stop-color="#7a7e83"/>
+          <stop offset="1" stop-color="#55595d"/>
         </linearGradient>
-        <!-- Surface tension rounds every edge: treat the blurred shape as a height map and light it, so the rims
-             swell and catch one soft specular highlight from the upper left. Added at low strength. -->
-        <filter id="liquid" x="-10%" y="-10%" width="120%" height="120%" color-interpolation-filters="sRGB">
-          <feGaussianBlur in="SourceAlpha" stdDeviation="3" result="h"/>
-          <feSpecularLighting in="h" surfaceScale="2.6" specularConstant="0.85" specularExponent="24" lighting-color="#ffffff" result="spec">
-            <feDistantLight azimuth="225" elevation="58"/>
+        <filter id="blasted" x="-6%" y="-6%" width="112%" height="112%" color-interpolation-filters="sRGB">
+          <feGaussianBlur in="SourceAlpha" stdDeviation="1.25" result="b"/>
+          <feComponentTransfer in="b" result="h">
+            <feFuncA type="table" tableValues="0 0 0 0 0 0.66 0.87 0.97 1"/>
+          </feComponentTransfer>
+          <feDiffuseLighting in="h" surfaceScale="2.2" diffuseConstant="1.04" lighting-color="#fff" result="form">
+            <feDistantLight azimuth="235" elevation="62"/>
+          </feDiffuseLighting>
+          <feTurbulence type="fractalNoise" baseFrequency="1.15" numOctaves="1" seed="11" result="n"/>
+          <feColorMatrix in="n" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  1 0 0 0 0" result="bump"/>
+          <feDiffuseLighting in="bump" surfaceScale="0.16" diffuseConstant="1.2" lighting-color="#fff" result="grain">
+            <feDistantLight azimuth="235" elevation="62"/>
+          </feDiffuseLighting>
+          <feComposite in="form" in2="grain" operator="arithmetic" k1="1" k2="0" k3="0" k4="0" result="light"/>
+          <feComposite in="SourceGraphic" in2="light" operator="arithmetic" k1="1" k2="0" k3="0" k4="0" result="lit"/>
+          <feColorMatrix in="n" type="matrix" values="1 0 0 0 0  1 0 0 0 0  1 0 0 0 0  0 0 0 0 1" result="speck"/>
+          <feComposite in="lit" in2="speck" operator="arithmetic" k1="0" k2="1" k3="0.11" k4="-0.055" result="tex"/>
+          <feSpecularLighting in="h" surfaceScale="2.6" specularConstant="0.25" specularExponent="6" lighting-color="#fff" result="sheen">
+            <feDistantLight azimuth="235" elevation="62"/>
           </feSpecularLighting>
-          <feComposite in="spec" in2="SourceAlpha" operator="in" result="specIn"/>
-          <feComposite in="SourceGraphic" in2="specIn" operator="arithmetic" k1="0" k2="1" k3="0.16" k4="0"/>
+          <feComposite in="tex" in2="sheen" operator="arithmetic" k1="0" k2="1" k3="0.14" k4="0" result="out"/>
+          <feComposite in="out" in2="SourceAlpha" operator="in"/>
         </filter>
       </defs>
-      <g fill="url(#metal)" stroke="rgba(0,0,0,0.25)" stroke-width="0.4" stroke-linejoin="round" filter="url(#liquid)">
-      <path d="M-0.27 1.20 Q0.00 -0.30 0.27 1.20 C7.76 34.98 21.60 51.67 38.00 57.00 C25.90 58.49 12.72 62.84 0.00 68.50 C-12.72 62.84 -25.90 58.49 -38.00 57.00 C-21.60 51.67 -7.76 34.98 -0.27 1.20 Z"/>
-      <path d="M18.77 67.63 C29.65 94.74 44.27 107.23 60.00 110.00 A218.49 218.49 0 0 1 -60.00 110.00 C-44.27 107.23 -29.65 94.74 -18.77 67.63 C-12.36 69.73 -6.16 72.33 0.00 75.07 C6.16 72.33 12.36 69.73 18.77 67.63 Z"/>
+      <g fill="url(#alu)" filter="url(#blasted)">
+      <path d="M1.05 4.55 C8.01 33.25 19.77 48.88 33.78 55.35 C34.86 55.85 34.70 57.45 33.52 57.65 C24.90 59.05 13.72 61.68 1.57 64.94 C0.54 65.21 -0.55 65.21 -1.58 64.93 C-13.73 61.68 -24.90 59.05 -33.52 57.65 C-34.70 57.45 -34.86 55.85 -33.78 55.35 C-19.77 48.88 -8.01 33.25 -1.05 4.55 C-0.78 3.45 0.78 3.45 1.05 4.55 Z"/>
+      <path d="M19.28 68.87 C29.04 92.32 41.73 102.99 55.48 104.89 C56.62 105.04 56.91 106.59 55.85 107.04 C20.16 122.19 -20.18 122.19 -55.87 107.03 C-56.92 106.58 -56.62 105.04 -55.48 104.89 C-41.73 102.98 -29.05 92.32 -19.29 68.88 C-18.80 67.72 -17.57 67.06 -16.36 67.35 C-11.94 68.42 -7.54 69.56 -3.15 70.73 C-1.08 71.28 1.08 71.28 3.15 70.73 C7.54 69.56 11.94 68.42 16.36 67.35 C17.57 67.06 18.80 67.72 19.28 68.87 Z"/>
       </g>
     </svg>
     <div class="words">
