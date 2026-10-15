@@ -1,0 +1,145 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Pine</title>
+<meta name="description" content="Pine builds EXO-1, a wearable that helps you move and, in return, records how people move. The physical world needs its own internet.">
+<link rel="icon" href="mark.svg" type="image/svg+xml">
+<link rel="preload" href="poster.jpg" as="image">
+<style>
+@font-face { font-family: "Michelangelus"; src: url("Michelangelus-Regular.ttf") format("truetype"); font-display: swap; }
+
+/* One ink, one paper. Colour comes only from the film. */
+:root {
+  --ink: #000;
+  --paper: #fff;
+  --quiet: #6b6b6b;
+  --u: 8px;                                   /* base unit; every space is a multiple */
+  --m: clamp(16px, 3.2vw, 48px);              /* outer margin */
+}
+* { box-sizing: border-box; margin: 0; }
+html, body { height: 100%; overflow: hidden; }
+body {
+  background: var(--paper); color: var(--ink);
+  font-family: "Michelangelus", "Iowan Old Style", Georgia, serif;
+  -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility;
+}
+
+/* Desktop: two fields on a 12-column grid. Text column 4, film 8. */
+.page {
+  height: 100vh; height: 100dvh;
+  display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: calc(var(--u) * 3);
+  padding: var(--m);
+}
+.text {
+  grid-column: 1 / span 4;
+  display: flex; flex-direction: column; justify-content: space-between; min-height: 0;
+  padding-right: calc(var(--u) * 2);
+}
+.mark { width: clamp(44px, 4.4vw, 64px); height: auto; display: block; }
+
+h1 {
+  font-weight: 400;
+  font-size: clamp(30px, 3.1vw, 52px);
+  line-height: 1.08; letter-spacing: -0.012em;
+  max-width: 14ch;
+}
+.foot {
+  margin-top: calc(var(--u) * 4);
+  display: flex; gap: calc(var(--u) * 3); align-items: baseline;
+  font-size: clamp(15px, 1.05vw, 17px); color: var(--quiet);
+}
+.foot a { color: var(--ink); text-decoration: none; border-bottom: 1px solid currentColor; padding-bottom: 1px; }
+.foot a:hover { border-bottom-color: transparent; }
+
+.film {
+  grid-column: 5 / -1; min-height: 0;
+  position: relative; overflow: hidden; border-radius: 4px;
+  background: #0e1512 url("poster.jpg") center / cover no-repeat;   /* poster shows before the film plays */
+}
+.film video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: block; }
+.film { cursor: pointer; }
+.film:focus-visible { outline: 2px solid var(--ink); outline-offset: 4px; }
+
+/* Phone and narrow windows: stack mark, film, words; still one screen. */
+@media (max-width: 760px), (max-aspect-ratio: 4/5) {
+  .page { grid-template-columns: 1fr; grid-template-rows: auto minmax(0, 1fr) auto; row-gap: calc(var(--u) * 3); }
+  .text { display: contents; }
+  .mark { grid-row: 1; }
+  .film { grid-column: 1; grid-row: 2; }
+  .words { grid-row: 3; }
+  h1 { max-width: 16ch; font-size: clamp(28px, 7.4vw, 40px); }
+  .foot { margin-top: calc(var(--u) * 2); }
+}
+
+/* Reduced motion: the film waits, paused on its poster, until asked. */
+@media (prefers-reduced-motion: reduce) {
+  .film video { opacity: 0; }
+  .film.playing video { opacity: 1; }
+}
+</style>
+</head>
+<body>
+<main class="page">
+  <div class="text">
+    <svg class="mark" viewBox="-64 -4 128 126.4" role="img" aria-label="Pine">
+      <defs>
+        <!-- Liquid metal, kept subtle. Chrome shows its surroundings, not a colour: a soft cool "sky" above,
+             a crisp horizon a little below centre where sky meets ground, and a faint bounce underneath.
+             Each piece reflects its own horizon (objectBoundingBox). -->
+        <linearGradient id="metal" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stop-color="#3d4043"/>
+          <stop offset="0.55" stop-color="#26282a"/>
+          <stop offset="0.62" stop-color="#1c1e20"/>
+          <stop offset="1" stop-color="#2a2c2e"/>
+        </linearGradient>
+        <!-- Surface tension rounds every edge: treat the blurred shape as a height map and light it, so the rims
+             swell and catch one soft specular highlight from the upper left. Added at low strength. -->
+        <filter id="liquid" x="-10%" y="-10%" width="120%" height="120%" color-interpolation-filters="sRGB">
+          <feGaussianBlur in="SourceAlpha" stdDeviation="3" result="h"/>
+          <feSpecularLighting in="h" surfaceScale="2.6" specularConstant="0.85" specularExponent="24" lighting-color="#ffffff" result="spec">
+            <feDistantLight azimuth="225" elevation="58"/>
+          </feSpecularLighting>
+          <feComposite in="spec" in2="SourceAlpha" operator="in" result="specIn"/>
+          <feComposite in="SourceGraphic" in2="specIn" operator="arithmetic" k1="0" k2="1" k3="0.16" k4="0"/>
+        </filter>
+      </defs>
+      <g fill="url(#metal)" stroke="rgba(0,0,0,0.25)" stroke-width="0.4" stroke-linejoin="round" filter="url(#liquid)">
+      <path d="M-0.27 1.20 Q0.00 -0.30 0.27 1.20 C7.76 34.98 21.60 51.67 38.00 57.00 C25.90 58.49 12.72 62.84 0.00 68.50 C-12.72 62.84 -25.90 58.49 -38.00 57.00 C-21.60 51.67 -7.76 34.98 -0.27 1.20 Z"/>
+      <path d="M18.77 67.63 C29.65 94.74 44.27 107.23 60.00 110.00 A218.49 218.49 0 0 1 -60.00 110.00 C-44.27 107.23 -29.65 94.74 -18.77 67.63 C-12.36 69.73 -6.16 72.33 0.00 75.07 C6.16 72.33 12.36 69.73 18.77 67.63 Z"/>
+      </g>
+    </svg>
+    <div class="words">
+      <h1>A long awaited upgrade to the human experience.</h1>
+      <p class="foot"><span>EXO-1</span><a href="https://lithe.site/">Join the waitlist</a></p>
+    </div>
+  </div>
+
+  <figure class="film" id="film" tabindex="0" role="button" aria-label="Pause film" aria-pressed="false">
+    <video id="video" muted loop playsinline disablepictureinpicture preload="auto" poster="poster.jpg" aria-label="EXO-1 joint and cuff assembly, rendered film">
+      <source src="film.mp4" type="video/mp4">
+    </video>
+  </figure>
+</main>
+
+<script>
+  // No visible control: clicking (or Space/Enter on) the film pauses and resumes it.
+  const video = document.getElementById("video"), film = document.getElementById("film");
+  const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const sync = () => {
+    const on = !video.paused;
+    film.classList.toggle("playing", on);
+    film.setAttribute("aria-label", on ? "Pause film" : "Play film");
+    film.setAttribute("aria-pressed", String(!on));
+  };
+  video.addEventListener("play", sync);
+  video.addEventListener("pause", sync);
+  const toggle = () => (video.paused ? video.play() : video.pause());
+  film.addEventListener("click", toggle);
+  film.addEventListener("keydown", e => { if (e.key === " " || e.key === "Enter") { e.preventDefault(); toggle(); } });
+  if (!reduce) video.play().catch(sync);
+  sync();
+</script>
+</body>
+</html>
