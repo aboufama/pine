@@ -1,0 +1,6 @@
+{
+ "ok": false,
+ "step": "secret",
+ "message": "RUNPOD_API_KEY repository secret is not set; nothing was created",
+ "at": "2026-10-21T19:34:24Z"
+}
