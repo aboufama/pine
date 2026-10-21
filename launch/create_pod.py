@@ -43,7 +43,19 @@ def record(**kw):
 def main():
     if not KEY:
         record(ok=False, step="secret", message="RUNPOD_API_KEY repository secret is not set; nothing was created"); return 0
+    acts = {}
+    ap = os.path.join(os.path.dirname(os.path.abspath(__file__)), "actions.json")
+    if os.path.exists(ap):
+        acts = json.load(open(ap))
     st, pods = http("GET", "/pods")
+    if st == 200:   # terminate pods listed in actions.json (only ours, by name), e.g. one on a host with a broken GPU
+        for p in pods or []:
+            if p.get("id") in acts.get("terminate", []) and p.get("name") == NAME:
+                ts, tp = http("DELETE", f"/pods/{p['id']}")
+                print(f"terminate {p['id']}: HTTP {ts}")
+        st, pods = http("GET", "/pods")
+    if acts.get("create") is False:
+        record(ok=True, step="no-create", message="actions.json says not to create a pod", pods=[{k: p.get(k) for k in ("id", "name", "desiredStatus")} for p in pods or []]); return 0
     if st != 200:
         record(ok=False, step="auth", status=st, message=str(pods)[:300]); return 1
     live = [p for p in (pods or []) if p.get("name") == NAME and p.get("desiredStatus") in ("RUNNING", "CREATED")]
