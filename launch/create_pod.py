@@ -77,9 +77,10 @@ def main():
     errors = []
     # Data-centre (SECURE) hosts first, with smaller volumes and no CUDA filter on the CUDA 12.4 image (every RunPod driver
     # runs it); community hosts last, because the ones free right now have repeatedly had GPUs that CUDA cannot open.
-    plans = [("SECURE", IMAGES[1][0], None, v) for v in (300, 200)] + [("SECURE", IMAGES[0][0], IMAGES[0][1], v) for v in (300, 200)] \
-          + [("COMMUNITY", IMAGES[1][0], None, 300), ("COMMUNITY", IMAGES[0][0], IMAGES[0][1], 300)]
+    plans = [("SECURE", IMAGES[1][0], None, v) for v in (500, 400)] + [("SECURE", IMAGES[0][0], IMAGES[0][1], v) for v in (500, 400)] \
+          + [("COMMUNITY", IMAGES[1][0], None, 500), ("COMMUNITY", IMAGES[0][0], IMAGES[0][1], 500)]
     for cloud, image, cuda, volume in plans:
+        env["PINE_VOLUME_GB"] = str(volume)
         body = dict(name=NAME, imageName=image, cloudType=cloud, computeType="GPU",
                     gpuTypeIds=GPUS, gpuTypePriority="custom", gpuCount=1, interruptible=False,
                     containerDiskInGb=60, volumeInGb=volume, volumeMountPath="/workspace", ports=["22/tcp"], env=env,

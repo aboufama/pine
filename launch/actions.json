@@ -6,6 +6,5 @@
   "fs8veeg3pe6bxa",
   "gy5n6hd4i79z8k"
  ],
- "note": "stop everything: HiPHI unpacked BVH overflowed the 300 GB volume; relaunch after the fetch fix",
- "create": false
+ "note": "relaunch with the disk-safe pipeline (engine-code e654115+)"
 }
