@@ -54,6 +54,13 @@ def main():
                 ts, tp = http("DELETE", f"/pods/{p['id']}")
                 print(f"terminate {p['id']}: HTTP {ts}")
         st, pods = http("GET", "/pods")
+    if acts.get("start"):   # restart stopped pods (keeps their /workspace volume), e.g. for phase 2
+        res = []
+        for pid in acts["start"]:
+            ss, sp = http("POST", f"/pods/{pid}/start")
+            res.append(dict(pod_id=pid, http=ss, reply=str(sp)[:300]))
+        ok = all(r["http"] in (200, 201, 202) for r in res)
+        record(ok=ok, step="start", pods=res, message="pod(s) restarted" if ok else "could not restart"); return 0 if ok else 1
     if acts.get("create") is False:
         record(ok=True, step="no-create", message="actions.json says not to create a pod", pods=[{k: p.get(k) for k in ("id", "name", "desiredStatus")} for p in pods or []]); return 0
     if st != 200:
