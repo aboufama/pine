@@ -54,7 +54,7 @@ while true; do
   fi
   report --final
   if grep -q "watchdog" "$WS/DONE" 2>/dev/null || over_cap; then stop_pod "GPU-hour cap reached"; sleep infinity; fi
-  if [ -f "$WS/BAD_HOST" ]; then stop_pod "this host's GPU is unusable; a new pod will be created on another host"; sleep infinity; fi
+  if [ -f "$WS/BAD_HOST" ]; then stop_pod "bad host: $(tail -c 120 "$WS/BAD_HOST")"; sleep infinity; fi
   say "phase $ph did not finish cleanly; waiting up to 60 min for a fix on $BR"
   for _ in $(seq 1 12); do sleep 300; [ "$(remote_sha)" != "$sha" ] && continue 2; done
   stop_pod "no fix arrived"; sleep infinity

@@ -80,6 +80,10 @@ def du_gb(path: str) -> float:
         return 0.0
 
 
+def _one_thread() -> None:
+    os.environ["OMP_NUM_THREADS"] = "1"
+
+
 def canon_cache(bvh_dir: str, out_npz: str) -> int:
     """Every non-mirror HiPHI BVH under bvh_dir -> one npz of canonical keypoints + per-take reports. Returns takes kept."""
     import build_shards as BS
@@ -97,7 +101,8 @@ def canon_cache(bvh_dir: str, out_npz: str) -> int:
         jobs.append(dict(source="hiphi", path=p, clip=mid, subject="hiphi_" + actor, unit=0.01, skel="mixamo",
                          drop=0, check_unit=True, desc=text))
     reps, kps = [], []
-    with get_context("fork").Pool(os.cpu_count() or 4, initializer=os.environ.__setitem__, initargs=("OMP_NUM_THREADS", "1")) as pool:
+    # spawn, not fork: GitHub clones run in threads alongside, and forking a threaded process can copy a held lock
+    with get_context("spawn").Pool(os.cpu_count() or 4, initializer=_one_thread) as pool:
         for rep, kp in pool.imap(BS.bvh_work, jobs, chunksize=4):
             if kp is not None:
                 rep["_n"] = len(kp); kps.append(kp.astype(np.float32))
@@ -107,6 +112,43 @@ def canon_cache(bvh_dir: str, out_npz: str) -> int:
              reps=np.array(json.dumps(reps)))
     os.replace(out_npz + ".tmp.npz", out_npz)
     return len(kps)
+
+
+def net_probe(report: dict) -> None:
+    """Log download speed from Hugging Face (first 256 MB of a HiPHI archive) and GitHub, so a slow host shows at once."""
+    import urllib.error, urllib.parse, urllib.request
+    out = {}
+    tests = []
+    if hf_token():
+        tests.append(("huggingface", "https://huggingface.co/datasets/noitomrobotics/HiPHI/resolve/main/data/"
+                      "HiPHI_data_part_0001_of_0032.tar.zst", {"Authorization": f"Bearer {hf_token()}"}))
+    tests.append(("github", "https://codeload.github.com/unitreerobotics/unitree_mujoco/tar.gz/refs/heads/main", {}))
+    class NoRedirect(urllib.request.HTTPRedirectHandler):
+        def redirect_request(self, *a, **k):  # noqa: ANN002
+            return None
+    for name, url, hdr in tests:
+        t0, n = time.time(), 0
+        try:
+            if hdr:   # resolve the CDN location with the token, then download from it without the token
+                try:
+                    urllib.request.build_opener(NoRedirect).open(urllib.request.Request(url, headers=hdr), timeout=30)
+                except urllib.error.HTTPError as e:
+                    if e.code in (301, 302, 303, 307, 308) and e.headers.get("Location"):
+                        url = urllib.parse.urljoin(url, e.headers["Location"]); hdr = {}
+                    else:
+                        raise
+            req = urllib.request.Request(url, headers=dict(hdr, Range="bytes=0-268435455"))
+            with urllib.request.urlopen(req, timeout=30) as r:
+                while time.time() - t0 < 20:
+                    b = r.read(1 << 20)
+                    if not b:
+                        break
+                    n += len(b)
+            out[name] = round(n / 1e6 / max(time.time() - t0, 1e-3), 1)
+        except Exception as e:  # noqa: BLE001
+            out[name] = f"failed: {type(e).__name__}: {e}"[:160]
+    report["network_mb_per_s"] = out
+    SAY("network: " + ", ".join(f"{k} {v} MB/s" if not isinstance(v, str) else f"{k} {v}" for k, v in out.items()))
 
 
 def free_gb(path: str) -> float:
@@ -129,6 +171,17 @@ def mark(name: str, info: dict) -> None:
     write_json(marker(name), info)
 
 
+def git_auth_env() -> dict:
+    """Clone as the GH_TOKEN user when there is one: anonymous clones from a busy data-centre IP get throttled."""
+    tok = os.environ.get("GH_TOKEN") or os.environ.get("GITHUB_TOKEN")
+    if not tok:
+        return {}
+    import base64
+    b = base64.b64encode(f"x-access-token:{tok}".encode()).decode()
+    return {"GIT_CONFIG_COUNT": "1", "GIT_CONFIG_KEY_0": "http.https://github.com/.extraheader",
+            "GIT_CONFIG_VALUE_0": f"AUTHORIZATION: basic {b}"}
+
+
 def git_clone(name: str) -> dict:
     spec = GIT[name]
     dest = os.path.join(RAW, name, "repo")
@@ -141,9 +194,9 @@ def git_clone(name: str) -> dict:
     # Abort a stalled transfer (under 200 KB/s for 90 s) instead of waiting out the hour-long timeout, then retry.
     cmd = ["git", "-c", "http.lowSpeedLimit=200000", "-c", "http.lowSpeedTime=90", "clone", "--quiet"] \
         + (["--depth", str(spec["depth"])] if spec["depth"] else []) + [spec["url"], dest]
-    env = {"GIT_LFS_SKIP_SMUDGE": "1"} if name == "lafan1" else None
+    env = {"GIT_LFS_SKIP_SMUDGE": "1"} if name == "lafan1" else {}
     for attempt in range(3):
-        rc, out = sh(cmd, timeout=1800, env=env)
+        rc, out = sh(cmd, timeout=1800, env=dict(env, **(git_auth_env() if attempt != 1 else {})))
         if rc == 0:
             break
         SAY(f"  {name}: git clone failed (attempt {attempt + 1}/3): {out}")
@@ -172,7 +225,19 @@ def fetch_bandai() -> dict:
     return r
 
 
+VENDORED = os.path.join(os.path.dirname(HERE), "assets", "unitree_robots")   # unitree_mujoco @ 1eb6642, BSD-3-Clause
+
+
 def fetch_unitree() -> dict:
+    from pine.g1 import SPECS
+    src = os.path.join(VENDORED, common.ROBOT)
+    if os.path.isdir(src):   # shipped with the code: no download, cannot stall
+        dest = os.path.join(RAW, os.path.dirname(os.path.dirname(SPECS[common.ROBOT]["mjcf"])), common.ROBOT)
+        shutil.rmtree(dest, ignore_errors=True); os.makedirs(os.path.dirname(dest), exist_ok=True)
+        shutil.copytree(src, dest)
+        ok = os.path.exists(os.path.join(RAW, SPECS[common.ROBOT]["mjcf"]))
+        return dict(status="ok" if ok else "failed", path=dest, source="vendored (unitree_mujoco 1eb6642)",
+                    models={common.ROBOT: ok}, license="BSD-3-Clause")
     r = git_clone("unitree_mujoco")
     if r["status"] in ("ok", "present"):
         from pine.g1 import SPECS
@@ -317,24 +382,35 @@ def fetch_hiphi(max_parts: int) -> dict:
     if not zstd_ok:
         return dict(status="failed", reason="no zstd decompressor (install zstd)")
     done, failed = [], []
-    ex_root = os.path.join(dest, "extracted")
-    for f in files:
+    from concurrent.futures import ThreadPoolExecutor
+
+    def download(f):
+        for attempt in range(3):
+            try:
+                return hh.hf_hub_download(repo, f, repo_type="dataset", local_dir=dest, token=hf_token())
+            except Exception as e:  # noqa: BLE001
+                if attempt == 2:
+                    raise
+                SAY(f"  hiphi: {os.path.basename(f)} download failed (attempt {attempt + 1}/3): {e}"[:300])
+                time.sleep(20 * (attempt + 1))
+
+    todo = [f for f in files if not os.path.exists(os.path.join(dest, ".done_" + os.path.basename(f)))]
+    done += [f for f in files if f not in todo]
+    dl = ThreadPoolExecutor(1)        # downloads archive k+1 while archive k is unpacked and parsed
+    nxt = dl.submit(download, todo[0]) if todo else None
+    for k, f in enumerate(todo):
         flag = os.path.join(dest, ".done_" + os.path.basename(f))
-        if os.path.exists(flag):
-            done.append(f); continue
+        fut, nxt = nxt, None
         if du_gb(os.path.dirname(dest)) > float(os.environ.get("PINE_VOLUME_GB", "300")) * 0.85:
             SAY(f"  hiphi: stopping, {du_gb(os.path.dirname(dest)):.0f} GB used of the volume"); break
         t0 = time.time()
         try:
-            for attempt in range(3):
-                try:
-                    local = hh.hf_hub_download(repo, f, repo_type="dataset", local_dir=dest, token=hf_token())
-                    break
-                except Exception as e:  # noqa: BLE001
-                    if attempt == 2:
-                        raise
-                    SAY(f"  hiphi: {os.path.basename(f)} download failed (attempt {attempt + 1}/3): {e}"[:300])
-                    time.sleep(20 * (attempt + 1))
+            try:
+                local = fut.result()
+            finally:
+                if k + 1 < len(todo):
+                    nxt = dl.submit(download, todo[k + 1])
+            t_dl = time.time() - t0
             # Unpacked BVH is several times the archive: parse each archive straight into canonical keypoints
             # (pine.canon, 20 fps) and delete the text before the next archive, so the disk never holds more than one.
             tmp = os.path.join(dest, "tmp_extract")
@@ -345,11 +421,12 @@ def fetch_hiphi(max_parts: int) -> dict:
             shutil.rmtree(tmp, ignore_errors=True)
             open(flag, "w").write(json.dumps(dict(files=n, takes_kept=kept, seconds=time.time() - t0)))
             done.append(f)
-            SAY(f"  hiphi: {os.path.basename(f)} -> {n} files, {kept} takes kept as keypoints, {time.time() - t0:.0f}s, "
-                f"{du_gb(dest):.1f} GB on disk")
+            SAY(f"  hiphi: {os.path.basename(f)} -> {n} files, {kept} takes kept as keypoints, {time.time() - t0:.0f}s "
+                f"(waited {t_dl:.0f}s for the download), {du_gb(dest):.1f} GB on disk")
         except Exception as e:  # noqa: BLE001
             failed.append(dict(file=f, error=f"{type(e).__name__}: {e}"[:300]))
             SAY(f"  hiphi: {f} failed: {e}")
+    dl.shutdown(wait=False, cancel_futures=True)
     bvh = len(glob.glob(os.path.join(dest, "canon", "*.npz")))
     return dict(status="ok" if done else "failed", path=dest, canon_archives=bvh, archives=len(done),
                 archives_total=len([1 for _ in files]), failed=failed, bvh_files=bvh,
@@ -422,21 +499,26 @@ def main(argv=None) -> int:
     report.setdefault("sources", {})
     fns = dict(cmu=fetch_cmu, bandai=fetch_bandai, lafan1=fetch_lafan1, unitree_mujoco=fetch_unitree,
                lafan1_g1=fetch_lafan1_g1, amass_g1=fetch_amass_g1, hiphi=lambda: fetch_hiphi(a.hiphi_parts))
-    for name in ORDER:
-        um = report["sources"].get("unitree_mujoco", {})
-        if name != "unitree_mujoco" and not only and um and um.get("status") not in ("ok", "present"):
-            break
+    import threading
+    from concurrent.futures import ThreadPoolExecutor
+    lock = threading.Lock()
+
+    def run_source(name):
         if only and name not in only:
-            continue
+            return
         if name in skip:
-            report["sources"][name] = dict(status="skipped", reason="PINE_SKIP / --skip"); continue
+            with lock:
+                report["sources"][name] = dict(status="skipped", reason="PINE_SKIP / --skip")
+            return
         if name in HF and robot not in HF[name]["robots"]:
-            report["sources"][name] = dict(status="skipped", reason=f"G1-native data; used only when PINE_ROBOT=g1 (robot is {robot})")
-            SAY(f"{name}: skipped (G1-native, robot is {robot})"); continue
+            with lock:
+                report["sources"][name] = dict(status="skipped", reason=f"G1-native data; used only when PINE_ROBOT=g1 (robot is {robot})")
+            SAY(f"{name}: skipped (G1-native, robot is {robot})"); return
         prev = done_before(name)
         if prev and prev.get("status") == "ok" and name != "hiphi":
-            report["sources"][name] = dict(prev, status="ok", cached=True)
-            SAY(f"{name}: already fetched"); continue
+            with lock:
+                report["sources"][name] = dict(prev, status="ok", cached=True)
+            SAY(f"{name}: already fetched"); return
         SAY(f"{name}: fetching ...")
         t0 = time.time()
         try:
@@ -447,19 +529,41 @@ def main(argv=None) -> int:
         p = res.get("path")
         if p and os.path.isdir(p) and res.get("status") == "ok" and name != "hiphi":
             res["bytes"] = du_bytes(p)
-        report["sources"][name] = res
-        if res.get("status") == "ok":
-            mark(name, res)
+        with lock:
+            report["sources"][name] = res
+            if res.get("status") == "ok":
+                mark(name, res)
+            write_json(report_path, report)
         SAY(f"{name}: {res.get('status')} in {res['seconds']:.0f}s "
             + json.dumps({k: v for k, v in res.items() if k not in ('path', 'status', 'seconds')})[:400])
-        write_json(report_path, report)
-    report["finished"] = time.strftime("%Y-%m-%dT%H:%M:%S%z")
-    report["free_gb_after"] = round(free_gb(RAW), 1)
-    write_json(report_path, report)
+
+    # The robot model first (required; shipped with the code). Then the GitHub datasets clone in the background while the
+    # Hugging Face data (HiPHI, the bulk) downloads and parses in the foreground, so a slow GitHub never blocks the run.
+    run_source("unitree_mujoco")
     um = report["sources"].get("unitree_mujoco", {})
     if not only and um.get("status") not in ("ok", "present"):
         SAY("FATAL: the robot model (unitree_mujoco) could not be fetched; this host's network is too slow or blocked")
+        write_json(report_path, report)
         return 3
+    if not only:
+        net_probe(report)
+    # Install system tools once, before the threads start (two concurrent apt-get runs would fight over the dpkg lock).
+    need = [pkg for pkg, exe in (("zstd", "zstd"), ("git-lfs", "git-lfs")) if not shutil.which(exe)]
+    if need:
+        rc, out = sh(["bash", "-lc", "apt-get update -qq && apt-get install -y -qq " + " ".join(need)], timeout=900)
+        SAY(f"apt-get install {' '.join(need)}: exit {rc}")
+    gh = [n for n in ORDER if n in GIT and n != "unitree_mujoco"]
+    pool = ThreadPoolExecutor(len(gh))
+    futs = [pool.submit(run_source, n) for n in gh]
+    for name in ORDER:
+        if name not in GIT:
+            run_source(name)
+    for f in futs:
+        f.result()
+    pool.shutdown()
+    report["finished"] = time.strftime("%Y-%m-%dT%H:%M:%S%z")
+    report["free_gb_after"] = round(free_gb(RAW), 1)
+    write_json(report_path, report)
     SAY(f"fetch report: {report_path}")
     return 0
 
