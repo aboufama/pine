@@ -1,6 +1,7 @@
 {
  "terminate": [
-  "gy5n6hd4i79z8k"
+  "gy5n6hd4i79z8k",
+  "041ojj2whg46vg"
  ],
- "note": "RTX 4090 community host: CUDA unknown error for 4+ minutes"
+ "note": "two community hosts with CUDA unknown error; start without a login shell"
 }

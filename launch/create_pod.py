@@ -71,7 +71,7 @@ def main():
                 body = dict(name=NAME, imageName=image, cloudType=cloud, computeType="GPU",
                             gpuTypeIds=GPUS, gpuTypePriority="custom", gpuCount=1, interruptible=False,
                             containerDiskInGb=60, volumeInGb=volume, volumeMountPath="/workspace", ports=["22/tcp"], env=env,
-                            dockerStartCmd=["bash", "-lc", START], allowedCudaVersions=cuda)
+                            dockerStartCmd=["bash", "-c", START], allowedCudaVersions=cuda)
                 st, p = http("POST", "/pods", body)
                 if st in (200, 201) and isinstance(p, dict) and p.get("id"):
                     m = p.get("machine") or {}
