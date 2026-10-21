@@ -1,13 +1,38 @@
 {
  "ok": true,
- "step": "created",
- "pod_id": "i7y1vuyjlp99n2",
- "image": "runpod/pytorch:2.4.0-py3.11-cuda12.4.1-devel-ubuntu22.04",
- "cloud": "SECURE",
- "volume_gb": 500,
- "gpu": "NVIDIA H100 NVL",
- "cost_per_hr": 3.19,
- "status": "RUNNING",
- "tried_before": [],
- "at": "2026-10-21T23:05:00Z"
+ "step": "info",
+ "pods": [
+  {
+   "pod_id": "i7y1vuyjlp99n2",
+   "http": 200,
+   "pod": {
+    "consumerUserId": "user_3Fug3eODkylB4MuLEhZThr2vllY",
+    "containerDiskInGb": 60,
+    "costPerHr": 3.19,
+    "createdAt": "2026-10-21 23:05:00.144 +0000 UTC",
+    "desiredStatus": "RUNNING",
+    "gpuCount": 1,
+    "id": "i7y1vuyjlp99n2",
+    "imageName": "runpod/pytorch:2.4.0-py3.11-cuda12.4.1-devel-ubuntu22.04",
+    "lastStartedAt": "2026-10-21 23:05:00.139 +0000 UTC",
+    "lastStatusChange": "Rented by User: Wed Oct 21 2026 23:05:00 GMT+0000 (Coordinated Universal Time)",
+    "machine": {},
+    "machineId": "budffwvq4rc6",
+    "memoryInGb": 188,
+    "name": "pine-engine",
+    "ports": [
+     "22/tcp"
+    ],
+    "portMappings": {
+     "22": 11086
+    },
+    "publicIp": "205.196.17.154",
+    "templateId": "",
+    "vcpuCount": 16,
+    "volumeInGb": 500,
+    "volumeMountPath": "/workspace"
+   }
+  }
+ ],
+ "at": "2026-10-21T23:24:08Z"
 }
