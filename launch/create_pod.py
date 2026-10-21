@@ -48,7 +48,7 @@ def main():
     env = {"HF_TOKEN": "{{ RUNPOD_SECRET_hf_token }}", "GH_TOKEN": "{{ RUNPOD_SECRET_gh_token }}", "PINE_MAX_GPU_HOURS": "8",
            "PINE_ROBOT": "h2"}
     errors = []
-    for volume in (1000, 700, 500, 400):
+    for volume in (500, 400, 700, 1000):   # HiPHI is extracted one archive at a time; 500 GB fits, and an idle volume bills by size
         for cloud in ("SECURE", "COMMUNITY"):
             body = dict(name=NAME, imageName="runpod/pytorch:1.4.0-cu1281-torch280-ubuntu2404", cloudType=cloud, computeType="GPU",
                         gpuTypeIds=GPUS, gpuTypePriority="custom", gpuCount=1, interruptible=False,

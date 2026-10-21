@@ -4,6 +4,9 @@ on:
     branches: [engine-launch]
 permissions:
   contents: write
+concurrency:
+  group: launch-pod
+  cancel-in-progress: false
 jobs:
   launch:
     runs-on: ubuntu-latest
