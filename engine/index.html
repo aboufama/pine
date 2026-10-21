@@ -531,7 +531,9 @@ function render(D, MODEL, BIN) {
     const lr = lad[lad.length - 1];
     label(c, lr.params, lr.test.full, "people never seen", -6, -9, "end"); label(c, lr.params, lr.val.full, "new takes, seen people", -6, 15, "end");
   }
-  $("#c-e").innerHTML = `Bigger models barely close the gap between familiar people and ${fmt(ds.splits_hours.test, 1)} h from <b>people never trained on</b>. More wearers would.`;
+  const mir = D.mirror && D.mirror.runs && D.mirror.runs.M;
+  $("#c-e").innerHTML = `Bigger models barely close the gap to ${fmt(ds.splits_hours.test, 1)} h from <b>people never trained on</b>.` +
+    (mir ? ` Doubling to ${fmt(D.mirror.train_hours, 1)} h by mirroring every take moved it by ${fmt(100 * Math.abs(mir.test / mir.base_test - 1), 1)}%: more of the same people does not help; more people should.` : "");
 
   /* f: sensors */
   $("#h-f").textContent = "Legs carry the signal; arm encoders would help";
