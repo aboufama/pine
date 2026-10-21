@@ -182,9 +182,27 @@ def git_auth_env() -> dict:
             "GIT_CONFIG_VALUE_0": f"AUTHORIZATION: basic {b}"}
 
 
+def tarball(url: str, dest: str) -> tuple[int, str]:
+    """Download a GitHub repo's default branch as a tarball and unpack it into dest. Returns (exit code, message)."""
+    owner, repo = url.rstrip("/").split("/")[-2:]
+    os.makedirs(dest, exist_ok=True)
+    hdr = os.path.join(dest + ".hdr")
+    tok = os.environ.get("GH_TOKEN") or os.environ.get("GITHUB_TOKEN")
+    with open(os.open(hdr, os.O_WRONLY | os.O_CREAT | os.O_TRUNC, 0o600), "w") as f:
+        f.write(f"Authorization: Bearer {tok}\n" if tok else "Accept: application/vnd.github+json\n")
+    try:
+        cmd = (f"set -o pipefail; curl -fsSL --retry 3 --speed-limit 200000 --speed-time 90 -H @{hdr} "
+               f"https://api.github.com/repos/{owner}/{repo}/tarball | tar xz --strip-components=1 -C {dest}")
+        return sh(["bash", "-c", cmd], timeout=3600)
+    finally:
+        os.remove(hdr)
+
+
 def git_clone(name: str) -> dict:
     spec = GIT[name]
     dest = os.path.join(RAW, name, "repo")
+    if os.path.isdir(dest) and not os.path.isdir(os.path.join(dest, ".git")) and done_before(name) is None:
+        shutil.rmtree(dest, ignore_errors=True)        # a partial tarball unpack from an interrupted run
     if os.path.isdir(os.path.join(dest, ".git")):
         rc, out = sh(["git", "-C", dest, "rev-parse", "HEAD"], timeout=60)
         if rc == 0:
@@ -195,11 +213,19 @@ def git_clone(name: str) -> dict:
     cmd = ["git", "-c", "http.lowSpeedLimit=200000", "-c", "http.lowSpeedTime=90", "clone", "--quiet"] \
         + (["--depth", str(spec["depth"])] if spec["depth"] else []) + [spec["url"], dest]
     env = {"GIT_LFS_SKIP_SMUDGE": "1"} if name == "lafan1" else {}
-    for attempt in range(3):
-        rc, out = sh(cmd, timeout=1800, env=dict(env, **(git_auth_env() if attempt != 1 else {})))
-        if rc == 0:
-            break
-        SAY(f"  {name}: git clone failed (attempt {attempt + 1}/3): {out}")
+    # git (as the token user), then a plain HTTPS tarball (codeload; streams fine where git's pack transfer stalls),
+    # then git anonymously. The tarball has no .git and no LFS files, so it is not used for lafan1.
+    tries = ["git_auth", "tarball", "git_anon"] if name != "lafan1" else ["git_auth", "git_anon", "git_auth"]
+    for attempt, how in enumerate(tries):
+        if how == "tarball":
+            rc, out = tarball(spec["url"], dest)
+            if rc == 0:
+                return dict(status="ok", path=dest, commit=None, url=spec["url"], via="tarball")
+        else:
+            rc, out = sh(cmd, timeout=1800, env=dict(env, **(git_auth_env() if how == "git_auth" else {})))
+            if rc == 0:
+                break
+        SAY(f"  {name}: {how} failed (attempt {attempt + 1}/{len(tries)}): {out}")
         shutil.rmtree(dest, ignore_errors=True)
         time.sleep(10 * (attempt + 1))
     else:
