@@ -1,56 +1,12 @@
 {
- "ok": false,
- "step": "create",
- "attempts": [
-  {
-   "cloud": "SECURE",
-   "volume_gb": 500,
-   "status": 500,
-   "error": "{'error': 'create pod: There are no instances currently available\\nThere are no instances currently available\\nThere are no instances currently available\\nThere are no instances currently available\\nThere are no instances currently available', 'status': 500}"
-  },
-  {
-   "cloud": "COMMUNITY",
-   "volume_gb": 500,
-   "status": 500,
-   "error": "{'error': 'create pod: There are no instances currently available\\nThere are no instances currently available\\nThere are no instances currently available\\nThere are no instances currently available\\nThere are no instances currently available', 'status': 500}"
-  },
-  {
-   "cloud": "SECURE",
-   "volume_gb": 400,
-   "status": 500,
-   "error": "{'error': 'create pod: There are no instances currently available\\nThere are no instances currently available\\nThere are no instances currently available\\nThere are no instances currently available\\nThere are no instances currently available', 'status': 500}"
-  },
-  {
-   "cloud": "COMMUNITY",
-   "volume_gb": 400,
-   "status": 500,
-   "error": "{'error': 'create pod: There are no instances currently available\\nThere are no instances currently available\\nThere are no instances currently available\\nThere are no instances currently available\\nThere are no instances currently available', 'status': 500}"
-  },
-  {
-   "cloud": "SECURE",
-   "volume_gb": 700,
-   "status": 500,
-   "error": "{'error': 'create pod: There are no instances currently available\\nThere are no instances currently available\\nThere are no instances currently available\\nThere are no instances currently available\\nThere are no instances currently available', 'status': 500}"
-  },
-  {
-   "cloud": "COMMUNITY",
-   "volume_gb": 700,
-   "status": 500,
-   "error": "{'error': 'create pod: There are no instances currently available\\nThere are no instances currently available\\nThere are no instances currently available\\nThere are no instances currently available\\nThere are no instances currently available', 'status': 500}"
-  },
-  {
-   "cloud": "SECURE",
-   "volume_gb": 1000,
-   "status": 500,
-   "error": "{'error': 'create pod: There are no instances currently available\\nThere are no instances currently available\\nThere are no instances currently available\\nThere are no instances currently available\\nThere are no instances currently available', 'status': 500}"
-  },
-  {
-   "cloud": "COMMUNITY",
-   "volume_gb": 1000,
-   "status": 500,
-   "error": "{'error': 'create pod: There are no instances currently available\\nThere are no instances currently available\\nThere are no instances currently available\\nThere are no instances currently available\\nThere are no instances currently available', 'status': 500}"
-  }
- ],
- "message": "no H100/A100 80GB available with these settings; nothing is billing",
- "at": "2026-10-21T19:43:08Z"
+ "ok": true,
+ "step": "created",
+ "pod_id": "gy5n6hd4i79z8k",
+ "image": "runpod/pytorch:1.4.0-cu1281-torch280-ubuntu2404",
+ "cloud": "COMMUNITY",
+ "volume_gb": 500,
+ "gpu": "NVIDIA GeForce RTX 4090",
+ "cost_per_hr": 0.34,
+ "status": "RUNNING",
+ "at": "2026-10-21T19:44:09Z"
 }
