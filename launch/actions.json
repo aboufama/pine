@@ -1,6 +1,7 @@
 {
  "terminate": [
+  "2feih1xvionv3s",
   "f68jsd9litlacf"
  ],
- "note": "f68jsd9litlacf stalled 35 min cloning a 428 MB repo from GitHub (25 s on the previous host); relaunch with stall-abort fetch (engine-code b765af0)"
+ "note": "both stalled on GitHub clones from the same data centre; relaunch with the robot model shipped in the code and GitHub fetches off the critical path (engine-code 1st push after b765af0)"
 }
