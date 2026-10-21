@@ -1,7 +1,5 @@
 {
- "terminate": [
-  "2feih1xvionv3s",
-  "f68jsd9litlacf"
- ],
- "note": "both stalled on GitHub clones from the same data centre; relaunch with the robot model shipped in the code and GitHub fetches off the critical path (engine-code 1st push after b765af0)"
+ "info": ["i7y1vuyjlp99n2"],
+ "create": false,
+ "note": "read-only: RAM and vCPUs of the running pod (no create, no terminate)"
 }

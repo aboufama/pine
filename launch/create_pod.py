@@ -63,6 +63,14 @@ def main():
             res.append(dict(pod_id=pid, http=ss, reply=str(sp)[:300]))
         ok = all(r["http"] in (200, 201, 202) for r in res)
         record(ok=ok, step="start", pods=res, message="pod(s) restarted" if ok else "could not restart"); return 0 if ok else 1
+    if acts.get("info"):    # read-only: hardware details of the listed pods (env dropped: it holds secret references)
+        info = []
+        for pid in acts["info"]:
+            ss, sp = http("GET", f"/pods/{pid}")
+            if isinstance(sp, dict):
+                sp = {k: v for k, v in sp.items() if k not in ("env", "dockerStartCmd")}
+            info.append(dict(pod_id=pid, http=ss, pod=sp))
+        record(ok=True, step="info", pods=info); return 0
     if acts.get("create") is False:
         record(ok=True, step="no-create", message="actions.json says not to create a pod", pods_before=seen,
                pods_after=[{k: p.get(k) for k in ("id", "name", "desiredStatus")} for p in pods or []]); return 0
