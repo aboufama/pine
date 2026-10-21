@@ -134,8 +134,34 @@ cd "$REPO"
 # ---------------------------------------------------------------------- 1. environment
 status "environment"
 nvidia-smi || say "WARNING: nvidia-smi failed"
+cuda_diag() {   # what CUDA sees: device nodes, driver, libraries, and the raw driver-API result
+  say "--- CUDA diagnostics"
+  ls -la /dev/nvidia* 2>&1 | head -20
+  cat /proc/driver/nvidia/version 2>&1 | head -2
+  env | grep -E "^(CUDA|NVIDIA|LD_LIBRARY_PATH|PATH)=" || true
+  ldconfig -p 2>/dev/null | grep -E "libcuda\.so|libnvidia-ml" | head -6
+  "$PY" - <<'EOF' 2>&1 | head -5
+import ctypes
+try:
+    lib = ctypes.CDLL("libcuda.so.1"); print("libcuda", lib._name, "cuInit ->", lib.cuInit(0))
+    v = ctypes.c_int(); lib.cuDriverGetVersion(ctypes.byref(v)); print("driver CUDA version", v.value)
+except OSError as e:
+    print("libcuda not loadable:", e)
+EOF
+  say "--- end diagnostics"
+}
+cuda_diag
 cuda_ok=0
 for attempt in $(seq 1 12); do   # some hosts report "CUDA unknown error" for the first minutes after boot
+  if [ "$attempt" = 2 ] && command -v nvidia-modprobe >/dev/null; then say "trying nvidia-modprobe -u -c=0"; nvidia-modprobe -u -c=0 || true; fi
+  if [ "$attempt" = 3 ] && echo "${LD_LIBRARY_PATH:-}" | grep -q compat; then
+    say "dropping CUDA forward-compat libraries from LD_LIBRARY_PATH"
+    export LD_LIBRARY_PATH="$(echo "$LD_LIBRARY_PATH" | tr ':' '\n' | grep -v compat | paste -sd: -)"
+  fi
+  if [ "$attempt" = 4 ]; then
+    for d in /usr/local/cuda/compat /usr/local/cuda-*/compat; do [ -d "$d" ] && say "hiding $d" && mv "$d" "$d.off" 2>/dev/null; done
+    ldconfig 2>/dev/null || true
+  fi
   if "$PY" - <<'EOF'
 import sys, torch
 print("python", sys.version.split()[0], "torch", torch.__version__, "cuda", torch.version.cuda,
@@ -148,7 +174,7 @@ EOF
   say "CUDA not usable yet (attempt $attempt of 12); retrying in 20 s"; sleep 20
 done
 if [ "$cuda_ok" != 1 ]; then
-  say "FATAL: torch with CUDA is not usable on this host"; echo "$(date -u) CUDA unusable" > "$WS/BAD_HOST"
+  cuda_diag; say "FATAL: torch with CUDA is not usable on this host"; echo "$(date -u) CUDA unusable" > "$WS/BAD_HOST"
   finish 2 "aborted: no torch/CUDA (bad host)"
 fi
 need=""
