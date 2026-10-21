@@ -1,7 +1,7 @@
 {
  "ok": true,
  "step": "created",
- "pod_id": "f68jsd9litlacf",
+ "pod_id": "2feih1xvionv3s",
  "image": "runpod/pytorch:2.4.0-py3.11-cuda12.4.1-devel-ubuntu22.04",
  "cloud": "SECURE",
  "volume_gb": 500,
@@ -9,5 +9,5 @@
  "cost_per_hr": 3.19,
  "status": "RUNNING",
  "tried_before": [],
- "at": "2026-10-21T22:12:35Z"
+ "at": "2026-10-21T22:53:55Z"
 }
