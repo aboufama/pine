@@ -93,7 +93,11 @@ h3 { font-size: 15.5px; font-weight: 600; letter-spacing: -0.02em; line-height: 
 .stack span { display: block; font-size: 11.5px; color: var(--quiet); margin-top: 3px; }
 
 .bars { display: grid; gap: 5px; align-content: center; height: 100%; }
-.brow { display: grid; grid-template-columns: minmax(0, 8.6em) minmax(0, 1fr) 3.4em; gap: 8px; align-items: center; font-size: 11.5px; }
+.labels { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px 14px; height: 100%; align-content: center; }
+.labels h4 { font-size: 11px; font-weight: 600; color: var(--faint); margin: 0 0 4px; }
+.labels ul { list-style: none; margin: 0; padding: 0; font-size: 11.5px; line-height: 1.5; color: var(--ink2); }
+.labels .big { font-size: 26px; }
+.brow { display: grid; grid-template-columns: minmax(0, 8.6em) minmax(0, 1fr) 4.6em; gap: 8px; align-items: center; font-size: 11.5px; }
 .brow > div:first-child { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .brow .t { height: 13px; background: var(--paper); border-radius: 4px; position: relative; overflow: hidden; }
 .brow .t span { position: absolute; inset: 0 auto 0 0; background: var(--ink); border-radius: 4px; }
@@ -129,7 +133,7 @@ footer.note b { color: var(--ink2); font-weight: 600; }
 
   <header class="solo">
     <div>
-      <h1>Humanoid motion pretraining from public motion capture</h1>
+      <h1>High-quality full-body annotated motion data at scale</h1>
       <div class="stats" id="stats"></div>
     </div>
   </header>
@@ -152,12 +156,15 @@ footer.note b { color: var(--ink2); font-weight: 600; }
   </div>
 
   <main class="fig" id="fig">
-    <section class="panel"><div class="k"><i>a</i>Scaling</div><h3 id="h-c"></h3><div class="viz chart" id="v-c"></div><p class="cap" id="c-c"></p></section>
-    <section class="panel"><div class="k"><i>b</i>Data size</div><h3 id="h-d"></h3><div class="viz chart" id="v-d"></div><p class="cap" id="c-d"></p></section>
-    <section class="panel"><div class="k"><i>c</i>Generalisation</div><h3 id="h-e"></h3><div class="viz chart" id="v-e"></div><p class="cap" id="c-e"></p></section>
-    <section class="panel"><div class="k"><i>d</i>Sensors</div><h3 id="h-f"></h3><div class="viz"><div class="bars" id="v-f"></div></div><p class="cap" id="c-f"></p></section>
-    <section class="panel"><div class="k"><i>e</i>Suit to body</div><h3 id="h-g"></h3><div class="viz"><div class="duo"><canvas id="v-g" aria-label="Upper body inferred from leg sensors"></canvas><div class="stack" id="s-g"></div></div></div><p class="cap" id="c-g"></p></section>
-    <section class="panel"><div class="k"><i>f</i>Forecast</div><h3 id="h-h"></h3><div class="viz"><div class="bars" id="v-h"></div></div><p class="cap" id="c-h"></p></section>
+    <section class="panel"><div class="k"><i>a</i>Coverage</div><h3 id="h-a1"></h3><div class="viz"><div class="bars" id="v-a1"></div></div><p class="cap" id="c-a1"></p></section>
+    <section class="panel"><div class="k"><i>b</i>Quality</div><h3 id="h-b1"></h3><div class="viz"><div class="bars" id="v-b1"></div></div><p class="cap" id="c-b1"></p></section>
+    <section class="panel"><div class="k"><i>c</i>Annotations, checked</div><h3 id="h-c1"></h3><div class="viz"><div class="labels" id="v-c1"></div></div><p class="cap" id="c-c1"></p></section>
+    <section class="panel"><div class="k"><i>d</i>Scaling</div><h3 id="h-c"></h3><div class="viz chart" id="v-c"></div><p class="cap" id="c-c"></p></section>
+    <section class="panel"><div class="k"><i>e</i>Data size</div><h3 id="h-d"></h3><div class="viz chart" id="v-d"></div><p class="cap" id="c-d"></p></section>
+    <section class="panel"><div class="k"><i>f</i>Generalisation</div><h3 id="h-e"></h3><div class="viz chart" id="v-e"></div><p class="cap" id="c-e"></p></section>
+    <section class="panel"><div class="k"><i>g</i>Sensors</div><h3 id="h-f"></h3><div class="viz"><div class="bars" id="v-f"></div></div><p class="cap" id="c-f"></p></section>
+    <section class="panel"><div class="k"><i>h</i>Suit to body</div><h3 id="h-g"></h3><div class="viz"><div class="duo"><canvas id="v-g" aria-label="Upper body inferred from leg sensors"></canvas><div class="stack" id="s-g"></div></div></div><p class="cap" id="c-g"></p></section>
+    <section class="panel"><div class="k"><i>i</i>Forecast</div><h3 id="h-h"></h3><div class="viz"><div class="bars" id="v-h"></div></div><p class="cap" id="c-h"></p></section>
   </main>
 
   <footer class="note">
@@ -340,7 +347,7 @@ function render(D, MODEL, BIN) {
   const hold = row("hold"), base = row("direct4"), chunk = row("chunk16"), dct = row("dct16");
   const cmu = ds.sources.find((s) => s.id === "cmu");
 
-  $("#stats").innerHTML = [[fmt(ds.hours, 1) + " h", "motion"], [fmt(ds.takes_kept), "takes"], [fmt(ds.people), "people"], [fmt(ds.frames), "frames"], ["2", "robots"]]
+  $("#stats").innerHTML = [[fmt(ds.hours, 1) + " h", "motion"], [fmt(ds.takes_kept), "takes"], [fmt(ds.people), "people"], [fmt(ds.frames), "frames"], [String(D.annotations.activity.filter((a) => a.name !== "unlabeled" && a.name !== "other").length), "activity classes"], [fmt(D.annotations.grades.A.hours, 1) + " h", "grade A"]]
     .map(([b, s]) => `<div><b class="num">${b}</b><span>${s}</span></div>`).join("");
 
   /* hero: the captured take (left) and Unitree's own H2 model doing it (right) */
@@ -405,7 +412,7 @@ function render(D, MODEL, BIN) {
     let lo = 1e9, hi = -1e9;
     for (const [j] of TR) for (let f = 0; f < n; f++) { const v = q[f * 31 + j] * 57.2958; lo = Math.min(lo, v); hi = Math.max(hi, v); }
     lo = Math.floor(lo / 30) * 30; hi = Math.ceil(hi / 30) * 30;
-    const X = (f) => 34 + (f / (n - 1)) * (W - 104), Y = (v) => 6 + (1 - (v - lo) / (hi - lo)) * (H - 18);
+    const X = (f) => 34 + (f / (n - 1)) * (W - 104), Y = (v) => 6 + (1 - (v - lo) / (hi - lo)) * (H - 26);
     for (const v of [lo, 0, hi]) { svgEl("line", { x1: 34, x2: W - 70, y1: Y(v), y2: Y(v), stroke: v === 0 ? HAIR : "#ececf0" }, s);
       const t = svgEl("text", { x: 28, y: Y(v) + 3, "text-anchor": "end" }, s); t.textContent = v + "°"; }
     TR.forEach(([j, name, col], i) => {
@@ -414,7 +421,13 @@ function render(D, MODEL, BIN) {
       const t = svgEl("text", { x: W - 64, y: 12 + i * 12 }, s); t.textContent = name; t.setAttribute("fill", col);
       svgEl("line", { x1: W - 70 + 3, x2: W - 70 + 3, y1: 0, y2: 0 }, s);
     });
-    head = svgEl("line", { x1: 34, x2: 34, y1: 2, y2: H - 10, stroke: INK, "stroke-width": 1 }, s);
+    if (c.contacts) {   // annotated footfalls, left and right
+      [0, 1].forEach((side) => { let f0 = -1;
+        for (let f = 0; f <= n; f++) { const on = f < n && c.contacts[f * 2 + side];
+          if (on && f0 < 0) f0 = f; if (!on && f0 >= 0) { svgEl("rect", { x: X(f0), y: H - 8 + side * 4, width: Math.max(1, X(f) - X(f0)), height: 3, fill: side ? QUIET : INK, rx: 1 }, s); f0 = -1; } } });
+      const t = svgEl("text", { x: W - 64, y: H - 2 }, s); t.textContent = "foot down L / R";
+    }
+    head = svgEl("line", { x1: 34, x2: 34, y1: 2, y2: H, stroke: INK, "stroke-width": 1 }, s);
     head._X = X;
   }
   const hero = { f: 0, n: 1, size() { left.size(); robot.size(); }, draw(f) { left.draw(f); robot.pose(f); robot.render(); if (head) { const x = head._X(f); head.setAttribute("x1", x); head.setAttribute("x2", x); } } };
@@ -433,7 +446,7 @@ function render(D, MODEL, BIN) {
     robot.set(c, yaw, follow(c.robot, c.frames));
     hero.n = c.frames; hero.f = REDUCE ? (c.frames / 2) | 0 : 0;
     traces(c); hero.draw(hero.f);
-    $("#cap-title").textContent = c.desc[0].toUpperCase() + c.desc.slice(1);
+    $("#cap-title").textContent = c.desc[0].toUpperCase() + c.desc.slice(1) + (c.activity ? ` · ${c.activity}, grade ${c.grade}` : "");
     $("#cap-src").textContent = (c.source === "cmu" ? "CMU" : "Bandai Namco") + (c.split === "test" ? ", person never trained on" : "");
     document.querySelectorAll("#chips button").forEach((b, j) => b.setAttribute("aria-pressed", String(j === i)));
   }
@@ -441,9 +454,36 @@ function render(D, MODEL, BIN) {
   document.querySelectorAll("#chips button").forEach((b, i) => b.addEventListener("click", () => pickTake(i)));
   $("#rb-title").textContent = `${R.name}, ${R.dof} joints, ${R.height_m} m`;
   $("#rb-src").textContent = "Unitree's own model and meshes";
-  $("#cap-left").innerHTML = `The skeleton solved from optical markers, as recorded; these datasets ship no video. Lines: the joint angles a leg suit would measure on this take, after retargeting.`;
+  $("#cap-left").innerHTML = `The skeleton solved from optical markers, as recorded; these datasets ship no video. Lines: hip and knee angles a leg suit would measure. Bars: the annotated footfalls.`;
   $("#cap-right").innerHTML = `The same take on Unitree's MJCF with its real link meshes, posed every frame by our inverse kinematics: ${fmt(rt.frames)} frames solved, feet within <b>${fmt(rt.feet_err_cm, 1)} cm</b> of the human's on average. Wrists and head held still. Tap either view to pause.`;
   pickTake(0);
+
+  /* a-c: the data itself */
+  const AN = D.annotations;
+  {
+    const acts = AN.activity.filter((a) => a.name !== "unlabeled" && a.name !== "other");
+    const named = acts.reduce((t, a) => t + a.hours, 0), mx = Math.max(...acts.map((a) => a.hours));
+    $("#h-a1").textContent = `${acts.length} activity classes, every take labelled`;
+    $("#v-a1").innerHTML = acts.slice(0, 7).map((a) => `<div class="brow"><div>${a.name}</div><div class="t"><span style="width:${(100 * a.hours / mx).toFixed(1)}%"></span></div><div class="v">${fmt(a.hours, 1)} h</div></div>`).join("");
+    const other = AN.activity.filter((a) => a.name === "unlabeled" || a.name === "other").reduce((t, a) => t + a.hours, 0);
+    $("#c-a1").innerHTML = `Top 7 of ${acts.length} classes by hours, from the capture notes of each take. ${fmt(AN.styled_takes)} takes also carry a style (tired, elderly, angry and ${AN.styles.length - 3} more). ${fmt(other, 1)} h has no usable note and stays unlabelled.`;
+  }
+  {
+    const g = AN.grades, tot = g.A.hours + g.B.hours + g.C.hours;
+    $("#h-b1").textContent = `${fmt(100 * (g.A.hours + g.B.hours) / tot)}% of hours grade A or B on the robot`;
+    $("#v-b1").innerHTML = [["Grade A", g.A, ""], ["Grade B", g.B, "light"], ["Grade C", g.C, "ghost"]].map(([n, v, cls]) =>
+      `<div class="brow"><div>${n}</div><div class="t"><span class="${cls}" style="width:${(100 * v.hours / tot).toFixed(1)}%"></span></div><div class="v">${fmt(v.hours, 1)} h</div></div>`).join("") +
+      `<div class="brow"><div>Foot slide, human</div><div class="t"><span class="ghost" style="width:${(100 * AN.skate_human_cm_s / 20).toFixed(1)}%"></span></div><div class="v">${fmt(AN.skate_human_cm_s, 1)} cm/s</div></div>` +
+      `<div class="brow"><div>Foot slide, robot</div><div class="t"><span class="light" style="width:${(100 * AN.skate_robot_cm_s / 20).toFixed(1)}%"></span></div><div class="v">${fmt(AN.skate_robot_cm_s, 1)} cm/s</div></div>` +
+      `<div class="brow"><div>Ankle roll pinned</div><div class="t"><span style="width:${(100 * AN.ankle_roll_pinned).toFixed(1)}%"></span></div><div class="v">${fmt(100 * AN.ankle_roll_pinned)}%</div></div>`;
+    $("#c-b1").innerHTML = `${fmt(g.A.takes)} takes grade A: keypoints within 4.5 cm, feet slide under 15 cm/s, joints off their limits. Foot slide in cm/s while a foot is down. The ${R.name}'s ±18° ankle roll is the tightest fit for human motion.`;
+  }
+  {
+    const sc = AN.spot_check, ok = sc.length - 1;
+    $("#h-c1").textContent = `Footfalls agree on ${fmt(100 * AN.contact_agreement, 1)}% of frames`;
+    $("#v-c1").innerHTML = `<div><h4>Every frame</h4><ul>${AN.per_frame.map((x) => `<li>${x}</li>`).join("")}</ul></div><div><h4>Every take</h4><ul>${AN.per_take.slice(0, 8).map((x) => `<li>${x}</li>`).join("")}</ul></div>`;
+    $("#c-c1").innerHTML = `Contacts are labelled twice, on the human and on the robot, from different skeletons. A random spot check of ${sc.length} activity labels found ${ok} right; the miss was a take that mixes walking and sweeping.`;
+  }
 
   /* c: scaling with a registered prediction */
   $("#h-c").innerHTML = `Predicted before training, ${fmt(pr.loss, 4)}. Measured, ${fmt(ob.loss, 4)}.`;
@@ -475,7 +515,7 @@ function render(D, MODEL, BIN) {
     svgEl("line", { x1: c.sx(617), x2: c.sx(617), y1: c.sy(law(617)) - 5, y2: c.sy(law(617)) + 5, stroke: INK }, c.s);
     label(c, 617, law(617), "617 h queued", 0, -9, "middle");
   }
-  $("#c-d").innerHTML = `Same model on 1/64 to all of the hours: 1/64 is <b>${fmt(100 * (s64.val.full / S1.val.full - 1))}% worse</b>. Past ${fmt(M.params / 1000)}k parameters, bigger models gain nothing (panel a).`;
+  $("#c-d").innerHTML = `Same model on 1/64 to all of the hours: 1/64 is <b>${fmt(100 * (s64.val.full / S1.val.full - 1))}% worse</b>. Past ${fmt(M.params / 1000)}k parameters, bigger models gain nothing (panel d).`;
 
   /* e: new people */
   $("#h-e").textContent = `New people score ${fmt(gap, 1)}× worse`;
@@ -529,8 +569,8 @@ function render(D, MODEL, BIN) {
   const t200 = ro.eval.from_real_frames["200ms"];
   $("#c-h").innerHTML = `Joint error running alone for 2 s, people never seen, same budget each. From real frames the 200 ms forecast beats holding the pose by <b>${fmt(100 * (1 - t200.model_deg / t200.freeze_deg))}%</b>; FAST matches chunks with 62% fewer outputs.`;
 
-  $("#method").innerHTML = `<b>Method.</b> BVH takes are mapped to 19 keypoints at 20 fps, quality-checked, and fitted onto Unitree's MJCF by batched inverse kinematics. Each frame becomes 31 channels (23 joints, gravity at the pelvis, turn rate, velocity, height). A causal transformer reads 1.6 s and predicts the next 200 ms, with sensor groups hidden at random during training. Five sizes from 10k to 822k parameters, 900 steps each, hand-written in NumPy on 2 CPU cores, gradients checked numerically. Test takes come from people never trained on. Data: CMU Graphics Lab (free use, no resale) and Bandai Namco Research (CC BY-NC 4.0); robots from unitree_mujoco.`;
-  $("#next").innerHTML = `<b>Next.</b> The same pipe on GPUs: add LAFAN1 (4.6 h) and HiPHI (617 h), train a ladder to tens of millions of parameters with a prediction registered first, and keep the cosine chunks. The question it answers: do bigger models start paying again once there is 50× more data, as panels a to c predict? <a href="details.html">Full write-up</a>.`;
+  $("#method").innerHTML = `<b>Method.</b> Every take gets an activity, a style where the source gives one, and a quality grade; every frame gets foot contacts and a locomotion state. BVH takes are mapped to 19 keypoints at 20 fps, quality-checked, and fitted onto Unitree's MJCF by batched inverse kinematics. Each frame becomes 31 channels (23 joints, gravity at the pelvis, turn rate, velocity, height). A causal transformer reads 1.6 s and predicts the next 200 ms, with sensor groups hidden at random during training. Five sizes from 10k to 822k parameters, 900 steps each, hand-written in NumPy on 2 CPU cores, gradients checked numerically. Test takes come from people never trained on. Data: CMU Graphics Lab (free use, no resale) and Bandai Namco Research (CC BY-NC 4.0); robots from unitree_mujoco.`;
+  $("#next").innerHTML = `<b>Next.</b> The same pipe on GPUs: add LAFAN1 (4.6 h) and HiPHI (617 h), train a ladder to tens of millions of parameters with a prediction registered first, and keep the cosine chunks. The question it answers: do bigger models start paying again once there is 50× more data, as panels d to f predict? <a href="details.html">Full write-up</a>.`;
   requestAnimationFrame(tick);
 }
 })();
