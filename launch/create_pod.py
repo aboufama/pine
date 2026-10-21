@@ -65,21 +65,25 @@ def main():
     env = {"HF_TOKEN": "{{ RUNPOD_SECRET_hf_token }}", "GH_TOKEN": "{{ RUNPOD_SECRET_gh_token }}", "PINE_MAX_GPU_HOURS": "8",
            "PINE_ROBOT": "h2"}
     errors = []
-    for cloud in ("SECURE", "COMMUNITY"):          # data-centre hosts first: the first community host had a broken GPU
-        for image, cuda in IMAGES:
-            for volume in (500, 400):
-                body = dict(name=NAME, imageName=image, cloudType=cloud, computeType="GPU",
-                            gpuTypeIds=GPUS, gpuTypePriority="custom", gpuCount=1, interruptible=False,
-                            containerDiskInGb=60, volumeInGb=volume, volumeMountPath="/workspace", ports=["22/tcp"], env=env,
-                            dockerStartCmd=["bash", "-c", START], allowedCudaVersions=cuda)
-                st, p = http("POST", "/pods", body)
-                if st in (200, 201) and isinstance(p, dict) and p.get("id"):
-                    m = p.get("machine") or {}
-                    record(ok=True, step="created", pod_id=p["id"], image=image, cloud=cloud, volume_gb=volume,
-                           gpu=m.get("gpuTypeId") or p.get("gpuTypeId") or (p.get("gpu") or {}).get("id"),
-                           cost_per_hr=p.get("costPerHr") or p.get("adjustedCostPerHr"), status=p.get("desiredStatus"))
-                    return 0
-                errors.append(dict(image=image.split(":")[1], cloud=cloud, volume_gb=volume, status=st, error=str(p)[:160]))
+    # Data-centre (SECURE) hosts first, with smaller volumes and no CUDA filter on the CUDA 12.4 image (every RunPod driver
+    # runs it); community hosts last, because the ones free right now have repeatedly had GPUs that CUDA cannot open.
+    plans = [("SECURE", IMAGES[1][0], None, v) for v in (300, 200)] + [("SECURE", IMAGES[0][0], IMAGES[0][1], v) for v in (300, 200)] \
+          + [("COMMUNITY", IMAGES[1][0], None, 300), ("COMMUNITY", IMAGES[0][0], IMAGES[0][1], 300)]
+    for cloud, image, cuda, volume in plans:
+        body = dict(name=NAME, imageName=image, cloudType=cloud, computeType="GPU",
+                    gpuTypeIds=GPUS, gpuTypePriority="custom", gpuCount=1, interruptible=False,
+                    containerDiskInGb=60, volumeInGb=volume, volumeMountPath="/workspace", ports=["22/tcp"], env=env,
+                    dockerStartCmd=["bash", "-c", START])
+        if cuda:
+            body["allowedCudaVersions"] = cuda
+        st, p = http("POST", "/pods", body)
+        if st in (200, 201) and isinstance(p, dict) and p.get("id"):
+            m = p.get("machine") or {}
+            record(ok=True, step="created", pod_id=p["id"], image=image, cloud=cloud, volume_gb=volume,
+                   gpu=m.get("gpuTypeId") or p.get("gpuTypeId") or (p.get("gpu") or {}).get("id"),
+                   cost_per_hr=p.get("costPerHr") or p.get("adjustedCostPerHr"), status=p.get("desiredStatus"), tried_before=errors)
+            return 0
+        errors.append(dict(cloud=cloud, image=image.split(":")[1], volume_gb=volume, status=st, error=str(p)[:160]))
     record(ok=False, step="create", attempts=errors, message="no listed GPU available right now; nothing is billing")
     return 1
 
