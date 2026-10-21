@@ -1,0 +1,67 @@
+data: 4958 takes, 967,339 frames, 31 channels; load 2s
+== 2XS fraction 1.0
+  2XS f=1.0    step   150 train 0.3763 val 0.3161 exo 0.4909 hidden 23.4deg  13s
+  2XS f=1.0    step   300 train 0.5327 val 0.2727 exo 0.4565 hidden 22.7deg  25s
+  2XS f=1.0    step   450 train 0.4967 val 0.2613 exo 0.4357 hidden 22.1deg  39s
+  2XS f=1.0    step   600 train 0.3696 val 0.2546 exo 0.4243 hidden 21.7deg  52s
+  2XS f=1.0    step   750 train 0.3760 val 0.2515 exo 0.4157 hidden 21.3deg  65s
+  2XS f=1.0    step   900 train 0.4144 val 0.2493 exo 0.4144 hidden 21.2deg  77s
+   2XS f=1.0: params 10,220 best val 0.2493 test 0.4898 hidden 21.2 deg, 77s
+== XS fraction 1.0
+  XS f=1.0    step   150 train 0.3180 val 0.2272 exo 0.4500 hidden 23.5deg  22s
+  XS f=1.0    step   300 train 0.4552 val 0.1682 exo 0.4017 hidden 22.2deg  45s
+  XS f=1.0    step   450 train 0.3836 val 0.1516 exo 0.3734 hidden 21.4deg  69s
+  XS f=1.0    step   600 train 0.2978 val 0.1383 exo 0.3504 hidden 20.5deg  91s
+  XS f=1.0    step   750 train 0.2745 val 0.1326 exo 0.3434 hidden 20.4deg  114s
+  XS f=1.0    step   900 train 0.3222 val 0.1274 exo 0.3412 hidden 20.4deg  137s
+   XS f=1.0: params 32,604 best val 0.1274 test 0.3330 hidden 20.4 deg, 137s
+== S fraction 1.0
+  S f=1.0    step   150 train 0.2936 val 0.1944 exo 0.4306 hidden 23.1deg  49s
+  S f=1.0    step   300 train 0.4336 val 0.1426 exo 0.3702 hidden 21.4deg  101s
+  S f=1.0    step   450 train 0.3533 val 0.1268 exo 0.3398 hidden 20.7deg  152s
+  S f=1.0    step   600 train 0.2845 val 0.1166 exo 0.3155 hidden 19.6deg  202s
+  S f=1.0    step   750 train 0.2456 val 0.1105 exo 0.3142 hidden 19.7deg  252s
+  S f=1.0    step   900 train 0.3056 val 0.1054 exo 0.3094 hidden 19.7deg  301s
+   S f=1.0: params 114,236 best val 0.1054 test 0.3094 hidden 19.7 deg, 301s
+== M fraction 1.0
+  M f=1.0    step   150 train 0.2900 val 0.1960 exo 0.4241 hidden 22.8deg  107s
+  M f=1.0    step   300 train 0.4363 val 0.1391 exo 0.3633 hidden 21.3deg  218s
+  M f=1.0    step   450 train 0.3448 val 0.1225 exo 0.3278 hidden 20.2deg  328s
+  M f=1.0    step   600 train 0.2807 val 0.1122 exo 0.3096 hidden 19.4deg  439s
+  M f=1.0    step   750 train 0.2375 val 0.1053 exo 0.3074 hidden 19.6deg  551s
+  M f=1.0    step   900 train 0.2975 val 0.1000 exo 0.3025 hidden 19.5deg  660s
+   M f=1.0: params 356,860 best val 0.1000 test 0.3038 hidden 19.5 deg, 660s
+PRE-REGISTERED: L (821,500 params) val loss 0.1001 [0.0838, 0.1061]
+== L fraction 1.0
+  L f=1.0    step   150 train 0.2962 val 0.1991 exo 0.4250 hidden 22.8deg  191s
+  L f=1.0    step   300 train 0.4320 val 0.1429 exo 0.3620 hidden 21.2deg  399s
+  L f=1.0    step   450 train 0.3442 val 0.1245 exo 0.3280 hidden 20.3deg  602s
+  L f=1.0    step   600 train 0.2829 val 0.1134 exo 0.3066 hidden 19.3deg  804s
+  L f=1.0    step   750 train 0.2358 val 0.1064 exo 0.3061 hidden 19.5deg  1005s
+  L f=1.0    step   900 train 0.2960 val 0.1000 exo 0.2985 hidden 19.4deg  1207s
+   L f=1.0: params 821,500 best val 0.1000 test 0.3024 hidden 19.4 deg, 1207s
+== S fraction 0.015625
+  S f=0.015625 step   150 train 0.7168 val 0.2950 exo 0.4836 hidden 23.4deg  46s
+  S f=0.015625 step   300 train 0.4579 val 0.2325 exo 0.4758 hidden 23.3deg  94s
+  S f=0.015625 step   450 train 0.7462 val 0.2074 exo 0.4424 hidden 22.6deg  142s
+  S f=0.015625 step   600 train 0.5092 val 0.1994 exo 0.4432 hidden 22.5deg  193s
+  S f=0.015625 step   750 train 0.4951 val 0.1930 exo 0.4418 hidden 22.2deg  243s
+  S f=0.015625 step   900 train 0.6522 val 0.1925 exo 0.4466 hidden 22.5deg  290s
+   S f=0.015625: params 114,236 best val 0.1925 test 0.4279 hidden 22.5 deg, 290s
+== S fraction 0.0625
+  S f=0.0625 step   150 train 0.4902 val 0.2112 exo 0.4272 hidden 22.3deg  45s
+  S f=0.0625 step   300 train 0.3146 val 0.1736 exo 0.3979 hidden 21.9deg  93s
+  S f=0.0625 step   450 train 0.2425 val 0.1588 exo 0.3791 hidden 21.1deg  141s
+  S f=0.0625 step   600 train 0.3629 val 0.1486 exo 0.3618 hidden 20.5deg  190s
+  S f=0.0625 step   750 train 0.1831 val 0.1409 exo 0.3577 hidden 20.4deg  241s
+  S f=0.0625 step   900 train 0.2040 val 0.1382 exo 0.3521 hidden 20.3deg  293s
+   S f=0.0625: params 114,236 best val 0.1382 test 0.3536 hidden 20.3 deg, 293s
+== S fraction 0.25
+  S f=0.25   step   150 train 0.2752 val 0.1915 exo 0.4324 hidden 23.1deg  48s
+  S f=0.25   step   300 train 0.2806 val 0.1491 exo 0.3759 hidden 21.5deg  97s
+  S f=0.25   step   450 train 0.6251 val 0.1289 exo 0.3552 hidden 21.3deg  148s
+  S f=0.25   step   600 train 0.4763 val 0.1179 exo 0.3331 hidden 20.4deg  198s
+  S f=0.25   step   750 train 0.4508 val 0.1127 exo 0.3259 hidden 20.1deg  246s
+  S f=0.25   step   900 train 0.2402 val 0.1100 exo 0.3194 hidden 19.8deg  295s
+   S f=0.25: params 114,236 best val 0.1100 test 0.3183 hidden 19.8 deg, 295s
+sweep done in 60.1 min

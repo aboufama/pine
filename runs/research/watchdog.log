@@ -1,0 +1,14 @@
+14:15:52 watching for other CPU users while pid 3780 runs
+14:21:26 target exited
+14:21:26 watching for other CPU users while pid 3831 runs
+14:22:35 target exited
+14:26:32 watching for other CPU users while pid 4023 runs
+14:26:36 paused: python3[4009] 86%
+14:31:40 resumed
+14:31:44 paused: python3[4075] 72%
+14:50:20 resumed
+14:51:52 paused: python3[4707] 92%
+14:52:00 resumed
+14:56:33 target exited
+14:56:33 watching for other CPU users while pid 4731 runs
+15:02:07 target exited

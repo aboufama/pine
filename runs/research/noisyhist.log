@@ -1,0 +1,11 @@
+== chunk16 + noisyhist
+  noisyhist step 150 val 0.4678 48s
+  noisyhist step 300 val 0.4333 98s
+  noisyhist step 450 val 0.4151 148s
+  noisyhist step 600 val 0.4046 200s
+  noisyhist step 750 val 0.3974 251s
+  noisyhist step 900 val 0.3924 301s
+   execute 1: 0.5s 13.29  1s 17.18  2s 17.84  mean 15.57 deg (95% 14.55-16.73; vs hold -2.62 to -1.23)
+   execute 8: 0.5s 12.66  1s 16.31  2s 16.49  mean 14.61 deg (95% 13.50-15.86; vs hold -3.52 to -2.28)
+   hold 17.50 | 200ms from real 8.93 | train 301s score 30s total 333s (cpu 516s)
+exit 0

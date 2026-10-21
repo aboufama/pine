@@ -1,0 +1,32 @@
+== direct4
+  direct4 step 150 val 0.1944 43s
+  direct4 step 300 val 0.1426 86s
+  direct4 step 450 val 0.1268 131s
+  direct4 step 600 val 0.1166 175s
+  direct4 step 750 val 0.1105 221s
+  direct4 step 900 val 0.1054 263s
+   direct4: 0.5s 26.0  1s 38.1  2s 41.2  mean 34.6 deg | hold 17.5 | 200ms from real 9.1
+== resid4
+  resid4 step 150 val 0.1075 42s
+  resid4 step 300 val 0.0996 85s
+  resid4 step 450 val 0.0934 128s
+  resid4 step 600 val 0.0894 172s
+  resid4 step 750 val 0.0859 214s
+  resid4 step 900 val 0.0834 259s
+   resid4: 0.5s 14.1  1s 19.1  2s 20.3  mean 17.3 deg | hold 17.5 | 200ms from real 8.5
+== chunk16
+  chunk16 step 150 val 0.4703 45s
+  chunk16 step 300 val 0.4328 93s
+  chunk16 step 450 val 0.4159 140s
+  chunk16 step 600 val 0.4046 188s
+  chunk16 step 750 val 0.3960 234s
+  chunk16 step 900 val 0.3913 282s
+   chunk16: 0.5s 12.7  1s 16.5  2s 16.6  mean 14.7 deg | hold 17.5 | 200ms from real 8.8
+== dct16
+  dct16 step 150 val 1.1583 42s
+  dct16 step 300 val 1.0598 87s
+  dct16 step 450 val 1.0129 134s
+  dct16 step 600 val 0.9794 189s
+  dct16 step 750 val 0.9550 241s
+  dct16 step 900 val 0.9447 293s
+   dct16: 0.5s 12.7  1s 16.4  2s 16.5  mean 14.6 deg | hold 17.5 | 200ms from real 8.7

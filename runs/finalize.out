@@ -1,0 +1,5 @@
+model fit {'E': 0.09988293229309252, 'A': 96769.42349782042, 'alpha': 1.4494170090697567} pred {'size': 'L', 'params': 821500, 'loss': 0.10014175676886448, 'lo': 0.08382989101047592, 'hi': 0.106140534172532} obs {'size': 'L', 'params': 821500, 'loss': 0.09995336283501374}
+data fit {'E': 0.09632468586409657, 'B': 0.033453070621717367, 'beta': 0.6158008848713904}
+exo bandai2/dataset-2_walk_exhausted_021 walk, exhausted rmse 11.4 deg vs mean pose 17.5
+channels: full 0.1 {'legs': 0.2963, 'waist': 0.1407, 'arms': 0.2447, 'imu': 0.1742, 'root': 0.1412} {'EXO-1 as assumed: ': 0.2985, 'Leg encoders only': 0.3916, 'Pelvis IMU only': 0.6895, 'Legs + IMU + arm e': 0.1751, 'Everything except ': 0.1412}
+rollout bandai2/dataset-2_run_exhausted_027 run, exhausted {'0.5s': {'model_cm': 10.383128234571775, 'freeze_cm': 18.792154174581697}, '1.0s': {'model_cm': 25.035889440022746, 'freeze_cm': 14.197626110296662}, '2.0s': {'model_cm': 13.576131498529726, 'freeze_cm': 16.532461921171475}}

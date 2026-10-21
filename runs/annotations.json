@@ -1,0 +1,264 @@
+{
+ "takes": 4958,
+ "hours": 13.435263888888889,
+ "activity": [
+  {
+   "name": "walk",
+   "takes": 1361,
+   "hours": 3.9714027777777776
+  },
+  {
+   "name": "gesture and arms",
+   "takes": 1614,
+   "hours": 2.264125
+  },
+  {
+   "name": "pantomime and story",
+   "takes": 215,
+   "hours": 1.6105
+  },
+  {
+   "name": "other",
+   "takes": 262,
+   "hours": 1.1360833333333333
+  },
+  {
+   "name": "everyday",
+   "takes": 304,
+   "hours": 0.8665138888888888
+  },
+  {
+   "name": "sport",
+   "takes": 128,
+   "hours": 0.5016666666666667
+  },
+  {
+   "name": "dance",
+   "takes": 94,
+   "hours": 0.48944444444444446
+  },
+  {
+   "name": "run",
+   "takes": 405,
+   "hours": 0.4818194444444444
+  },
+  {
+   "name": "unlabeled",
+   "takes": 178,
+   "hours": 0.469375
+  },
+  {
+   "name": "fighting",
+   "takes": 81,
+   "hours": 0.46412499999999995
+  },
+  {
+   "name": "climb and crawl",
+   "takes": 57,
+   "hours": 0.45408333333333334
+  },
+  {
+   "name": "exercise",
+   "takes": 60,
+   "hours": 0.3891111111111111
+  },
+  {
+   "name": "jump",
+   "takes": 170,
+   "hours": 0.2725972222222222
+  },
+  {
+   "name": "acrobatics",
+   "takes": 29,
+   "hours": 0.06441666666666666
+  }
+ ],
+ "styles": [
+  "active",
+  "anger",
+  "angry",
+  "careful",
+  "drunk",
+  "elderly",
+  "exhausted",
+  "feminine",
+  "happy",
+  "masculine",
+  "normal",
+  "proud",
+  "sad",
+  "tired",
+  "youthful",
+  "zombie"
+ ],
+ "styled_takes": 2614,
+ "grades": {
+  "A": {
+   "takes": 2831,
+   "hours": 7.889430555555556
+  },
+  "B": {
+   "takes": 1342,
+   "hours": 3.6975
+  },
+  "C": {
+   "takes": 785,
+   "hours": 1.8483333333333334
+  }
+ },
+ "contact_agreement": 0.9793547039869167,
+ "skate_human_cm_s": 7.152060428803247,
+ "skate_robot_cm_s": 7.755135941602548,
+ "err_cm_median": 3.7717273235321045,
+ "saturation_median": 0.0,
+ "ankle_roll_pinned": 0.6308936164054173,
+ "locomotion": {
+  "still": 0.5372573627239261,
+  "walking": 0.4307114672312395,
+  "running": 0.032031170044834335
+ },
+ "spot_check": [
+  {
+   "desc": "carry 19.5lb suitcase",
+   "activity": "everyday",
+   "style": null
+  },
+  {
+   "desc": "direct traffic, wave, point",
+   "activity": "gesture and arms",
+   "style": null
+  },
+  {
+   "desc": "wave left hand, normal",
+   "activity": "gesture and arms",
+   "style": "normal"
+  },
+  {
+   "desc": "raise up both hands, exhausted",
+   "activity": "gesture and arms",
+   "style": "exhausted"
+  },
+  {
+   "desc": "Start Walk Right",
+   "activity": "walk",
+   "style": null
+  },
+  {
+   "desc": "walk, masculine",
+   "activity": "walk",
+   "style": "masculine"
+  },
+  {
+   "desc": "clean",
+   "activity": "everyday",
+   "style": null
+  },
+  {
+   "desc": "raise up left hand, elderly",
+   "activity": "gesture and arms",
+   "style": "elderly"
+  },
+  {
+   "desc": "run, feminine",
+   "activity": "run",
+   "style": "feminine"
+  },
+  {
+   "desc": "JumpForward",
+   "activity": "jump",
+   "style": null
+  },
+  {
+   "desc": "limping, hurt right leg",
+   "activity": "walk",
+   "style": null
+  },
+  {
+   "desc": "wave both hands, masculine",
+   "activity": "gesture and arms",
+   "style": "masculine"
+  },
+  {
+   "desc": "slope 2",
+   "activity": "walk",
+   "style": null
+  },
+  {
+   "desc": "Reach_Left002",
+   "activity": "everyday",
+   "style": null
+  },
+  {
+   "desc": "playground - climb",
+   "activity": "climb and crawl",
+   "style": null
+  },
+  {
+   "desc": "raise up both hands, masculine",
+   "activity": "gesture and arms",
+   "style": "masculine"
+  },
+  {
+   "desc": "wave both hands, active",
+   "activity": "gesture and arms",
+   "style": "active"
+  },
+  {
+   "desc": "walk, feminine",
+   "activity": "walk",
+   "style": "feminine"
+  },
+  {
+   "desc": "run, youthful",
+   "activity": "run",
+   "style": "youthful"
+  },
+  {
+   "desc": "chicken dance (2 subjects - subject A)",
+   "activity": "dance",
+   "style": null
+  },
+  {
+   "desc": "walking, dragging, sweeping, dustpan, wipe window, and wipe mirror",
+   "activity": "walk",
+   "style": null
+  },
+  {
+   "desc": "Walk With Wild Legs",
+   "activity": "walk",
+   "style": null
+  },
+  {
+   "desc": "Story",
+   "activity": "pantomime and story",
+   "style": null
+  },
+  {
+   "desc": "raise up right hand, youthful",
+   "activity": "gesture and arms",
+   "style": "youthful"
+  }
+ ],
+ "per_frame": [
+  "23 robot joint angles",
+  "gravity direction at the pelvis (3)",
+  "turn rate",
+  "pelvis velocity (3)",
+  "pelvis height",
+  "19 human keypoints (x, y, z)",
+  "left and right foot contact",
+  "locomotion state"
+ ],
+ "per_take": [
+  "activity",
+  "style",
+  "source description",
+  "person id",
+  "quality grade",
+  "retarget error",
+  "joint-limit saturation",
+  "foot skate",
+  "QA history",
+  "split"
+ ]
+}

@@ -1,0 +1,437 @@
+{
+ "robot": "Unitree H2",
+ "model": "L",
+ "fps": 20,
+ "channels": [
+  {
+   "name": "left_hip_pitch",
+   "group": "legs",
+   "unit": "deg",
+   "p5": -68.63322076167024,
+   "p50": -16.84812154077154,
+   "p95": 7.599180958757446,
+   "suit": true,
+   "source": "joint angle solved by retargeting"
+  },
+  {
+   "name": "left_hip_roll",
+   "group": "legs",
+   "unit": "deg",
+   "p5": -21.127250423710162,
+   "p50": -5.385731159384934,
+   "p95": 6.255173259592537,
+   "suit": true,
+   "source": "joint angle solved by retargeting"
+  },
+  {
+   "name": "left_hip_yaw",
+   "group": "legs",
+   "unit": "deg",
+   "p5": -43.15145836469932,
+   "p50": -19.44705718505923,
+   "p95": 7.247757694119946,
+   "suit": true,
+   "source": "joint angle solved by retargeting"
+  },
+  {
+   "name": "left_knee",
+   "group": "legs",
+   "unit": "deg",
+   "p5": 9.741926774276102,
+   "p50": 37.15575097162746,
+   "p95": 81.7430909772346,
+   "suit": true,
+   "source": "joint angle solved by retargeting"
+  },
+  {
+   "name": "left_ankle_roll",
+   "group": "legs",
+   "unit": "deg",
+   "p5": -20.000007955922303,
+   "p50": -2.5116467871902772,
+   "p95": 17.000001042250528,
+   "suit": true,
+   "source": "joint angle solved by retargeting"
+  },
+  {
+   "name": "left_ankle_pitch",
+   "group": "legs",
+   "unit": "deg",
+   "p5": -48.32596528367138,
+   "p50": -24.81984961827863,
+   "p95": 6.7003351076163495,
+   "suit": true,
+   "source": "joint angle solved by retargeting"
+  },
+  {
+   "name": "right_hip_pitch",
+   "group": "legs",
+   "unit": "deg",
+   "p5": -68.9758196353435,
+   "p50": -16.473019504385487,
+   "p95": 7.042923629284143,
+   "suit": true,
+   "source": "joint angle solved by retargeting"
+  },
+  {
+   "name": "right_hip_roll",
+   "group": "legs",
+   "unit": "deg",
+   "p5": -6.999502942791609,
+   "p50": 6.107819612212328,
+   "p95": 21.541341741199584,
+   "suit": true,
+   "source": "joint angle solved by retargeting"
+  },
+  {
+   "name": "right_hip_yaw",
+   "group": "legs",
+   "unit": "deg",
+   "p5": -10.268715786183913,
+   "p50": 14.611769903668565,
+   "p95": 40.97020757117813,
+   "suit": true,
+   "source": "joint angle solved by retargeting"
+  },
+  {
+   "name": "right_knee",
+   "group": "legs",
+   "unit": "deg",
+   "p5": 9.851253556895676,
+   "p50": 37.28805173585061,
+   "p95": 83.0339540416847,
+   "suit": true,
+   "source": "joint angle solved by retargeting"
+  },
+  {
+   "name": "right_ankle_roll",
+   "group": "legs",
+   "unit": "deg",
+   "p5": -17.000001042250528,
+   "p50": 0.41245185864520967,
+   "p95": 20.000007955922303,
+   "suit": true,
+   "source": "joint angle solved by retargeting"
+  },
+  {
+   "name": "right_ankle_pitch",
+   "group": "legs",
+   "unit": "deg",
+   "p5": -48.536838836559056,
+   "p50": -22.654870042907703,
+   "p95": 8.283834638847882,
+   "suit": true,
+   "source": "joint angle solved by retargeting"
+  },
+  {
+   "name": "waist_yaw",
+   "group": "waist",
+   "unit": "deg",
+   "p5": -5.888715361209664,
+   "p50": 0.14787648368693876,
+   "p95": 6.127621931441782,
+   "suit": false,
+   "source": "joint angle solved by retargeting"
+  },
+  {
+   "name": "waist_roll",
+   "group": "waist",
+   "unit": "deg",
+   "p5": -6.421775874157723,
+   "p50": 0.2683943511687006,
+   "p95": 7.263278658678566,
+   "suit": false,
+   "source": "joint angle solved by retargeting"
+  },
+  {
+   "name": "waist_pitch",
+   "group": "waist",
+   "unit": "deg",
+   "p5": 0.381690407510978,
+   "p50": 4.217102654425266,
+   "p95": 8.24826642874504,
+   "suit": false,
+   "source": "joint angle solved by retargeting"
+  },
+  {
+   "name": "left_shoulder_pitch",
+   "group": "arms",
+   "unit": "deg",
+   "p5": -86.07204096752658,
+   "p50": 2.1313545540869554,
+   "p95": 28.301652526474406,
+   "suit": false,
+   "source": "joint angle solved by retargeting"
+  },
+  {
+   "name": "left_shoulder_roll",
+   "group": "arms",
+   "unit": "deg",
+   "p5": -7.37203042474739,
+   "p50": 6.528397048092326,
+   "p95": 69.92887178872851,
+   "suit": false,
+   "source": "joint angle solved by retargeting"
+  },
+  {
+   "name": "left_shoulder_yaw",
+   "group": "arms",
+   "unit": "deg",
+   "p5": -34.29592344538644,
+   "p50": 14.389882670744237,
+   "p95": 51.48426610022643,
+   "suit": false,
+   "source": "joint angle solved by retargeting"
+  },
+  {
+   "name": "left_elbow",
+   "group": "arms",
+   "unit": "deg",
+   "p5": -26.421751813568292,
+   "p50": 50.00549514019917,
+   "p95": 68.52125688570081,
+   "suit": false,
+   "source": "joint angle solved by retargeting"
+  },
+  {
+   "name": "right_shoulder_pitch",
+   "group": "arms",
+   "unit": "deg",
+   "p5": -88.57656888333271,
+   "p50": 0.6012159824678538,
+   "p95": 28.45123964571321,
+   "suit": false,
+   "source": "joint angle solved by retargeting"
+  },
+  {
+   "name": "right_shoulder_roll",
+   "group": "arms",
+   "unit": "deg",
+   "p5": -70.99664550696036,
+   "p50": -5.721444775487993,
+   "p95": 7.5320632511046695,
+   "suit": false,
+   "source": "joint angle solved by retargeting"
+  },
+  {
+   "name": "right_shoulder_yaw",
+   "group": "arms",
+   "unit": "deg",
+   "p5": -50.52722938523435,
+   "p50": -15.803701093085612,
+   "p95": 31.57111509865824,
+   "suit": false,
+   "source": "joint angle solved by retargeting"
+  },
+  {
+   "name": "right_elbow",
+   "group": "arms",
+   "unit": "deg",
+   "p5": -27.033644128760816,
+   "p50": 51.722908640958444,
+   "p95": 68.63512809199597,
+   "suit": false,
+   "source": "joint angle solved by retargeting"
+  },
+  {
+   "name": "grav_x",
+   "group": "imu",
+   "unit": "g",
+   "p5": -0.13096218928694725,
+   "p50": 0.0006331864860840142,
+   "p95": 0.35795891284942627,
+   "suit": true,
+   "source": "derived from the solved pose"
+  },
+  {
+   "name": "grav_y",
+   "group": "imu",
+   "unit": "g",
+   "p5": -0.10282904095947742,
+   "p50": 0.011446664109826088,
+   "p95": 0.11689995229244232,
+   "suit": true,
+   "source": "derived from the solved pose"
+  },
+  {
+   "name": "grav_z",
+   "group": "imu",
+   "unit": "g",
+   "p5": -0.9997912645339966,
+   "p50": -0.9965908527374268,
+   "p95": -0.9071657210588455,
+   "suit": true,
+   "source": "derived from the solved pose"
+  },
+  {
+   "name": "yaw_rate",
+   "group": "imu",
+   "unit": "deg/s",
+   "p5": -75.38807636023233,
+   "p50": 0.15542125471843765,
+   "p95": 83.839436542957,
+   "suit": true,
+   "source": "derived from the solved pose"
+  },
+  {
+   "name": "vel_fwd",
+   "group": "root",
+   "unit": "m/s",
+   "p5": -0.24574525654315948,
+   "p50": 0.03401591442525387,
+   "p95": 1.5837552845478058,
+   "suit": false,
+   "source": "derived from the solved pose"
+  },
+  {
+   "name": "vel_left",
+   "group": "root",
+   "unit": "m/s",
+   "p5": -0.3382853865623474,
+   "p50": 0.0010361510794609785,
+   "p95": 0.3754177987575531,
+   "suit": false,
+   "source": "derived from the solved pose"
+  },
+  {
+   "name": "vel_up",
+   "group": "root",
+   "unit": "m/s",
+   "p5": -0.29393911361694336,
+   "p50": -0.00042438507080078125,
+   "p95": 0.3102058172225952,
+   "suit": false,
+   "source": "derived from the solved pose"
+  },
+  {
+   "name": "height",
+   "group": "root",
+   "unit": "m",
+   "p5": 0.8377842605113983,
+   "p50": 0.9945671558380127,
+   "p95": 1.0528790652751923,
+   "suit": false,
+   "source": "derived from the solved pose"
+  }
+ ],
+ "full_loss": 0.09995336283501374,
+ "nothing_loss": 0.8765353420981667,
+ "hide_one_group": [
+  {
+   "group": "legs",
+   "channels": 12,
+   "loss": 0.29629000449682225
+  },
+  {
+   "group": "waist",
+   "channels": 3,
+   "loss": 0.1407083876503025
+  },
+  {
+   "group": "arms",
+   "channels": 8,
+   "loss": 0.24473123766355848
+  },
+  {
+   "group": "imu",
+   "channels": 4,
+   "loss": 0.17416832478509103
+  },
+  {
+   "group": "root",
+   "channels": 4,
+   "loss": 0.14115965513418227
+  }
+ ],
+ "suits": [
+  {
+   "name": "EXO-1 as assumed: leg encoders + pelvis IMU",
+   "groups": [
+    "legs",
+    "imu"
+   ],
+   "loss": 0.29852194672545485,
+   "channels": 16
+  },
+  {
+   "name": "Leg encoders only",
+   "groups": [
+    "legs"
+   ],
+   "loss": 0.3916405468956328,
+   "channels": 12
+  },
+  {
+   "name": "Pelvis IMU only",
+   "groups": [
+    "imu"
+   ],
+   "loss": 0.689526759957989,
+   "channels": 4
+  },
+  {
+   "name": "Legs + IMU + arm encoders",
+   "groups": [
+    "legs",
+    "imu",
+    "arms"
+   ],
+   "loss": 0.17510534214862278,
+   "channels": 24
+  },
+  {
+   "name": "Everything except the root",
+   "groups": [
+    "legs",
+    "imu",
+    "arms",
+    "waist"
+   ],
+   "loss": 0.14115965513418227,
+   "channels": 27
+  }
+ ],
+ "groups": {
+  "legs": [
+   "left_hip_pitch",
+   "left_hip_roll",
+   "left_hip_yaw",
+   "left_knee",
+   "left_ankle_roll",
+   "left_ankle_pitch",
+   "right_hip_pitch",
+   "right_hip_roll",
+   "right_hip_yaw",
+   "right_knee",
+   "right_ankle_roll",
+   "right_ankle_pitch"
+  ],
+  "waist": [
+   "waist_yaw",
+   "waist_roll",
+   "waist_pitch"
+  ],
+  "arms": [
+   "left_shoulder_pitch",
+   "left_shoulder_roll",
+   "left_shoulder_yaw",
+   "left_elbow",
+   "right_shoulder_pitch",
+   "right_shoulder_roll",
+   "right_shoulder_yaw",
+   "right_elbow"
+  ],
+  "imu": [
+   "grav_x",
+   "grav_y",
+   "grav_z",
+   "yaw_rate"
+  ],
+  "root": [
+   "vel_fwd",
+   "vel_left",
+   "vel_up",
+   "height"
+  ]
+ }
+}

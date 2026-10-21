@@ -1,0 +1,16 @@
+mirror check on Unitree H2: max keypoint difference 0.000 mm
+training hours with mirrors: 23.9
+  S f=1.0    step   150 train 0.2751 val 0.1891 exo 0.4151 hidden 22.7deg  46s
+  S f=1.0    step   300 train 0.3423 val 0.1438 exo 0.3676 hidden 21.6deg  95s
+  S f=1.0    step   450 train 0.3324 val 0.1286 exo 0.3571 hidden 21.3deg  145s
+  S f=1.0    step   600 train 0.5719 val 0.1144 exo 0.3368 hidden 20.8deg  201s
+  S f=1.0    step   750 train 0.2844 val 0.1086 exo 0.3273 hidden 20.6deg  250s
+  S f=1.0    step   900 train 0.3443 val 0.1056 exo 0.3170 hidden 20.0deg  302s
+   S: val 0.1054 -> 0.1056 | new people 0.3094 -> 0.3118 | hidden joints 20.4 -> 20.3 deg
+  M f=1.0    step   150 train 0.2730 val 0.1924 exo 0.4156 hidden 22.6deg  194s
+  M f=1.0    step   300 train 0.3398 val 0.1410 exo 0.3572 hidden 21.3deg  350s
+  M f=1.0    step   450 train 0.3275 val 0.1273 exo 0.3501 hidden 21.0deg  464s
+  M f=1.0    step   600 train 0.5483 val 0.1098 exo 0.3261 hidden 20.4deg  579s
+  M f=1.0    step   750 train 0.2771 val 0.1040 exo 0.3146 hidden 20.2deg  694s
+  M f=1.0    step   900 train 0.3330 val 0.1004 exo 0.3059 hidden 19.7deg  809s
+   M: val 0.1000 -> 0.1004 | new people 0.3038 -> 0.3060 | hidden joints 20.3 -> 20.2 deg

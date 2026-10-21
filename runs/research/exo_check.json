@@ -1,0 +1,38 @@
+{
+ "windows": 200,
+ "hidden_joints": [
+  "waist_yaw",
+  "waist_roll",
+  "waist_pitch",
+  "left_shoulder_pitch",
+  "left_shoulder_roll",
+  "left_shoulder_yaw",
+  "left_elbow",
+  "right_shoulder_pitch",
+  "right_shoulder_roll",
+  "right_shoulder_yaw",
+  "right_elbow"
+ ],
+ "mean_pose_baseline_hidden_deg": 21.300098419189453,
+ "hold_true_current_hidden_deg": 9.905001640319824,
+ "none_s1": {
+  "hidden_oracle_deg": 9.72572464460014,
+  "hidden_no_info_deg": 21.219584214853985,
+  "legs_deg": 8.584747841833188
+ },
+ "noisyhist": {
+  "hidden_oracle_deg": 9.748087524048191,
+  "hidden_no_info_deg": 21.160373826391623,
+  "legs_deg": 8.870464109767282
+ },
+ "selfhist": {
+  "hidden_oracle_deg": 9.738032919446168,
+  "hidden_no_info_deg": 21.16511892210203,
+  "legs_deg": 8.6581146001274
+ },
+ "reference_direct_targets_L": {
+  "model": "L direct4 (runs/weights_L.npz, 821k params, absolute targets)",
+  "hidden_200ms_deg": 19.8921141986807,
+  "legs_200ms_deg": 8.49136182857469
+ }
+}

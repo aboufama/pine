@@ -1,0 +1,11 @@
+== chunk16 + selfhist
+  selfhist step 150 val 0.4703 1479s
+  selfhist step 300 val 0.4330 1545s
+  selfhist step 450 val 0.4162 1602s
+  selfhist step 600 val 0.4052 1656s
+  selfhist step 750 val 0.3968 1712s
+  selfhist step 900 val 0.3924 1766s
+   execute 1: 0.5s 14.07  1s 18.45  2s 19.48  mean 16.79 deg (95% 15.56-18.10; vs hold -1.27 to -0.16)
+   execute 8: 0.5s 12.70  1s 16.41  2s 16.53  mean 14.65 deg (95% 13.48-15.94; vs hold -3.44 to -2.27)
+   hold 17.50 | 200ms from real 8.80 | train 1766s score 30s total 1799s (cpu 552s)
+exit 0
