@@ -1,7 +1,8 @@
 {
  "terminate": [
-  "gy5n6hd4i79z8k",
-  "041ojj2whg46vg"
+  "041ojj2whg46vg",
+  "dz32dwi6x50kj2",
+  "gy5n6hd4i79z8k"
  ],
- "note": "two community hosts with CUDA unknown error; start without a login shell"
+ "note": "failed hosts; the H100 NVL pod agohv1hcx59lhm must keep running"
 }
