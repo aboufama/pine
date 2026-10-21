@@ -77,6 +77,11 @@ def build(tree: str, final: bool, note: str | None) -> dict:
         if name.startswith("run_") and isinstance(r, dict) and "val" in r:
             runs.append(dict(size=r.get("size"), fraction=r.get("fraction"), params=r.get("params"), train_hours=r.get("train_hours"),
                              val=r["val"].get("full"), test=r.get("test", {}).get("full"), wall_s=r.get("wall_s")))
+    p2 = os.path.join(RUNS, "phase2")
+    if os.path.isdir(p2):
+        os.makedirs(os.path.join(tree, "runs", "phase2"), exist_ok=True)
+        for p in glob.glob(os.path.join(p2, "*.json")):
+            shutil.copy(p, os.path.join(tree, "runs", "phase2", os.path.basename(p)))
     hiphi_done = len(glob.glob(os.path.join(RAW, "hiphi", ".done_*")))
     status = dict(
         updated=time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()), final=final, note=note,

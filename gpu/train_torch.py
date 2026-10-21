@@ -206,6 +206,18 @@ def run(a) -> int:
 
     t_load = time.time()
     data = ShardData(a.shards)
+    split_info = None
+    if a.split_file:   # phase 2: a custom split (e.g. held-out people) and optional trimmed lengths, per clip
+        sf = json.load(open(a.split_file))
+        if len(sf["split"]) != len(data.clips):
+            die(f"{a.split_file}: {len(sf['split'])} entries for {len(data.clips)} clips")
+        data.split = np.array(sf["split"])
+        if sf.get("length") is not None:
+            ln = np.asarray(sf["length"], dtype=np.int64)
+            if len(ln) != len(data.lens) or (ln > data.lens).any() or (ln < 0).any():
+                die(f"{a.split_file}: lengths must be between 0 and each clip's length")
+            data.lens = ln            # starts stay the same: a trimmed clip keeps its first `length` frames
+        split_info = dict(file=os.path.basename(a.split_file), name=sf.get("name"), meta=sf.get("meta"))
     tr_ids = data.subset("train", a.fraction, seed=a.seed)
     trw = F.Windows(data, tr_ids, T, Kw, seed=a.seed)
     va_ids, te_ids = data.subset("val"), data.subset("test")
@@ -348,9 +360,12 @@ def run(a) -> int:
         os.makedirs(a.out, exist_ok=True)
         name = f"run_{a.size}_{a.fraction:.4f}"
         tag = ""
+        if split_info:   # phase-2 runs are named by their split and never match run_*.json
+            rec.update(split=split_info)
+            name = f"phase2_{split_info['name'] or os.path.splitext(split_info['file'])[0]}_{a.size}"
         if chunk:   # an extra experiment: never named run_*.json, so ladder consumers and fits cannot pick it up
             tag = f"_{a.objective}" + ("_noisyhist" if a.noisy_history else "")
-            name = f"extra_{a.size}_{a.fraction:.4f}{tag}"
+            name = (name + tag) if split_info else f"extra_{a.size}_{a.fraction:.4f}{tag}"
             rec.update(objective=dict(name=a.objective, chunk_frames=obj.H, dct_coeffs=obj.k, execute=obj.execute,
                                       targets="offsets from the masked input frame (measured: residual, masked: absolute)",
                                       noisy_history=bool(a.noisy_history)))
@@ -403,6 +418,7 @@ def parse(argv=None):
                     help="next4 = the CPU recipe (default, used by the whole ladder); dct16mix = 16-frame chunks as 6 "
                          "DCT coefficients, residual on measured / absolute on masked channels (one extra run)")
     ap.add_argument("--noisy-history", action="store_true", help="dct16mix only: noisy-history context augmentation")
+    ap.add_argument("--split-file", default="", help="JSON {name, split: [per clip], length: [per clip, optional]}")
     ap.add_argument("--shards", default=common.SHARDS)
     ap.add_argument("--out", default=common.RUNS)
     a = ap.parse_args(argv)

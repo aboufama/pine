@@ -26,8 +26,17 @@ export PINE_T0="${PINE_T0:-$(date +%s)}"
 export PYTHONUNBUFFERED=1
 mkdir -p "$PINE_LOGS" "$PINE_RUNS" "$PINE_RAW" "$PINE_SHARDS"
 RESULTS="$WS/results.tgz"
-
 PY="$(command -v python || command -v python3)"
+
+# Phase 2 (gpu/phase2.py) runs when gpu/PHASE says 2 and phase 1 has finished on this volume (fits.json and
+# results.tgz exist). It gets what phase 1 left of the GPU-hour cap: the cap minus (end of phase 1 - first boot).
+PHASE=1
+if [ "$(cat "$REPO/gpu/PHASE" 2>/dev/null)" = "2" ] && [ -f "$PINE_RUNS/fits.json" ] && [ -f "$RESULTS" ] && [ -f "$WS/T0" ]; then
+  PHASE=2
+  left_h="$("$PY" -c "import os; t0=float(open('$WS/T0').read()); end1=os.path.getmtime('$RESULTS'); print(max(0.0, float(os.environ['PINE_MAX_GPU_HOURS']) - (end1 - t0) / 3600))")"
+  export PINE_T0="$(date +%s)" PINE_MAX_GPU_HOURS="$left_h"
+  export PINE_PHASE2_DEADLINE="$("$PY" -c "import time; print(time.time() + max(0.0, $left_h * 3600 - 15 * 60))")"
+fi
 
 pack() {   # pack <out.tgz>: run records, weights, fits, logs, shard stats, fetch report, plan
   local out="$1" tmp
@@ -128,7 +137,7 @@ EOF
   exit "$rc"
 }
 
-say "Pine Engine GPU run: robot $PINE_ROBOT, cap $PINE_MAX_GPU_HOURS GPU-h, repo $REPO, python $PY"
+say "Pine Engine GPU run (phase $PHASE): robot $PINE_ROBOT, cap $PINE_MAX_GPU_HOURS GPU-h, repo $REPO, python $PY"
 cd "$REPO"
 
 # ---------------------------------------------------------------------- 1. environment
@@ -199,6 +208,17 @@ if ! "$PY" gpu/parity.py 2>&1 | tee "$PINE_LOGS/parity.log"; then
   finish 1 "aborted: parity failed"
 fi
 grep -q "PARITY OK" "$PINE_LOGS/parity.log" || finish 1 "aborted: parity did not report OK"
+
+# ---------------------------------------------------------------------- phase 2 (instead of steps 3 and 4)
+if [ "$PHASE" = 2 ]; then
+  if "$PY" -c "import sys; sys.exit(0 if float('$PINE_MAX_GPU_HOURS') >= 0.5 else 1)"; then
+    status "phase 2: people vs hours on held-out HiPHI performers (${PINE_MAX_GPU_HOURS} GPU-h left)"
+    "$PY" gpu/phase2.py || say "WARNING: phase2.py exited with an error"
+  else
+    say "phase 2 skipped: only ${PINE_MAX_GPU_HOURS} GPU-h left of the cap"
+  fi
+  finish 0 "DONE (phase 2)"
+fi
 
 # ---------------------------------------------------------------------- 3. data
 status "fetching datasets"
