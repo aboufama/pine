@@ -50,6 +50,14 @@ def gpu_info():
         return []
 
 
+def used_gb(path):
+    try:
+        out = subprocess.run(["du", "-s", "--block-size=1M", path], capture_output=True, text=True, timeout=120).stdout
+        return round(float(out.split()[0]) / 1024, 1) if out else None
+    except Exception:
+        return None
+
+
 def free_gb(path):
     try:
         st = os.statvfs(path); return round(st.f_bavail * st.f_frsize / 1e9, 1)
@@ -90,7 +98,7 @@ def build(tree: str, final: bool, note: str | None) -> dict:
         code=open(f"{WS}/CODE_SHA").read().strip() if os.path.exists(f"{WS}/CODE_SHA") else None,
         pod=os.environ.get("RUNPOD_POD_ID"), gpus=gpus, hours_since_boot=round(elapsed, 3), gpu_hours=round(elapsed * n, 3),
         est_cost_usd=round(elapsed * n * usd, 2) if usd else None, cap_gpu_hours=float(os.environ.get("PINE_MAX_GPU_HOURS", "8")),
-        disk_free_gb=free_gb(WS), hiphi_archives_extracted=hiphi_done, runs=runs,
+        disk_used_gb=used_gb(WS), volume_gb=os.environ.get("PINE_VOLUME_GB"), hiphi_archives_extracted=hiphi_done, runs=runs,
         shards=read(os.path.join(SHARDS, "stats.json")), fetch=read(os.path.join(RAW, "fetch_report.json")))
     for src, dst in ((os.path.join(SHARDS, "stats.json"), "shards_stats.json"), (os.path.join(RAW, "fetch_report.json"), "fetch_report.json")):
         if os.path.exists(src):

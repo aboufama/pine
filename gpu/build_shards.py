@@ -410,6 +410,17 @@ def main(argv=None) -> int:
                 reps.append(rep); kps.append(kp)
                 if (i + 1) % 2000 == 0:
                     SAY(f"  parsed {i + 1}/{len(jobs)} takes, {time.time() - t0:.0f}s")
+    # HiPHI arrives already parsed (fetch_data.canon_cache): one npz of canonical keypoints per archive
+    if "hiphi" in only:
+        for p in sorted(glob.glob(os.path.join(RAW, "hiphi", "canon", "*.npz"))):
+            z = np.load(p, allow_pickle=False)
+            rr = json.loads(str(z["reps"])); off = z["offsets"]; k = 0
+            for rep in rr:
+                n = rep.pop("_n", None)
+                if n is None:
+                    reps.append(rep); kps.append(None); continue
+                reps.append(rep); kps.append(z["kp"][off[k]:off[k + 1]].astype(np.float64)); k += 1
+        SAY(f"  HiPHI from keypoint caches: {sum(1 for r in reps if r.get('source') == 'hiphi')} takes")
     t_parse = time.time() - t0
     keep = [i for i, k in enumerate(kps) if k is not None]
     SAY(f"parsed {len(jobs)} takes in {t_parse:.0f}s: {len(keep)} kept, {len(jobs) - len(keep)} rejected")

@@ -30,7 +30,8 @@ update_code() {
 over_cap() { "$PY" -c "import os,time; raise SystemExit(0 if (time.time()-float(os.environ['PINE_T0']))/3600 >= float(os.environ['PINE_MAX_GPU_HOURS']) else 1)"; }
 
 say "bootstrap: pod ${RUNPOD_POD_ID:-?}, GPU cap ${PINE_MAX_GPU_HOURS} h from $(date -u -d @"$PINE_T0" 2>/dev/null || cat "$WS/T0")"
-( while sleep 600; do "$PY" "$CODE/gpu/report_github.py" || true; done ) &
+( while sleep 300; do "$PY" "$CODE/gpu/report_github.py" || true; done ) &
+trap '"$PY" "$CODE/gpu/report_github.py" --note "bootstrap exiting (signal or error)" || true' EXIT
 while true; do
   sha="$(remote_sha)"; update_code || say "code update failed; using what is on disk"
   echo "${sha:-unknown}" > "$WS/CODE_SHA"

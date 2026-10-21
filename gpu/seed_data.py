@@ -3,8 +3,8 @@
     python gpu/seed_data.py            (phase 2 starts it in the background; it never stops phase 2 on failure)
 
 1. Download the metadata and ONE motion archive (soma_proportional, else soma_uniform) from Hugging Face with HF_TOKEN,
-   stream-extract the BVH files, skip mirrored copies (they add no people). HiPHI's raw BVH is deleted first when the
-   phase-1 shards exist, to make room; the shards keep everything training needs.
+   then stream it: unpack 3,000 BVH files, parse them into canonical keypoints, delete them, repeat. Mirrored copies are
+   skipped (they add no people). The disk never holds more than the archive and one batch.
 2. Map the SOMA skeleton onto the 19 canonical keypoints by the rig's hierarchy (pelvis -> hips -> knees -> ankles,
    chest -> upper arms -> elbows -> hands), not by guessing names, and detect the up axis from the first take.
 3. Parse, QA and resample with build_shards.bvh_work, retarget with build_shards.Retargeter (GPU IK), build features,
@@ -119,40 +119,15 @@ def fetch() -> dict:
         cands = [f for f in files if want in f and f.endswith((".tar.gz", ".tgz", ".tar", ".tar.zst"))]
         if cands:
             arch = sorted(cands); break
-    bvh_loose = [f for f in files if f.lower().endswith(".bvh")]
-    ex = os.path.join(RAW, "bvh")
-    n = 0
-    if os.path.exists(os.path.join(RAW, ".extracted")):
-        n = len(glob.glob(os.path.join(ex, "**", "*.bvh"), recursive=True)); SAY(f"already extracted: {n} BVH")
-    elif arch:
-        for a in arch:
-            t0 = time.time()
-            local = hh.hf_hub_download(REPO, a, repo_type="dataset", local_dir=RAW, token=tok)
-            SAY(f"downloaded {a} ({os.path.getsize(local)/1e9:.1f} GB) in {time.time()-t0:.0f}s")
-            mode = "r|gz" if a.endswith(("gz", "tgz")) else "r|"
-            if a.endswith(".zst"):
-                import fetch_data as FD
-                n += FD.extract_tar_zst(local, ex, keep=(".bvh",))
-            else:
-                with tarfile.open(local, mode) as tf:
-                    for mm in tf:
-                        if not mm.isfile() or not mm.name.lower().endswith(".bvh") or "mirror" in mm.name.lower():
-                            continue
-                        target = os.path.abspath(os.path.join(ex, mm.name))
-                        if not target.startswith(os.path.abspath(ex) + os.sep):
-                            continue
-                        os.makedirs(os.path.dirname(target), exist_ok=True)
-                        with open(target, "wb") as out:
-                            shutil.copyfileobj(tf.extractfile(mm), out)
-                        n += 1
-            os.remove(local)
-            SAY(f"extracted {n} BVH so far ({time.time()-t0:.0f}s)")
-        open(os.path.join(RAW, ".extracted"), "w").write(str(n))
-    elif bvh_loose:
-        raise RuntimeError(f"no archive; {len(bvh_loose)} loose BVH files (not handled)")
-    else:
-        raise RuntimeError("no SOMA motion archive found in the repository")
-    return dict(archives=arch, bvh=n)
+    if not arch:
+        raise RuntimeError(f"no SOMA motion archive in the repository ({len([f for f in files if f.lower().endswith('.bvh')])} loose BVH)")
+    local = []
+    for a in arch:
+        t0 = time.time()
+        p = hh.hf_hub_download(REPO, a, repo_type="dataset", local_dir=RAW, token=tok)
+        SAY(f"downloaded {a} ({os.path.getsize(p)/1e9:.1f} GB) in {time.time()-t0:.0f}s")
+        local.append(p)
+    return dict(archives=arch, local=local)
 
 
 def actor_table() -> tuple[dict, dict]:
@@ -214,51 +189,73 @@ def run() -> int:
         shutil.rmtree(hip, ignore_errors=True)
     rep = fetch()
     actors, mirror = actor_table()
-    files = sorted(glob.glob(os.path.join(RAW, "bvh", "**", "*.bvh"), recursive=True))
-    stem = lambda f: os.path.splitext(os.path.basename(f))[0]
-    files = [f for f in files if not mirror.get(stem(f), False) and "mirror" not in f.lower()]
-    with_actor = [f for f in files if stem(f) in actors]
-    SAY(f"{len(files)} original BVH files; {len(with_actor)} with an actor id ({len(set(actors[stem(f)] for f in with_actor))} actors)")
-    if len(with_actor) < 0.5 * max(1, len(files)):
-        SAY("WARNING: under half the files matched the metadata; unmatched files get subject seed_unknown (not used in the people sweep)")
-    if MAX_TAKES:
-        files = files[:MAX_TAKES]
-    # skeleton and up axis from the first file
+    SAY(f"metadata: {len(actors)} files with an actor id ({len(set(actors.values()))} actors), {sum(mirror.values())} marked mirrored")
     from pine import mocap_io, canon
     import build_shards as BS
-    t = mocap_io.read_bvh(files[0], 0.01, "seed", stem(files[0]), "x")
-    names = [n.split(":")[-1] for n in t.names]
-    SAY(f"SOMA joints ({len(names)}): {names}")
-    amap = auto_map(names, t.parents)
-    SAY(f"keypoint map: {amap}")
-    canon.MAPS["seed"] = amap
-    kp = canon.to_canonical(t, "seed")
-    up = np.median(kp[:, canon.KP["head"]] - kp[:, canon.KP["l_ankle"]], axis=0)
-    if abs(up[2]) < 0.5 * np.linalg.norm(up):                         # not Z-up after the Y-up conversion: data is Z-up
-        SAY(f"up axis: body axis {np.round(up, 3)} after a Y-up conversion -> treating the files as Z-up")
-        mocap_io.Y_UP_TO_Z_UP = np.eye(3)
-    jobs = [dict(source="seed", path=f, clip=stem(f), subject="seed_" + actors.get(stem(f), "unknown"), unit=0.01,
-                 skel="seed", drop=0, check_unit=True) for f in files]
-    SAY(f"parsing {len(jobs)} takes on {os.cpu_count()} cores")
-    t0 = time.time(); reps, kps = [], []
-    with get_context("fork").Pool(os.cpu_count() or 4, initializer=os.environ.__setitem__, initargs=("OMP_NUM_THREADS", "1")) as pool:
-        for i, (r, k) in enumerate(pool.imap(BS.bvh_work, jobs, chunksize=8)):
-            reps.append(r); kps.append(k)
-            if (i + 1) % 5000 == 0:
-                SAY(f"  parsed {i+1}/{len(jobs)} ({time.time()-t0:.0f}s)")
+    stem = lambda f: os.path.splitext(os.path.basename(f))[0]
+    tmp = os.path.join(RAW, "tmp_batch")
+    state = dict(mapped=False)
+    reps, kps = [], []
+
+    def process(paths):
+        if not paths:
+            return
+        if not state["mapped"]:          # skeleton and up axis from the first file
+            t = mocap_io.read_bvh(paths[0], 0.01, "seed", stem(paths[0]), "x")
+            names = [n.split(":")[-1] for n in t.names]
+            SAY(f"SOMA joints ({len(names)}): {names}")
+            amap = auto_map(names, t.parents)
+            SAY(f"keypoint map: {amap}")
+            canon.MAPS["seed"] = amap; state["map"] = amap
+            kp = canon.to_canonical(t, "seed")
+            up = np.median(kp[:, canon.KP["head"]] - kp[:, canon.KP["l_ankle"]], axis=0)
+            if abs(up[2]) < 0.5 * np.linalg.norm(up):
+                SAY(f"up axis: body axis {np.round(up, 3)} after a Y-up conversion -> treating the files as Z-up")
+                mocap_io.Y_UP_TO_Z_UP = np.eye(3)
+            state["mapped"] = True
+        jobs = [dict(source="seed", path=f, clip=stem(f), subject="seed_" + actors.get(stem(f), "unknown"), unit=0.01,
+                     skel="seed", drop=0, check_unit=True) for f in paths]
+        with get_context("fork").Pool(os.cpu_count() or 4, initializer=os.environ.__setitem__, initargs=("OMP_NUM_THREADS", "1")) as pool:
+            for r, k in pool.imap(BS.bvh_work, jobs, chunksize=8):
+                reps.append(r); kps.append(None if k is None else k.astype(np.float32))
+
+    t0 = time.time(); batch = []
+    for path in rep["local"]:
+        mode = "r|gz" if path.endswith(("gz", "tgz")) else "r|"
+        with tarfile.open(path, mode) as tf:
+            for mm in tf:
+                if not mm.isfile() or not mm.name.lower().endswith(".bvh") or "mirror" in mm.name.lower() \
+                        or mirror.get(stem(mm.name), False):
+                    continue
+                target = os.path.abspath(os.path.join(tmp, mm.name))
+                if not target.startswith(os.path.abspath(tmp) + os.sep):
+                    continue
+                os.makedirs(os.path.dirname(target), exist_ok=True)
+                with open(target, "wb") as out:
+                    shutil.copyfileobj(tf.extractfile(mm), out)
+                batch.append(target)
+                if len(batch) >= 3000:
+                    process(batch); shutil.rmtree(tmp, ignore_errors=True); batch = []
+                    SAY(f"  {len(reps)} takes parsed ({sum(k is not None for k in kps)} kept), {time.time()-t0:.0f}s")
+                if MAX_TAKES and len(reps) + len(batch) >= MAX_TAKES:
+                    break
+        os.remove(path)
+    process(batch); shutil.rmtree(tmp, ignore_errors=True)
+    amap = state.get("map")
     keep = [i for i, k in enumerate(kps) if k is not None]
     rej = {}
     for r in reps:
         if "reject" in r:
             key = r["reject"].split(" (")[0].split(":")[0]; rej[key] = rej.get(key, 0) + 1
-    SAY(f"parsed in {time.time()-t0:.0f}s: {len(keep)} kept, rejects {rej}")
+    SAY(f"parsed {len(reps)} takes in {time.time()-t0:.0f}s: {len(keep)} kept, rejects {rej}; "
+        f"{len({reps[i]['subject'] for i in keep})} actors")
     if not keep:
-        raise RuntimeError(f"every SEED take was rejected: {rej}; first: {reps[0].get('reject')}")
+        raise RuntimeError(f"every SEED take was rejected: {rej}; first: {reps[0].get('reject') if reps else None}")
     rt = BS.Retargeter("cuda", os.cpu_count() or 4)
     rng = np.random.default_rng(0)
-    chk = rt.calibrate([kps[i] for i in rng.permutation(keep)[:60]])
+    chk = rt.calibrate([kps[i].astype(np.float64) for i in rng.permutation(keep)[:60]])
     SAY(f"IK check: passed={chk.get('passed')} backend {rt.backend}")
-    t0 = time.time(); sols = rt.run([kps[i] for i in keep])
+    t0 = time.time(); sols = rt.run([kps[i].astype(np.float64) for i in keep])
     SAY(f"IK: {sum(len(kps[i]) for i in keep):,} frames in {time.time()-t0:.0f}s")
     from pine import features as F
     st = json.load(open(os.path.join(shards1, "stats.json")))
@@ -281,8 +278,10 @@ def run() -> int:
     tmp = os.path.join(OUT, "features.tmp.npy")
     out = np.lib.format.open_memmap(tmp, mode="w+", dtype=np.float16, shape=(X1.shape[0] + Xs.shape[0], X1.shape[1]))
     step = 2_000_000
-    for a in range(0, X1.shape[0], step):
-        out[a:a + step] = X1[a:a + step]
+    n1 = X1.shape[0]
+    for a in range(0, n1, step):
+        b = min(a + step, n1)
+        out[a:b] = X1[a:b]
     out[X1.shape[0]:] = Xs; out.flush(); del out
     os.replace(tmp, os.path.join(OUT, "features.npy"))
     common.write_json(os.path.join(OUT, "clips.json"), dict(robot=st["robot"], clips=clips1 + new_clips), indent=None)

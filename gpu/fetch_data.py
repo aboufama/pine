@@ -9,14 +9,16 @@ Layout: $PINE_RAW/<name>/repo (git sources) or $PINE_RAW/<name>/ (Hugging Face),
                   unzip to lafan1/bvh/ (BVH, 30 fps, cm, Mixamo-style names, CC BY-NC-ND 4.0)
   unitree_mujoco  git clone --depth 1 https://github.com/unitreerobotics/unitree_mujoco (robot models; REQUIRED later)
   hiphi           HF noitomrobotics/HiPHI: gated (needs HF_TOKEN with granted access). BVH, 90 Hz, cm, Y-up, packed in
-                  32 .tar.zst archives (~215 GB). Archives are downloaded and extracted one at a time (BVH + metadata
-                  only) and deleted after extraction. PINE_HIPHI_PARTS / --hiphi-parts limits how many.
+                  32 .tar.zst archives (~215 GB). One archive at a time: download, unpack, parse every take into
+                  canonical keypoints (hiphi/canon/<archive>.npz, via build_shards.bvh_work), delete archive and text.
+                  PINE_HIPHI_PARTS / --hiphi-parts limits how many.
   lafan1_g1       HF unitreerobotics/LAFAN1_Retargeting_Dataset, g1/*.csv  (only fetched when PINE_ROBOT=g1)
   amass_g1        HF fleaven/Retargeted_AMASS_for_robotics, g1/**/*.npy    (only fetched when PINE_ROBOT=g1)
 A source that already has its .ok marker is not downloaded again.
 """
 from __future__ import annotations
 import argparse, csv, glob, io, json, os, shutil, subprocess, sys, tarfile, time, zipfile
+import numpy as np
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, HERE)
@@ -67,6 +69,44 @@ def du_bytes(path: str) -> int:
 
 def count(path: str, pattern: str) -> int:
     return len(glob.glob(os.path.join(path, pattern), recursive=True))
+
+
+def du_gb(path: str) -> float:
+    """Bytes actually used under path (statvfs on a RunPod network volume reports the whole filesystem, not the quota)."""
+    try:
+        out = subprocess.run(["du", "-s", "--block-size=1M", path], capture_output=True, text=True, timeout=300).stdout
+        return float(out.split()[0]) / 1024 if out else 0.0
+    except Exception:  # noqa: BLE001
+        return 0.0
+
+
+def canon_cache(bvh_dir: str, out_npz: str) -> int:
+    """Every non-mirror HiPHI BVH under bvh_dir -> one npz of canonical keypoints + per-take reports. Returns takes kept."""
+    import build_shards as BS
+    from multiprocessing import get_context
+    os.makedirs(os.path.dirname(out_npz), exist_ok=True)
+    meta = BS.hiphi_actors()
+    jobs = []
+    for p in sorted(glob.glob(os.path.join(bvh_dir, "**", "*.bvh"), recursive=True)):
+        if "__mirror" in p:
+            continue
+        mid = os.path.basename(p)[:-4]
+        if mid not in meta and os.path.basename(os.path.dirname(p)) in meta:
+            mid = os.path.basename(os.path.dirname(p))
+        actor, text = meta.get(mid, ("unknown", ""))
+        jobs.append(dict(source="hiphi", path=p, clip=mid, subject="hiphi_" + actor, unit=0.01, skel="mixamo",
+                         drop=0, check_unit=True, desc=text))
+    reps, kps = [], []
+    with get_context("fork").Pool(os.cpu_count() or 4, initializer=os.environ.__setitem__, initargs=("OMP_NUM_THREADS", "1")) as pool:
+        for rep, kp in pool.imap(BS.bvh_work, jobs, chunksize=4):
+            if kp is not None:
+                rep["_n"] = len(kp); kps.append(kp.astype(np.float32))
+            reps.append(rep)
+    off = np.concatenate([[0], np.cumsum([len(k) for k in kps])]).astype(np.int64)
+    np.savez(out_npz + ".tmp.npz", kp=np.concatenate(kps) if kps else np.zeros((0, 19, 3), np.float32), offsets=off,
+             reps=np.array(json.dumps(reps)))
+    os.replace(out_npz + ".tmp.npz", out_npz)
+    return len(kps)
 
 
 def free_gb(path: str) -> float:
@@ -280,21 +320,28 @@ def fetch_hiphi(max_parts: int) -> dict:
         flag = os.path.join(dest, ".done_" + os.path.basename(f))
         if os.path.exists(flag):
             done.append(f); continue
-        if free_gb(dest) < 30:
-            SAY(f"  hiphi: stopping, only {free_gb(dest):.0f} GB free"); break
+        if du_gb(os.path.dirname(dest)) > float(os.environ.get("PINE_VOLUME_GB", "300")) * 0.85:
+            SAY(f"  hiphi: stopping, {du_gb(os.path.dirname(dest)):.0f} GB used of the volume"); break
         t0 = time.time()
         try:
             local = hh.hf_hub_download(repo, f, repo_type="dataset", local_dir=dest, token=hf_token())
-            n = extract_tar_zst(local, ex_root, keep=(".bvh", ".json", ".csv"))
+            # Unpacked BVH is several times the archive: parse each archive straight into canonical keypoints
+            # (pine.canon, 20 fps) and delete the text before the next archive, so the disk never holds more than one.
+            tmp = os.path.join(dest, "tmp_extract")
+            shutil.rmtree(tmp, ignore_errors=True)
+            n = extract_tar_zst(local, tmp, keep=(".bvh", ".json", ".csv"))
             os.remove(local)
-            open(flag, "w").write(json.dumps(dict(files=n, seconds=time.time() - t0)))
+            kept = canon_cache(tmp, os.path.join(dest, "canon", os.path.basename(f).split(".")[0] + ".npz"))
+            shutil.rmtree(tmp, ignore_errors=True)
+            open(flag, "w").write(json.dumps(dict(files=n, takes_kept=kept, seconds=time.time() - t0)))
             done.append(f)
-            SAY(f"  hiphi: {os.path.basename(f)} -> {n} files in {time.time() - t0:.0f}s, {free_gb(dest):.0f} GB free")
+            SAY(f"  hiphi: {os.path.basename(f)} -> {n} files, {kept} takes kept as keypoints, {time.time() - t0:.0f}s, "
+                f"{du_gb(dest):.1f} GB on disk")
         except Exception as e:  # noqa: BLE001
             failed.append(dict(file=f, error=f"{type(e).__name__}: {e}"[:300]))
             SAY(f"  hiphi: {f} failed: {e}")
-    bvh = count(ex_root, "**/*.bvh")
-    return dict(status="ok" if done else "failed", path=dest, extracted=ex_root, archives=len(done),
+    bvh = len(glob.glob(os.path.join(dest, "canon", "*.npz")))
+    return dict(status="ok" if done else "failed", path=dest, canon_archives=bvh, archives=len(done),
                 archives_total=len([1 for _ in files]), failed=failed, bvh_files=bvh,
                 license="ModalityNet Open Research License (non-commercial research)",
                 format="BVH, 90 Hz, cm, Y-up; each motion also has a __mirror copy")
