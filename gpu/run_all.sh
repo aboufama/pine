@@ -30,11 +30,11 @@ PY="$(command -v python || command -v python3)"
 
 # Phase 2 (gpu/phase2.py) runs when gpu/PHASE says 2 and phase 1 has finished on this volume (fits.json and
 # results.tgz exist). It gets what phase 1 left of the GPU-hour cap (the cap minus the time from first boot to the end
-# of phase 1), and at least PINE_PHASE2_MIN_HOURS (default 3) so the flagship run always fits.
+# of phase 1), and at least PINE_PHASE2_MIN_HOURS (default 4) so the SEED sweep and the flagship fit.
 PHASE=1
 if [ "$(cat "$REPO/gpu/PHASE" 2>/dev/null)" = "2" ] && [ -f "$PINE_RUNS/fits.json" ] && [ -f "$RESULTS" ] && [ -f "$WS/T0" ]; then
   PHASE=2
-  left_h="$("$PY" -c "import os; t0=float(open('$WS/T0').read()); end1=os.path.getmtime('$RESULTS'); print(max(float(os.environ.get('PINE_PHASE2_MIN_HOURS', 3)), float(os.environ['PINE_MAX_GPU_HOURS']) - (end1 - t0) / 3600))")"
+  left_h="$("$PY" -c "import os; t0=float(open('$WS/T0').read()); end1=os.path.getmtime('$RESULTS'); print(max(float(os.environ.get('PINE_PHASE2_MIN_HOURS', 4)), float(os.environ['PINE_MAX_GPU_HOURS']) - (end1 - t0) / 3600))")"
   export PINE_T0="$(date +%s)" PINE_MAX_GPU_HOURS="$left_h"
   export PINE_PHASE2_DEADLINE="$("$PY" -c "import time; print(time.time() + max(0.0, $left_h * 3600 - 15 * 60))")"
 fi
