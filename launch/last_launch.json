@@ -1,8 +1,13 @@
 {
  "ok": true,
- "step": "exists",
- "pod_id": "agohv1hcx59lhm",
+ "step": "created",
+ "pod_id": "fs8veeg3pe6bxa",
+ "image": "runpod/pytorch:2.4.0-py3.11-cuda12.4.1-devel-ubuntu22.04",
+ "cloud": "SECURE",
+ "volume_gb": 300,
+ "gpu": "NVIDIA H100 80GB HBM3",
+ "cost_per_hr": 3.99,
  "status": "RUNNING",
- "message": "a pine-engine pod is already running; not creating another",
- "at": "2026-10-21T21:13:07Z"
+ "tried_before": [],
+ "at": "2026-10-21T22:05:30Z"
 }
