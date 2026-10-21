@@ -1,8 +1,11 @@
 {
  "terminate": [
   "041ojj2whg46vg",
+  "agohv1hcx59lhm",
   "dz32dwi6x50kj2",
+  "fs8veeg3pe6bxa",
   "gy5n6hd4i79z8k"
  ],
- "note": "failed hosts; the H100 NVL pod agohv1hcx59lhm must keep running"
+ "note": "stop everything: HiPHI unpacked BVH overflowed the 300 GB volume; relaunch after the fetch fix",
+ "create": false
 }

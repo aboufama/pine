@@ -48,6 +48,8 @@ def main():
     if os.path.exists(ap):
         acts = json.load(open(ap))
     st, pods = http("GET", "/pods")
+    seen = [{k: p.get(k) for k in ("id", "name", "desiredStatus", "lastStatusChange", "costPerHr", "volumeInGb")}
+            for p in (pods or []) if isinstance(p, dict)] if st == 200 else []
     if st == 200:   # terminate pods listed in actions.json (only ours, by name), e.g. one on a host with a broken GPU
         for p in pods or []:
             if p.get("id") in acts.get("terminate", []) and p.get("name") == NAME:
@@ -62,7 +64,8 @@ def main():
         ok = all(r["http"] in (200, 201, 202) for r in res)
         record(ok=ok, step="start", pods=res, message="pod(s) restarted" if ok else "could not restart"); return 0 if ok else 1
     if acts.get("create") is False:
-        record(ok=True, step="no-create", message="actions.json says not to create a pod", pods=[{k: p.get(k) for k in ("id", "name", "desiredStatus")} for p in pods or []]); return 0
+        record(ok=True, step="no-create", message="actions.json says not to create a pod", pods_before=seen,
+               pods_after=[{k: p.get(k) for k in ("id", "name", "desiredStatus")} for p in pods or []]); return 0
     if st != 200:
         record(ok=False, step="auth", status=st, message=str(pods)[:300]); return 1
     live = [p for p in (pods or []) if p.get("name") == NAME and p.get("desiredStatus") in ("RUNNING", "CREATED")]
