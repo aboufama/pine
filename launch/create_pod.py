@@ -65,8 +65,8 @@ def main():
     env = {"HF_TOKEN": "{{ RUNPOD_SECRET_hf_token }}", "GH_TOKEN": "{{ RUNPOD_SECRET_gh_token }}", "PINE_MAX_GPU_HOURS": "8",
            "PINE_ROBOT": "h2"}
     errors = []
-    for image, cuda in IMAGES:
-        for cloud in ("SECURE", "COMMUNITY"):
+    for cloud in ("SECURE", "COMMUNITY"):          # data-centre hosts first: the first community host had a broken GPU
+        for image, cuda in IMAGES:
             for volume in (500, 400):
                 body = dict(name=NAME, imageName=image, cloudType=cloud, computeType="GPU",
                             gpuTypeIds=GPUS, gpuTypePriority="custom", gpuCount=1, interruptible=False,
