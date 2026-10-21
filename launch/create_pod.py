@@ -11,7 +11,12 @@ KEY = os.environ.get("RUNPOD_API_KEY", "").strip()
 NAME = "pine-engine"
 START = ('git clone -q -b engine-code --depth 1 https://github.com/aboufama/pine /workspace/pine-engine || true; '
          'bash /workspace/pine-engine/gpu/bootstrap.sh')
-GPUS = ["NVIDIA H100 PCIe", "NVIDIA H100 NVL", "NVIDIA H100 80GB HBM3", "NVIDIA A100 80GB PCIe", "NVIDIA A100-SXM4-80GB"]
+# Most preferred first. The models are small, so any of these trains them; the GPU-hour cap still applies.
+GPUS = ["NVIDIA H100 PCIe", "NVIDIA H100 NVL", "NVIDIA H100 80GB HBM3", "NVIDIA H200", "NVIDIA A100 80GB PCIe",
+        "NVIDIA A100-SXM4-80GB", "NVIDIA L40S", "NVIDIA RTX 6000 Ada Generation", "NVIDIA L40", "NVIDIA RTX A6000",
+        "NVIDIA A40", "NVIDIA GeForce RTX 4090"]
+IMAGES = [("runpod/pytorch:1.4.0-cu1281-torch280-ubuntu2404", ["12.8", "12.9", "13.0"]),
+          ("runpod/pytorch:2.4.0-py3.11-cuda12.4.1-devel-ubuntu22.04", ["12.4", "12.5", "12.6", "12.7", "12.8", "12.9", "13.0"])]
 OUT = os.path.join(os.path.dirname(os.path.abspath(__file__)), "last_launch.json")
 
 
@@ -48,19 +53,22 @@ def main():
     env = {"HF_TOKEN": "{{ RUNPOD_SECRET_hf_token }}", "GH_TOKEN": "{{ RUNPOD_SECRET_gh_token }}", "PINE_MAX_GPU_HOURS": "8",
            "PINE_ROBOT": "h2"}
     errors = []
-    for volume in (500, 400, 700, 1000):   # HiPHI is extracted one archive at a time; 500 GB fits, and an idle volume bills by size
+    for image, cuda in IMAGES:
         for cloud in ("SECURE", "COMMUNITY"):
-            body = dict(name=NAME, imageName="runpod/pytorch:1.4.0-cu1281-torch280-ubuntu2404", cloudType=cloud, computeType="GPU",
-                        gpuTypeIds=GPUS, gpuTypePriority="custom", gpuCount=1, interruptible=False,
-                        containerDiskInGb=60, volumeInGb=volume, volumeMountPath="/workspace", ports=["22/tcp"], env=env,
-                        dockerStartCmd=["bash", "-lc", START], allowedCudaVersions=["12.8", "12.9", "13.0"])
-            st, p = http("POST", "/pods", body)
-            if st in (200, 201) and isinstance(p, dict) and p.get("id"):
-                record(ok=True, step="created", pod_id=p["id"], cloud=cloud, volume_gb=volume, gpu=(p.get("machine") or {}).get("gpuTypeId") or p.get("gpuTypeId"),
-                       cost_per_hr=p.get("costPerHr") or p.get("adjustedCostPerHr"), status=p.get("desiredStatus"))
-                return 0
-            errors.append(dict(cloud=cloud, volume_gb=volume, status=st, error=str(p)[:300]))
-    record(ok=False, step="create", attempts=errors, message="no H100/A100 80GB available with these settings; nothing is billing")
+            for volume in (500, 400):
+                body = dict(name=NAME, imageName=image, cloudType=cloud, computeType="GPU",
+                            gpuTypeIds=GPUS, gpuTypePriority="custom", gpuCount=1, interruptible=False,
+                            containerDiskInGb=60, volumeInGb=volume, volumeMountPath="/workspace", ports=["22/tcp"], env=env,
+                            dockerStartCmd=["bash", "-lc", START], allowedCudaVersions=cuda)
+                st, p = http("POST", "/pods", body)
+                if st in (200, 201) and isinstance(p, dict) and p.get("id"):
+                    m = p.get("machine") or {}
+                    record(ok=True, step="created", pod_id=p["id"], image=image, cloud=cloud, volume_gb=volume,
+                           gpu=m.get("gpuTypeId") or p.get("gpuTypeId") or (p.get("gpu") or {}).get("id"),
+                           cost_per_hr=p.get("costPerHr") or p.get("adjustedCostPerHr"), status=p.get("desiredStatus"))
+                    return 0
+                errors.append(dict(image=image.split(":")[1], cloud=cloud, volume_gb=volume, status=st, error=str(p)[:160]))
+    record(ok=False, step="create", attempts=errors, message="no listed GPU available right now; nothing is billing")
     return 1
 
 
