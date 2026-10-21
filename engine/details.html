@@ -7,7 +7,6 @@
 <meta name="description" content="Research preview of Pine's data engine: public full-body motion capture retargeted onto a full-size humanoid and used to pretrain a motion model, with scaling results.">
 <meta property="og:title" content="Pine Engine">
 <meta property="og:description" content="Human movement in. Humanoid motion out. A research preview of Pine's data engine.">
-<meta property="og:image" content="https://aboufama.github.io/pine/poster.jpg">
 <link rel="icon" href="../mark-c2.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -179,13 +178,8 @@ footer p { margin: 14px 0 0; max-width: 60em; }
 
 <main>
 <header class="hero"><div class="wrap">
-  <p class="eyebrow">Pine · Research preview · October 2026</p>
-  <h1>Human movement in. Humanoid motion out.</h1>
-  <p class="lede" id="lede">A working proof of concept of Pine's data engine. Public full-body motion capture, retargeted onto a full-size humanoid and used to pretrain a motion model. EXO-1 recordings enter the same pipe.</p>
-  <figure class="film" id="film" tabindex="0" role="button" aria-label="Pause film">
-    <video id="video" muted loop playsinline disablepictureinpicture preload="metadata" poster="../poster.jpg" aria-label="EXO-1 joint and cuff assembly, rendered film"><source src="../film.mp4" type="video/mp4"></video>
-  </figure>
-  <p class="caption">EXO-1, the wearable that records how people move. Tap the film to pause.</p>
+  <p class="eyebrow">Full write-up · October 2026</p>
+  <h1>Humanoid motion pretraining from public motion capture</h1>
   <div class="stats" id="stats"></div>
 </div></header>
 
@@ -280,7 +274,7 @@ footer p { margin: 14px 0 0; max-width: 60em; }
 </main>
 
 <footer><div class="wrap">
-  <div><span>Pine 2026</span><span><a href="../">Pine</a> &nbsp; <a href="./">One page</a> &nbsp; <a href="https://lithe.site/">Waitlist</a></span></div>
+  <div><span>Pine 2026</span><span><a href="./">One page</a></span></div>
   <p>Motion data: CMU Graphics Lab Motion Capture Database (mocap.cs.cmu.edu), created with funding from NSF EIA-0196217, in the BVH conversion by B. Hahne; Bandai Namco Research Motion Datasets 1 and 2 (CC BY-NC 4.0). Robot models: Unitree H2 and G1 from unitreerobotics/unitree_mujoco. Results are from a CPU proof of concept and are not a product claim.</p>
 </div></footer>
 
@@ -293,7 +287,7 @@ const fmt = (x, d = 0) => Number(x).toLocaleString("en-US", { minimumFractionDig
 const INK = "#1d1d1f", QUIET = "#86868b", GHOST = "#c7c7cc", HAIR = "#d2d2d7";
 
 /* film: same behaviour as the Pine site */
-const video = $("#video"), film = $("#film");
+const video = $("#video") || document.createElement("video"), film = $("#film") || document.createElement("div");
 const syncFilm = () => film.setAttribute("aria-label", video.paused ? "Play film" : "Pause film");
 film.addEventListener("click", () => (video.paused ? video.play() : video.pause()));
 film.addEventListener("keydown", (e) => { if (e.key === " " || e.key === "Enter") { e.preventDefault(); video.paused ? video.play() : video.pause(); } });
@@ -446,7 +440,6 @@ function render(D) {
   const runs = D.runs || [], fits = D.fits, byKey = (s, f = 1) => runs.find((r) => r.size === s && Math.abs(r.fraction - f) < 1e-9);
   const cmu = ds.sources.find((s) => s.id === "cmu");
 
-  $("#lede").textContent = `A working proof of concept of Pine's data engine. ${fmt(ds.hours, 1)} hours of public full-body motion capture, retargeted onto a full-size ${R.name} and used to pretrain a motion model. EXO-1 recordings enter the same pipe.`;
   $("#stats").innerHTML = [
     [fmt(ds.hours, 1) + " h", "of full-body motion"], [fmt(ds.takes_kept), "takes kept of " + fmt(ds.takes_in)],
     [fmt(ds.people), "people"], [fmt(ds.frames), "frames at 20 fps"], ["2", "humanoids, one pipe"],

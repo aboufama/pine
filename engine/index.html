@@ -7,7 +7,6 @@
 <meta name="description" content="Pine's data engine on one page: public mocap retargeted onto a full-size humanoid, pretrained, and measured.">
 <meta property="og:title" content="Pine Engine">
 <meta property="og:description" content="Human movement in. Humanoid motion out. Every finding of the first run on one page.">
-<meta property="og:image" content="https://aboufama.github.io/pine/poster.jpg">
 <link rel="icon" href="../mark-c2.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -37,7 +36,7 @@ a:hover { text-decoration-color: var(--ink); }
 .top b { color: var(--ink); font-weight: 600; }
 .top .sp { flex: 1; }
 
-header { display: grid; grid-template-columns: minmax(0, 1.55fr) minmax(0, 1fr); gap: 28px; align-items: stretch; }
+header { display: block; }
 header > * { min-width: 0; }
 h1 { font-family: var(--display); font-weight: 600; font-size: clamp(30px, 3vw, 44px); line-height: 1.05; letter-spacing: -0.035em; margin: 2px 0 10px; text-wrap: balance; }
 .abs { margin: 0; color: var(--ink2); font-size: 15px; max-width: 64em; text-wrap: pretty; }
@@ -128,16 +127,11 @@ footer.note b { color: var(--ink2); font-weight: 600; }
     <b>Pine Engine</b><span>Research preview · October 2026</span><span class="sp"></span><span><a href="details.html">Full write-up</a></span>
   </div>
 
-  <header>
+  <header class="solo">
     <div>
-      <h1>Human movement in. Humanoid motion out.</h1>
-      <p class="abs" id="abs"></p>
+      <h1>Humanoid motion pretraining from public motion capture</h1>
       <div class="stats" id="stats"></div>
     </div>
-    <figure class="film" id="film" tabindex="0" role="button" aria-label="Pause film" style="margin:0">
-      <video id="video" muted loop playsinline disablepictureinpicture preload="metadata" poster="../poster.jpg" aria-label="EXO-1 joint and cuff, rendered film"><source src="../film.mp4" type="video/mp4"></video>
-      <span>EXO-1, the wearable that records how people move</span>
-    </figure>
   </header>
 
   <div class="hero">
@@ -182,7 +176,7 @@ const fmt = (x, d = 0) => Number(x).toLocaleString("en-US", { minimumFractionDig
 const INK = "#1d1d1f", QUIET = "#86868b", GHOST = "#c7c7cc", HAIR = "#d2d2d7";
 
 /* film: same behaviour as the Pine site */
-const video = $("#video"), film = $("#film");
+const video = $("#video") || document.createElement("video"), film = $("#film") || document.createElement("div");
 const syncFilm = () => film.setAttribute("aria-label", video.paused ? "Play film" : "Pause film");
 film.addEventListener("click", () => (video.paused ? video.play() : video.pause()));
 film.addEventListener("keydown", (e) => { if (e.key === " " || e.key === "Enter") { e.preventDefault(); video.paused ? video.play() : video.pause(); } });
@@ -346,7 +340,6 @@ function render(D, MODEL, BIN) {
   const hold = row("hold"), base = row("direct4"), chunk = row("chunk16"), dct = row("dct16");
   const cmu = ds.sources.find((s) => s.id === "cmu");
 
-  $("#abs").innerHTML = `We built Pine's data pipeline end to end on public data: <b>${fmt(ds.hours, 1)} hours</b> of full-body motion capture from ${fmt(ds.people)} people, retargeted onto a full-size <b>${R.name}</b>, then used to pretrain a motion transformer that also fills in what a leg suit does not measure. A loss predicted before training landed within 0.0002. At this scale data, not model size, is the limit, and people the model has never seen are the largest gap. Exactly what a suit worn by many people would supply.`;
   $("#stats").innerHTML = [[fmt(ds.hours, 1) + " h", "motion"], [fmt(ds.takes_kept), "takes"], [fmt(ds.people), "people"], [fmt(ds.frames), "frames"], ["2", "robots"]]
     .map(([b, s]) => `<div><b class="num">${b}</b><span>${s}</span></div>`).join("");
 
