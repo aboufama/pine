@@ -1,0 +1,23 @@
+name: Launch Pine Engine pod
+on:
+  push:
+    branches: [engine-launch]
+permissions:
+  contents: write
+jobs:
+  launch:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Create the RunPod pod
+        env:
+          RUNPOD_API_KEY: ${{ secrets.RUNPOD_API_KEY }}
+        run: python3 launch/create_pod.py || echo "launch did not succeed (see launch/last_launch.json)"
+      - name: Record the result on this branch
+        run: |
+          git config user.name "Pine Engine launcher"
+          git config user.email "launcher@pine.invalid"
+          git add launch/last_launch.json
+          git commit -m "launch result" || exit 0
+          git push
