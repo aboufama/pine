@@ -1,0 +1,643 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Pine Engine</title>
+<meta name="description" content="Research preview of Pine's data engine: public full-body motion capture retargeted onto a full-size humanoid and used to pretrain a motion model, with scaling results.">
+<meta property="og:title" content="Pine Engine">
+<meta property="og:description" content="Human movement in. Humanoid motion out. A research preview of Pine's data engine.">
+<meta property="og:image" content="https://aboufama.github.io/pine/poster.jpg">
+<link rel="icon" href="../mark-c2.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* One column on Apple's 980px measure. Neutrals only; colour comes from the film. */
+:root {
+  --ink: #1d1d1f; --ink2: #424245; --quiet: #6e6e73; --faint: #86868b; --ghost: #c7c7cc;
+  --hair: #d2d2d7; --wash: #f5f5f7; --paper: #ffffff;
+  --sans: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Inter", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  --display: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Inter", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  --mono: ui-monospace, "SF Mono", SFMono-Regular, "JetBrains Mono", Menlo, monospace;
+  --w: 980px;
+  --gl: max(20px, env(safe-area-inset-left, 0px)); --gr: max(20px, env(safe-area-inset-right, 0px));
+}
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body { margin: 0; background: var(--paper); color: var(--ink); font-family: var(--sans); font-size: 17px; line-height: 1.47;
+  letter-spacing: -0.012em; -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility; }
+a { color: inherit; text-decoration: underline; text-decoration-color: var(--ghost); text-underline-offset: 3px; }
+a:hover { text-decoration-color: var(--ink); }
+.wrap { max-width: calc(var(--w) + 40px); margin: 0 auto; padding-left: var(--gl); padding-right: var(--gr); }
+.num { font-variant-numeric: tabular-nums; }
+.mono { font-family: var(--mono); font-size: 12px; letter-spacing: 0; }
+
+/* top bar */
+.bar { position: sticky; top: 0; z-index: 5; background: rgba(255,255,255,.86); backdrop-filter: saturate(180%) blur(20px);
+  -webkit-backdrop-filter: saturate(180%) blur(20px); border-bottom: 1px solid rgba(0,0,0,.08); padding-top: env(safe-area-inset-top, 0px); }
+.bar .wrap { height: 48px; display: flex; align-items: center; gap: 12px; }
+.bar svg { width: 20px; height: auto; display: block; }
+.bar b { font-weight: 600; font-size: 15px; letter-spacing: -0.01em; }
+.bar span { color: var(--quiet); font-size: 13px; margin-left: auto; }
+
+/* hero */
+header.hero { padding-block: 72px 32px; text-align: center; }
+.eyebrow { color: var(--quiet); font-size: 14px; font-weight: 500; letter-spacing: 0; margin: 0 0 12px; }
+h1 { font-family: var(--display); font-weight: 600; font-size: clamp(40px, 7vw, 76px); line-height: 1.04; letter-spacing: -0.035em; margin: 0 auto; max-width: 13ch; text-wrap: balance; }
+.lede { font-size: clamp(19px, 2.2vw, 24px); line-height: 1.38; color: var(--ink2); max-width: 34em; margin: 20px auto 0; text-wrap: pretty; letter-spacing: -0.015em; }
+.film { margin: 40px auto 0; max-width: var(--w); aspect-ratio: 16 / 9; border-radius: 18px; overflow: hidden; background: #0e1512 url("../poster.jpg") center / cover; position: relative; cursor: pointer; }
+.film video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: block; }
+.film:focus-visible { outline: 2px solid var(--ink); outline-offset: 4px; }
+.caption { color: var(--quiet); font-size: 13px; line-height: 1.45; margin: 12px 0 0; letter-spacing: -0.005em; }
+.caption b { color: var(--ink); font-weight: 600; }
+header .caption { text-align: center; }
+
+/* stats */
+.stats { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 24px; padding-block: 40px 8px; border-top: 1px solid var(--hair); margin-top: 48px; }
+.stat b { display: block; font-family: var(--display); font-size: clamp(28px, 3.4vw, 40px); font-weight: 600; letter-spacing: -0.03em; line-height: 1.1; }
+.stat span { display: block; color: var(--quiet); font-size: 14px; margin-top: 4px; }
+
+/* sections */
+section { padding-block: 88px 8px; }
+section.wash { background: var(--wash); padding-block: 88px; margin-top: 88px; }
+.kicker { font-size: 14px; font-weight: 600; color: var(--quiet); margin: 0 0 8px; }
+h2 { font-family: var(--display); font-weight: 600; font-size: clamp(30px, 4.4vw, 48px); line-height: 1.08; letter-spacing: -0.03em; margin: 0; max-width: 18ch; text-wrap: balance; }
+.prose { max-width: 40em; color: var(--ink2); margin: 16px 0 0; text-wrap: pretty; }
+.prose + .prose { margin-top: 12px; }
+figure { margin: 40px 0 0; }
+figure.panel { background: var(--paper); border-radius: 18px; padding: 24px; }
+section.wash figure.panel { background: var(--paper); }
+section:not(.wash) figure.panel { background: var(--wash); }
+canvas { display: block; width: 100%; }
+
+/* findings */
+.findings { list-style: none; padding: 0; margin: 32px 0 0; display: grid; gap: 0; counter-reset: f; }
+.findings li { display: grid; grid-template-columns: 40px minmax(0, 1fr); gap: 16px; padding: 22px 0; border-top: 1px solid var(--hair); counter-increment: f; }
+.findings li::before { content: counter(f); font-family: var(--display); font-weight: 600; font-size: 20px; color: var(--faint); }
+.findings b { display: block; font-size: 19px; font-weight: 600; letter-spacing: -0.02em; margin-bottom: 4px; }
+.findings p { margin: 0; color: var(--ink2); }
+
+/* plate */
+.plate { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 6px; }
+.cell { background: var(--paper); border-radius: 10px; padding: 6px 6px 8px; }
+.cell canvas { aspect-ratio: 3 / 4; }
+.cell .mono { display: block; color: var(--faint); font-size: 10px; line-height: 1.3; height: 2.6em; overflow: hidden; margin-top: 2px; text-transform: lowercase; }
+
+/* tables */
+.tablewrap { overflow-x: auto; margin-top: 32px; }
+table { border-collapse: collapse; width: 100%; font-size: 14px; min-width: 620px; }
+th { text-align: left; font-weight: 600; color: var(--quiet); font-size: 12px; padding: 0 12px 10px 0; border-bottom: 1px solid var(--hair); white-space: nowrap; }
+td { padding: 10px 12px 10px 0; border-bottom: 1px solid var(--hair); vertical-align: top; }
+td.r, th.r { text-align: right; font-variant-numeric: tabular-nums; }
+tr.total td { font-weight: 600; border-bottom: 0; }
+
+/* channel dictionary */
+.dict { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px 40px; margin-top: 32px; }
+.grp { min-width: 0; }
+.grp h3 { font-size: 15px; font-weight: 600; margin: 16px 0 6px; letter-spacing: -0.01em; }
+.grp h3 small { color: var(--faint); font-weight: 400; margin-left: 6px; }
+.ch { display: grid; grid-template-columns: minmax(0, 9.5em) minmax(0, 1fr) auto; gap: 10px; align-items: center; padding: 5px 0; border-top: 1px solid var(--hair); font-size: 13px; }
+.ch .n { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.ch .n i { font-style: normal; display: inline-block; width: 7px; height: 7px; border-radius: 50%; background: var(--ink); margin-right: 6px; vertical-align: 1px; }
+.ch .n i.off { background: transparent; box-shadow: inset 0 0 0 1px var(--ghost); }
+.ch svg { width: 100%; height: 10px; display: block; }
+.ch .v { color: var(--quiet); text-align: right; font-family: var(--mono); font-size: 11px; white-space: nowrap; min-width: 7.5em; }
+.legend { display: flex; gap: 20px; flex-wrap: wrap; color: var(--quiet); font-size: 13px; margin-top: 16px; }
+.legend i { display: inline-block; width: 7px; height: 7px; border-radius: 50%; background: var(--ink); margin-right: 6px; vertical-align: 1px; }
+.legend i.off { background: transparent; box-shadow: inset 0 0 0 1px var(--ghost); }
+
+/* bars */
+.bars { display: grid; gap: 10px; margin-top: 8px; }
+.brow { display: grid; grid-template-columns: minmax(0, 15em) minmax(0, 1fr) 4.5em; gap: 12px; align-items: center; font-size: 14px; }
+.brow .t { height: 22px; background: var(--wash); border-radius: 6px; position: relative; overflow: hidden; }
+section:not(.wash) .brow .t { background: var(--paper); }
+.brow .t span { position: absolute; inset: 0 auto 0 0; background: var(--ink); border-radius: 6px; }
+.brow .t span.light { background: var(--faint); }
+.brow .v { text-align: right; font-family: var(--mono); font-size: 12px; color: var(--ink2); }
+.two { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px; }
+.two > * { min-width: 0; }
+h4 { font-size: 15px; font-weight: 600; margin: 0 0 12px; letter-spacing: -0.01em; }
+
+/* players */
+.players { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+.players > div { min-width: 0; }
+.players canvas { aspect-ratio: 3 / 4; background: var(--paper); border-radius: 12px; cursor: pointer; }
+.players .mono { color: var(--quiet); display: block; margin-top: 8px; }
+.chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 20px; }
+.chips button { font: inherit; font-size: 13px; border: 1px solid var(--hair); background: var(--paper); color: var(--ink); border-radius: 980px; padding: 6px 14px; cursor: pointer; }
+.chips button[aria-pressed="true"] { background: var(--ink); color: var(--paper); border-color: var(--ink); }
+.chips button:focus-visible, .players canvas:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
+.chips button small { opacity: .6; margin-left: 4px; }
+.solo { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 32px; align-items: center; }
+.solo canvas { aspect-ratio: 4 / 5; background: var(--paper); border-radius: 12px; cursor: pointer; }
+section:not(.wash) .solo canvas, section:not(.wash) .players canvas { background: var(--wash); }
+.big { font-family: var(--display); font-size: 44px; font-weight: 600; letter-spacing: -0.03em; line-height: 1.05; }
+.big small { font-size: 17px; color: var(--quiet); font-weight: 400; letter-spacing: -0.01em; margin-left: 6px; }
+.kv { display: grid; gap: 14px; margin-top: 8px; }
+.kv div span { display: block; color: var(--quiet); font-size: 14px; }
+
+/* charts */
+.chart svg { width: 100%; height: auto; display: block; overflow: visible; }
+.chart text { font-family: var(--mono); font-size: 11px; fill: var(--quiet); }
+.chart .lbl { font-family: var(--sans); font-size: 12px; fill: var(--ink2); }
+
+/* code */
+.cmd { display: flex; gap: 8px; align-items: center; background: var(--ink); color: #f5f5f7; border-radius: 12px; padding: 14px 16px; margin-top: 24px; overflow-x: auto; }
+.cmd code { font-family: var(--mono); font-size: 13px; white-space: nowrap; flex: 1; }
+.cmd button { font: inherit; font-size: 12px; background: #424245; color: #fff; border: 0; border-radius: 980px; padding: 5px 12px; cursor: pointer; flex: none; }
+
+footer { border-top: 1px solid var(--hair); margin-top: 96px; padding-block: 28px calc(40px + env(safe-area-inset-bottom, 0px)); color: var(--quiet); font-size: 12px; }
+footer .wrap > div { display: flex; gap: 20px; flex-wrap: wrap; justify-content: space-between; }
+footer p { margin: 14px 0 0; max-width: 60em; }
+.pending { color: var(--faint); font-size: 14px; margin-top: 24px; }
+
+@media (max-width: 760px) {
+  header.hero { padding-block: 48px 24px; }
+  .film { border-radius: 14px; margin-top: 28px; }
+  .stats { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px; }
+  .stats .stat:last-child { grid-column: span 2; }
+  section { padding-block: 64px 4px; }
+  section.wash { padding-block: 64px; margin-top: 64px; }
+  .plate { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .dict, .two, .solo { grid-template-columns: 1fr; }
+  .players { grid-template-columns: 1fr 1fr; }
+  .players > div:nth-child(3) { grid-column: span 2; width: calc(50% - 6px); justify-self: center; }
+  .brow { grid-template-columns: minmax(0, 9.5em) minmax(0, 1fr) 4em; font-size: 13px; }
+  figure.panel { padding: 14px; border-radius: 14px; }
+  .big { font-size: 36px; }
+}
+@media (prefers-reduced-motion: reduce) { * { scroll-behavior: auto !important; } }
+</style>
+</head>
+<body>
+
+<div class="bar"><div class="wrap">
+  <svg viewBox="-64 -4 128 126.4" role="img" aria-label="Pine"><g fill="#1d1d1f"><path d="M1.05 4.55 C8.01 33.25 19.77 48.88 33.78 55.35 C34.86 55.85 34.70 57.45 33.52 57.65 C24.90 59.05 13.72 61.68 1.57 64.94 C0.54 65.21 -0.55 65.21 -1.58 64.93 C-13.73 61.68 -24.90 59.05 -33.52 57.650 C-34.70 57.45 -34.86 55.85 -33.78 55.35 C-19.77 48.88 -8.01 33.25 -1.05 4.55 C-0.78 3.45 0.78 3.45 1.05 4.55 Z"/><path d="M19.28 68.87 C29.04 92.32 41.73 102.99 55.48 104.89 C56.62 105.04 56.91 106.59 55.85 107.04 C20.16 122.19 -20.18 122.19 -55.87 107.03 C-56.92 106.58 -56.62 105.04 -55.48 104.89 C-41.73 102.98 -29.05 92.32 -19.29 68.88 C-18.80 67.72 -17.57 67.06 -16.36 67.35 C-11.94 68.42 -7.54 69.56 -3.15 70.73 C-1.08 71.28 1.08 71.28 3.15 70.73 C7.54 69.56 11.94 68.42 16.36 67.35 C17.57 67.06 18.80 67.72 19.28 68.87 Z"/></g></svg>
+  <b>Pine Engine</b><span>Research preview</span>
+</div></div>
+
+<main>
+<header class="hero"><div class="wrap">
+  <p class="eyebrow">Pine · Research preview · October 2026</p>
+  <h1>Human movement in. Humanoid motion out.</h1>
+  <p class="lede" id="lede">A working proof of concept of Pine's data engine. Public full-body motion capture, retargeted onto a full-size humanoid and used to pretrain a motion model. EXO-1 recordings enter the same pipe.</p>
+  <figure class="film" id="film" tabindex="0" role="button" aria-label="Pause film">
+    <video id="video" muted loop playsinline disablepictureinpicture preload="metadata" poster="../poster.jpg" aria-label="EXO-1 joint and cuff assembly, rendered film"><source src="../film.mp4" type="video/mp4"></video>
+  </figure>
+  <p class="caption">EXO-1, the wearable that records how people move. Tap the film to pause.</p>
+  <div class="stats" id="stats"></div>
+</div></header>
+
+<section id="plate-s"><div class="wrap">
+  <p class="kicker">The data</p>
+  <h2>Real people, recorded with optical motion capture.</h2>
+  <p class="prose" id="plate-prose"></p>
+  <figure class="panel"><div class="plate" id="plate"></div>
+  <figcaption class="caption"><b>Figure 1.</b> Twenty-four takes from the training set, each the most active four seconds of its take, played at real speed. Trails follow the hands and feet for the last 0.75 s.</figcaption></figure>
+</div></section>
+
+<section id="findings-s"><div class="wrap">
+  <p class="kicker">Findings</p>
+  <h2>What this first run shows.</h2>
+  <ol class="findings" id="findings"></ol>
+</div></section>
+
+<section class="wash" id="frame-s"><div class="wrap">
+  <p class="kicker">What is in a frame</p>
+  <h2>Thirty-one numbers, twenty times a second.</h2>
+  <p class="prose">The public sets were captured with reflective markers and cameras. CMU used 41 markers at 120 Hz; Bandai Namco delivers studio capture at 30 fps. Each take is solved to a skeleton, which we fit onto the robot. After that, every frame is the robot's own state: 23 joint angles, the direction of gravity seen from the pelvis, how fast the body turns, how fast it moves, and how high the pelvis is.</p>
+  <p class="prose">Public motion capture never contains force or joint torque. A powered suit measures those from its own motors, for free, which is the one channel no public dataset can give a humanoid.</p>
+  <div class="dict" id="dict"></div>
+  <div class="legend"><span><i></i>Measured directly by EXO-1 (assumed: hip, knee and ankle encoders and a pelvis IMU)</span><span><i class="off"></i>Inferred by the model</span><span>Bar: 5th to 95th percentile over the training set</span></div>
+  <figure class="panel" style="margin-top:40px">
+    <div class="two">
+      <div><h4>What the model needs</h4><p class="caption" style="margin:0 0 14px">Error when one group of channels is hidden, as a multiple of the error with everything visible.</p><div class="bars" id="hide"></div></div>
+      <div><h4>Which suit to build</h4><p class="caption" style="margin:0 0 14px">Error when the model sees only these sensors, as a multiple of the error with everything visible.</p><div class="bars" id="suits"></div></div>
+    </div>
+    <figcaption class="caption" id="ablation-cap"></figcaption>
+  </figure>
+  <div class="tablewrap"><table id="sources"></table></div>
+</div></section>
+
+<section id="retarget-s"><div class="wrap">
+  <p class="kicker">Retarget</p>
+  <h2>One take, any humanoid.</h2>
+  <p class="prose" id="rt-prose"></p>
+  <figure class="panel">
+    <div class="players">
+      <div><canvas id="c-human" tabindex="0" aria-label="Human motion capture"></canvas><span class="mono">Human, from motion capture</span></div>
+      <div><canvas id="c-robot" tabindex="0" aria-label="Primary robot"></canvas><span class="mono" id="l-robot"></span></div>
+      <div><canvas id="c-g1" tabindex="0" aria-label="Second robot"></canvas><span class="mono" id="l-g1"></span></div>
+    </div>
+    <div class="chips" id="chips"></div>
+    <figcaption class="caption"><b>Figure 2.</b> The same take, the human and both robots drawn at true relative size. Tap a figure to pause. Takes marked new person come from people the model never trains on.</figcaption>
+  </figure>
+</div></section>
+
+<section class="wash" id="model-s"><div class="wrap">
+  <p class="kicker">Pretrain</p>
+  <h2>A small transformer that learns how bodies move.</h2>
+  <p class="prose">Each token is one frame. The model reads 1.6 s of motion and predicts the next 200 ms of the whole body. During training, groups of sensors are hidden at random, so the same model learns to forecast and to fill in what a suit does not measure. No labels are needed, the same way language models learn from raw text.</p>
+  <div class="two" style="margin-top:40px">
+    <figure class="panel" style="margin:0"><h4>Model size</h4><div class="chart" id="ch-model"></div><figcaption class="caption" id="cap-model"></figcaption></figure>
+    <figure class="panel" style="margin:0"><h4>Hours of data</h4><div class="chart" id="ch-data"></div><figcaption class="caption" id="cap-data"></figcaption></figure>
+  </div>
+  <figure class="panel"><h4>Seen people versus new people</h4><div class="chart" id="ch-people"></div><figcaption class="caption" id="cap-people"></figcaption></figure>
+</div></section>
+
+<section id="suit-s"><div class="wrap">
+  <p class="kicker">From suit to body</p>
+  <h2>Leg sensors in, a whole body out.</h2>
+  <div class="solo" style="margin-top:32px">
+    <canvas id="c-exo" tabindex="0" aria-label="Upper body inferred from leg sensors"></canvas>
+    <div>
+      <p class="prose" style="margin-top:0" id="exo-prose"></p>
+      <div class="kv" id="exo-kv"></div>
+      <p class="caption"><b>Figure 6.</b> Solid: what the suit measures. Dashed: the upper body the model infers from it. Grey: the true upper body.</p>
+    </div>
+  </div>
+</div></section>
+
+<section class="wash" id="forecast-s"><div class="wrap">
+  <p class="kicker">Forecast</p>
+  <h2>The next 200 ms work. Running on its own needs work.</h2>
+  <div class="solo" style="margin-top:32px">
+    <canvas id="c-roll" tabindex="0" aria-label="Model forecast"></canvas>
+    <div><p class="prose" style="margin-top:0" id="roll-prose"></p><div class="chart" id="ch-roll"></div><p class="caption" id="cap-roll"></p></div>
+  </div>
+  <figure class="panel" id="pi-panel"><h4>Ideas from robot-learning papers, same budget, same test</h4><div class="tablewrap" style="margin-top:8px"><table id="pi"></table></div><figcaption class="caption" id="cap-pi"></figcaption></figure>
+</div></section>
+
+<section id="scale-s"><div class="wrap">
+  <p class="kicker">Next</p>
+  <h2>The same pipe on GPUs.</h2>
+  <p class="prose">Everything above ran on a two-core laptop-class CPU. The GPU version of the trainer is a PyTorch copy of this model, checked gradient for gradient against the CPU reference before it spends GPU time. It adds the larger public sets below, then trains a ladder of models up to a few tens of millions of parameters with a prediction registered before the largest run, as here.</p>
+  <div class="tablewrap"><table id="gpu"></table></div>
+  <div class="cmd"><code id="cmd">python3 runpod/launch.py plan</code><button id="copy" type="button">Copy</button></div>
+  <p class="caption" id="gpu-cap">The launcher prints the GPU, hours and cost and asks for confirmation before anything bills.</p>
+</div></section>
+</main>
+
+<footer><div class="wrap">
+  <div><span>Pine 2026</span><span><a href="../">Pine</a> &nbsp; <a href="./">One page</a> &nbsp; <a href="https://lithe.site/">Waitlist</a></span></div>
+  <p>Motion data: CMU Graphics Lab Motion Capture Database (mocap.cs.cmu.edu), created with funding from NSF EIA-0196217, in the BVH conversion by B. Hahne; Bandai Namco Research Motion Datasets 1 and 2 (CC BY-NC 4.0). Robot models: Unitree H2 and G1 from unitreerobotics/unitree_mujoco. Results are from a CPU proof of concept and are not a product claim.</p>
+</div></footer>
+
+<script>
+(() => {
+"use strict";
+const $ = (s) => document.querySelector(s);
+const REDUCE = matchMedia("(prefers-reduced-motion: reduce)").matches;
+const fmt = (x, d = 0) => Number(x).toLocaleString("en-US", { minimumFractionDigits: d, maximumFractionDigits: d });
+const INK = "#1d1d1f", QUIET = "#86868b", GHOST = "#c7c7cc", HAIR = "#d2d2d7";
+
+/* film: same behaviour as the Pine site */
+const video = $("#video"), film = $("#film");
+const syncFilm = () => film.setAttribute("aria-label", video.paused ? "Play film" : "Pause film");
+film.addEventListener("click", () => (video.paused ? video.play() : video.pause()));
+film.addEventListener("keydown", (e) => { if (e.key === " " || e.key === "Enter") { e.preventDefault(); video.paused ? video.play() : video.pause(); } });
+video.addEventListener("play", syncFilm); video.addEventListener("pause", syncFilm);
+if (!REDUCE) video.play().catch(syncFilm);
+
+/* ---------------------------------------------------------------- skeleton drawing */
+let EDGES = [], KP = {};
+const LEGSET = new Set(["pelvis", "l_hip", "r_hip", "l_knee", "r_knee", "l_ankle", "r_ankle", "l_toe", "r_toe"]);
+const TRAIL = ["l_wrist", "r_wrist", "l_ankle", "r_ankle"];
+const YAW = -0.62, PITCH = 0.2, cy = Math.cos(YAW), sy = Math.sin(YAW), cp = Math.cos(PITCH), sp = Math.sin(PITCH);
+
+function follow(arr, n) {            // smoothed pelvis track so walkers stay in frame
+  const px = new Float32Array(n), py = new Float32Array(n);
+  for (let f = 0; f < n; f++) {
+    let sx = 0, sy2 = 0, c = 0;
+    for (let g = Math.max(0, f - 10); g <= Math.min(n - 1, f + 10); g++) { sx += arr[g * 57]; sy2 += arr[g * 57 + 1]; c++; }
+    px[f] = sx / c; py[f] = sy2 / c;
+  }
+  return { px, py };
+}
+function P(arr, f, k, ox, oy) {      // world cm -> view (x right, y up) relative to a follow centre
+  const i = (f * 19 + k) * 3, x = arr[i] - ox, y = arr[i + 1] - oy, z = arr[i + 2];
+  const xr = x * cy - y * sy, yr = x * sy + y * cy;
+  return [xr, z * cp - yr * sp];
+}
+class Figure {
+  constructor(canvas, opts) {
+    this.c = canvas; this.o = Object.assign({ height: 210, ground: 0.86, center: 0.5 }, opts);
+    this.ctx = canvas.getContext("2d"); this.size(); this.layers = []; this.n = 1; this.f = 0;
+  }
+  size() {
+    const r = this.c.getBoundingClientRect(), d = Math.min(2, window.devicePixelRatio || 1);
+    this.w = Math.max(10, r.width); this.h = Math.max(10, r.height);
+    this.c.width = Math.round(this.w * d); this.c.height = Math.round(this.h * d);
+    this.ctx.setTransform(d, 0, 0, d, 0, 0);
+    this.s = (this.h * this.o.ground * 0.95) / this.o.height;
+  }
+  set(layers, n, track) { this.layers = layers; this.n = n; this.track = track; this.f = Math.min(this.f, n - 1); }
+  xy(v) { return [this.w * this.o.center + v[0] * this.s, this.h * this.o.ground - v[1] * this.s]; }
+  draw(f) {
+    const g = this.ctx, t = this.track; g.clearRect(0, 0, this.w, this.h);
+    const ox = t.px[f], oy = t.py[f];
+    // ground: a soft shadow and ticks that move as the body travels
+    g.fillStyle = "rgba(0,0,0,0.06)"; g.beginPath();
+    g.ellipse(this.w * this.o.center, this.h * this.o.ground + 2, 28 * this.s, 6 * this.s, 0, 0, Math.PI * 2); g.fill();
+    g.strokeStyle = HAIR; g.lineWidth = 1;
+    for (let k = -6; k <= 6; k++) {
+      const gx = Math.round((ox / 50)) * 50 + k * 50;
+      const a = P([gx, oy, 0], 0, 0, ox, oy); const q = this.xy(a);
+      g.beginPath(); g.moveTo(q[0], q[1]); g.lineTo(q[0] + 4, q[1]); g.stroke();
+    }
+    for (const L of this.layers) {
+      const arr = L.data, ff = Math.min(f, (arr.length / 57 | 0) - 1);
+      if (L.trail) {
+        for (const name of TRAIL) {
+          const k = KP[name]; g.lineWidth = 1.2;
+          for (let b = Math.max(0, ff - 15); b < ff; b++) {
+            const p0 = this.xy(P(arr, b, k, ox, oy)), p1 = this.xy(P(arr, b + 1, k, ox, oy));
+            g.strokeStyle = `rgba(29,29,31,${(0.32 * (b - ff + 16) / 16).toFixed(3)})`;
+            g.beginPath(); g.moveTo(p0[0], p0[1]); g.lineTo(p1[0], p1[1]); g.stroke();
+          }
+        }
+      }
+      g.lineCap = "round"; g.lineJoin = "round";
+      for (const [a, b] of EDGES) {
+        if (L.only && !L.only(a, b)) continue;
+        const p = this.xy(P(arr, ff, a, ox, oy)), q = this.xy(P(arr, ff, b, ox, oy));
+        g.strokeStyle = L.color; g.lineWidth = L.width; g.setLineDash(L.dash || []);
+        g.beginPath(); g.moveTo(p[0], p[1]); g.lineTo(q[0], q[1]); g.stroke();
+      }
+      g.setLineDash([]);
+      if (L.dots) {
+        g.fillStyle = L.color;
+        for (let k = 0; k < 19; k++) { const p = this.xy(P(arr, ff, k, ox, oy)); g.beginPath(); g.arc(p[0], p[1], L.dots, 0, Math.PI * 2); g.fill(); }
+        const h = this.xy(P(arr, ff, KP.head, ox, oy)); g.beginPath(); g.arc(h[0], h[1] - 5 * this.s, 6 * this.s, 0, Math.PI * 2);
+        g.strokeStyle = L.color; g.lineWidth = L.width; g.stroke();
+      }
+    }
+    if (this.o.overlay) this.o.overlay(g, f, this);
+  }
+}
+
+/* one clock for every figure: 20 fps, only while on screen */
+const players = new Set(); let last = 0;
+function tick(t) {
+  if (t - last >= 50) {
+    last = t;
+    for (const p of players) if (p.visible && !p.paused) { p.fig.f = (p.fig.f + 1) % p.fig.n; p.fig.draw(p.fig.f); }
+  }
+  requestAnimationFrame(tick);
+}
+function register(fig, el) {
+  const p = { fig, visible: false, paused: REDUCE }; players.add(p);
+  new IntersectionObserver((es) => { p.visible = es[0].isIntersecting; }, { rootMargin: "100px" }).observe(el);
+  const toggle = () => { p.paused = !p.paused; };
+  el.addEventListener("click", toggle);
+  el.addEventListener("keydown", (e) => { if (e.key === " " || e.key === "Enter") { e.preventDefault(); toggle(); } });
+  return p;
+}
+addEventListener("resize", () => { for (const p of players) { p.fig.size(); p.fig.draw(p.fig.f); } });
+
+/* ---------------------------------------------------------------- charts */
+function svgEl(tag, attrs, parent) {
+  const e = document.createElementNS("http://www.w3.org/2000/svg", tag);
+  for (const k in attrs) e.setAttribute(k, attrs[k]);
+  if (parent) parent.appendChild(e); return e;
+}
+function chart(el, { W, H, x, y, xlog = true, ylog = false, xticks, yticks, xfmt, yfmt, xlabel, ylabel }) {
+  W = W || Math.max(280, Math.round(el.clientWidth)); H = H || Math.round(Math.min(300, Math.max(220, W * 0.62)));
+  const m = { l: 46, r: 14, t: 12, b: 40 };
+  const s = svgEl("svg", { viewBox: `0 0 ${W} ${H}`, role: "img" }, null);
+  const sx = (v) => m.l + ((xlog ? Math.log(v) : v) - (xlog ? Math.log(x[0]) : x[0])) / ((xlog ? Math.log(x[1]) : x[1]) - (xlog ? Math.log(x[0]) : x[0])) * (W - m.l - m.r);
+  const sy2 = (v) => H - m.b - ((ylog ? Math.log(v) : v) - (ylog ? Math.log(y[0]) : y[0])) / ((ylog ? Math.log(y[1]) : y[1]) - (ylog ? Math.log(y[0]) : y[0])) * (H - m.t - m.b);
+  for (const v of yticks) {
+    svgEl("line", { x1: m.l, x2: W - m.r, y1: sy2(v), y2: sy2(v), stroke: v === yticks[0] ? HAIR : "#ececf0", "stroke-width": 1 }, s);
+    const t = svgEl("text", { x: m.l - 8, y: sy2(v) + 4, "text-anchor": "end" }, s); t.textContent = yfmt(v);
+  }
+  for (const v of xticks) {
+    svgEl("line", { x1: sx(v), x2: sx(v), y1: H - m.b, y2: H - m.b + 4, stroke: HAIR }, s);
+    const t = svgEl("text", { x: sx(v), y: H - m.b + 17, "text-anchor": "middle" }, s); t.textContent = xfmt(v);
+  }
+  const xl = svgEl("text", { x: (m.l + W - m.r) / 2, y: H - 6, "text-anchor": "middle", class: "lbl" }, s); xl.textContent = xlabel;
+  const yl = svgEl("text", { x: 12, y: (m.t + H - m.b) / 2, "text-anchor": "middle", class: "lbl", transform: `rotate(-90 12 ${(m.t + H - m.b) / 2})` }, s); yl.textContent = ylabel;
+  el.appendChild(s);
+  return { s, sx, sy: sy2, m, W, H };
+}
+const path = (pts) => pts.map((p, i) => (i ? "L" : "M") + p[0].toFixed(1) + " " + p[1].toFixed(1)).join(" ");
+function label(c, xv, yv, txt, dx = 8, dy = 4, anchor = "start", cls = "lbl") {
+  const t = svgEl("text", { x: c.sx(xv) + dx, y: c.sy(yv) + dy, "text-anchor": anchor, class: cls }, c.s); t.textContent = txt; return t;
+}
+function bars(el, rows, max) {
+  el.innerHTML = "";
+  for (const r of rows) {
+    const d = document.createElement("div"); d.className = "brow";
+    d.innerHTML = `<div>${r.name}</div><div class="t"><span class="${r.light ? "light" : ""}" style="width:${Math.min(100, 100 * r.value / max).toFixed(1)}%"></span></div><div class="v">${r.text}</div>`;
+    el.appendChild(d);
+  }
+}
+
+/* ---------------------------------------------------------------- page */
+fetch("data.json").then((r) => r.json()).then(render).catch((e) => {
+  document.querySelector("main").insertAdjacentHTML("beforeend", `<div class="wrap"><p class="pending">The data file did not load (${e}). Reload the page to try again.</p></div>`);
+});
+
+function render(D) {
+  KP = Object.fromEntries(D.skeleton.keypoints.map((k, i) => [k, i]));
+  EDGES = D.skeleton.edges;
+  const ds = D.dataset, R = D.robot, R2 = D.robot2, rt = D.retarget[R.id], rt2 = D.retarget[R2.id];
+  const runs = D.runs || [], fits = D.fits, byKey = (s, f = 1) => runs.find((r) => r.size === s && Math.abs(r.fraction - f) < 1e-9);
+  const cmu = ds.sources.find((s) => s.id === "cmu");
+
+  $("#lede").textContent = `A working proof of concept of Pine's data engine. ${fmt(ds.hours, 1)} hours of public full-body motion capture, retargeted onto a full-size ${R.name} and used to pretrain a motion model. EXO-1 recordings enter the same pipe.`;
+  $("#stats").innerHTML = [
+    [fmt(ds.hours, 1) + " h", "of full-body motion"], [fmt(ds.takes_kept), "takes kept of " + fmt(ds.takes_in)],
+    [fmt(ds.people), "people"], [fmt(ds.frames), "frames at 20 fps"], ["2", "humanoids, one pipe"],
+  ].map(([b, s]) => `<div class="stat"><b class="num">${b}</b><span>${s}</span></div>`).join("");
+  $("#plate-prose").textContent = `${fmt(ds.takes_kept)} takes from ${cmu.subjects} CMU subjects and 3 Bandai Namco actors: walking, running, sport, dance, fighting, climbing, and everyday movement. Quality checks dropped ${fmt(ds.takes_in - ds.takes_kept)} takes: ${Object.entries(ds.rejects).map(([k, v]) => `${fmt(v)} ${k}`).join(", ")}.`;
+
+  /* figure 1: the plate */
+  const plate = $("#plate");
+  for (const w of D.wall) {
+    const cell = document.createElement("div"); cell.className = "cell";
+    cell.innerHTML = `<canvas aria-label="${w.desc}"></canvas><span class="mono">${w.desc}</span>`;
+    plate.appendChild(cell);
+    const fig = new Figure(cell.querySelector("canvas"), { height: 205, ground: 0.9 });
+    fig.set([{ data: w.human, color: INK, width: 1.6, dots: 0, trail: true }], w.frames, follow(w.human, w.frames));
+    fig.f = (w.frames * 0.37) | 0; fig.draw(fig.f); register(fig, cell.querySelector("canvas"));
+  }
+
+  /* findings */
+  const L = byKey(fits.model.prediction.size), S1 = byKey("S"), M = byKey("M");
+  const s64 = runs.find((r) => r.size === "S" && r.fraction < 0.02);
+  const gap = L.test.full / L.val.full;
+  const ch = D.channels, hide = Object.fromEntries(ch.hide_one_group.map((h) => [h.group, h.loss]));
+  const suit = ch.suits[0], suitArms = ch.suits.find((s) => s.groups.includes("arms") && s.groups.length === 3);
+  const pi = D.pi_pass || null;
+  const items = [
+    ["Scaling is predictable.", `We fit four model sizes, wrote down the loss of a fifth before training it (${fmt(fits.model.prediction.loss, 4)}, 80% interval ${fmt(fits.model.prediction.lo, 3)} to ${fmt(fits.model.prediction.hi, 3)}), then trained it: ${fmt(fits.model.observed.loss, 4)}.`],
+    ["At this size, data is the limit.", `Past ${fmt(M.params / 1000)}k parameters the model stops improving on ${fmt(ds.splits_hours.train, 1)} hours of training data. The same small model trained on 1/64 of the hours is ${fmt(100 * (s64.val.full / S1.val.full - 1))}% worse.`],
+    ["New people are the gap.", `People the model has never seen score ${fmt(gap, 1)}× worse than unseen takes of familiar people. That is the gap many wearers close, and the case for a product people choose to wear.`],
+    ["Legs carry most of the signal.", `Hiding the leg joints makes the model ${fmt(hide.legs / ch.full_loss, 1)}× worse, more than any other group. With only the assumed EXO-1 sensors it is ${fmt(suit.loss / ch.full_loss, 1)}× the full-body error; adding arm encoders brings that to ${fmt(suitArms.loss / ch.full_loss, 2)}×.`],
+  ];
+  if (pi && pi.best) items.push(["Small ideas from robot-learning papers help.", pi.best]);
+  $("#findings").innerHTML = items.map(([b, p]) => `<li><div><b>${b}</b><p>${p}</p></div></li>`).join("");
+
+  /* what is in a frame */
+  const groupNames = { legs: "Legs", waist: "Waist", arms: "Arms", imu: "Pelvis IMU", root: "Pelvis motion" };
+  const minus = (t) => t.replace(/^-/, "−");
+  const rangeTxt = (c) => { const d = c.unit === "deg" || c.unit === "deg/s" ? 0 : 2; const u = { deg: "°", "deg/s": "°/s", "m/s": " m/s", m: " m", g: "" }[c.unit];
+    return `${minus(fmt(c.p5, d))} to ${minus(fmt(c.p95, d))}${u}`; };
+  const pretty = (n) => n.replace(/_/g, " ").replace(/^grav /, "gravity ").replace("vel ", "velocity ");
+  const dict = $("#dict");
+  for (const g of ["legs", "waist", "arms", "imu", "root"]) {
+    const cs = ch.channels.filter((c) => c.group === g);
+    const lo = Math.min(...cs.map((c) => c.p5)), hi = Math.max(...cs.map((c) => c.p95)), span = hi - lo || 1;
+    const div = document.createElement("div"); div.className = "grp";
+    div.innerHTML = `<h3>${groupNames[g]}<small>${cs.length} channels${g === "root" ? ", derived from the solved pose" : ""}</small></h3>` + cs.map((c) => {
+      const a = ((c.p5 - lo) / span) * 100, b = ((c.p95 - lo) / span) * 100, m = ((c.p50 - lo) / span) * 100;
+      return `<div class="ch"><div class="n"><i class="${c.suit ? "" : "off"}"></i>${pretty(c.name)}</div><svg viewBox="0 0 100 10" preserveAspectRatio="none"><rect x="0" y="4.5" width="100" height="1" fill="${HAIR}"/><rect x="${a.toFixed(1)}" y="3" width="${Math.max(0.8, b - a).toFixed(1)}" height="4" rx="2" fill="${c.suit ? INK : QUIET}"/><rect x="${(m - 0.4).toFixed(1)}" y="1" width="0.8" height="8" fill="${INK}"/></svg><div class="v">${rangeTxt(c)}</div></div>`;
+    }).join("");
+    dict.appendChild(div);
+  }
+  const rel = (v) => v / ch.full_loss;
+  const hmax = Math.max(...ch.hide_one_group.map((h) => rel(h.loss)), ...ch.suits.map((s) => rel(s.loss)));
+  bars($("#hide"), ch.hide_one_group.slice().sort((a, b) => b.loss - a.loss).map((h) => ({ name: `Hide ${groupNames[h.group].toLowerCase()}`, value: rel(h.loss), text: fmt(rel(h.loss), 2) + "×" })), hmax);
+  bars($("#suits"), ch.suits.map((s, i) => ({ name: s.name.replace("EXO-1 as assumed: ", "EXO-1: "), value: rel(s.loss), text: fmt(rel(s.loss), 2) + "×", light: i !== 0 })), hmax);
+  $("#ablation-cap").innerHTML = `<b>Figure 3.</b> Measured with the trained ${fits.model.prediction.size} model on held-out takes. With nothing visible the error is ${fmt(rel(ch.nothing_loss), 1)}×. The sensor layout of EXO-1 is an assumption for this study.`;
+  $("#sources").innerHTML = `<thead><tr><th>Source</th><th>Format</th><th class="r">Input rate</th><th class="r">Takes</th><th class="r">Hours</th><th class="r">People</th><th>Licence</th></tr></thead><tbody>` +
+    ds.sources.map((s) => `<tr><td><a href="${s.url}">${s.name}</a></td><td>${s.fmt.split(" (")[0]}</td><td class="r">${s.fps_in} fps</td><td class="r">${fmt(s.takes)}</td><td class="r">${fmt(s.hours, 1)}</td><td class="r">${s.id === "cmu" ? s.subjects : "3 actors"}</td><td>${s.license.split(";")[0]}</td></tr>`).join("") +
+    `<tr class="total"><td>Total</td><td></td><td class="r">20 fps out</td><td class="r">${fmt(ds.takes_kept)}</td><td class="r">${fmt(ds.hours, 1)}</td><td class="r">${fmt(ds.people)}</td><td></td></tr></tbody>`;
+
+  /* figure 2: retarget players */
+  $("#rt-prose").textContent = `Every frame is fitted onto Unitree's own robot model by inverse kinematics: ${fmt(rt.frames)} frames onto the ${R.name} (${R.dof} joints, ${R.height_m} m) in ${fmt(rt.wall_s / 60)} minutes on two CPU cores, and again onto the ${R2.name} (${R2.dof} joints, ${R2.height_m} m). On the ${R.name} the feet land within ${fmt(rt.feet_err_cm, 1)} cm of the human's on average, every keypoint within ${fmt(rt.mean_err_cm, 1)} cm, and 95% within ${fmt(rt.p95_err_cm, 1)} cm. Wrists and the head are held still: the public data has no hand or face markers.`;
+  $("#l-robot").textContent = `${R.name}, ${R.dof} joints`; $("#l-g1").textContent = `${R2.name}, ${R2.dof} joints`;
+  const figs = { h: new Figure($("#c-human"), { height: 215 }), r: new Figure($("#c-robot"), { height: 215 }), g: new Figure($("#c-g1"), { height: 215 }) };
+  const pl = { h: register(figs.h, $("#c-human")), r: register(figs.r, $("#c-robot")), g: register(figs.g, $("#c-g1")) };
+  function pick(i) {
+    const c = D.clips[i], tr = follow(c.human, c.frames);
+    figs.h.set([{ data: c.human, color: QUIET, width: 1.6, dots: 1.6, trail: true }], c.frames, tr);
+    figs.r.set([{ data: c.robot, color: INK, width: 2.4, dots: 1.8, trail: true }], c.frames, follow(c.robot, c.frames));
+    figs.g.set([{ data: c.g1, color: INK, width: 2.2, dots: 1.6, trail: true }], c.frames, follow(c.g1, c.frames));
+    for (const k in figs) { figs[k].f = 0; figs[k].draw(REDUCE ? (c.frames / 2) | 0 : 0); }
+    document.querySelectorAll("#chips button").forEach((b, j) => b.setAttribute("aria-pressed", String(j === i)));
+  }
+  $("#chips").innerHTML = D.clips.map((c, i) => `<button type="button" aria-pressed="false">${c.desc}${c.split === "test" ? "<small>new person</small>" : ""}</button>`).join("");
+  document.querySelectorAll("#chips button").forEach((b, i) => b.addEventListener("click", () => pick(i)));
+  pick(0);
+
+  /* figure 4: model size */
+  {
+    const pts = fits.model.points, pr = fits.model.prediction, ob = fits.model.observed;
+    const c = chart($("#ch-model"), { x: [6e3, 2e6], y: [0.08, 0.3], ylog: true, xticks: [1e4, 1e5, 1e6], yticks: [0.08, 0.1, 0.15, 0.2, 0.3],
+      xfmt: (v) => (v >= 1e6 ? v / 1e6 + "M" : v / 1e3 + "k"), yfmt: (v) => v.toFixed(2), xlabel: "parameters", ylabel: "validation loss" });
+    const law = (n) => fits.model.E + fits.model.A * Math.pow(n, -fits.model.alpha);
+    const curve = []; for (let n = 8e3; n <= 2e6; n *= 1.08) curve.push([c.sx(n), c.sy(Math.min(0.3, law(n)))]);
+    svgEl("path", { d: path(curve), fill: "none", stroke: QUIET, "stroke-width": 1.2 }, c.s);
+    svgEl("line", { x1: c.sx(pr.params), x2: c.sx(pr.params), y1: c.sy(pr.lo), y2: c.sy(pr.hi), stroke: INK, "stroke-width": 1.2, "stroke-dasharray": "3 3" }, c.s);
+    for (const v of [pr.lo, pr.hi]) svgEl("line", { x1: c.sx(pr.params) - 5, x2: c.sx(pr.params) + 5, y1: c.sy(v), y2: c.sy(v), stroke: INK, "stroke-width": 1.2 }, c.s);
+    for (const p of pts) { svgEl("circle", { cx: c.sx(p.params), cy: c.sy(p.loss), r: 4, fill: INK }, c.s); label(c, p.params, p.loss, p.size, 7, -7, "start"); }
+    if (ob) svgEl("circle", { cx: c.sx(ob.params), cy: c.sy(ob.loss), r: 6, fill: "none", stroke: INK, "stroke-width": 1.6 }, c.s);
+    label(c, pr.params, pr.lo, `${pr.size}, predicted before training`, -10, 4, "end");
+    $("#cap-model").innerHTML = `<b>Figure 4.</b> Dots: the four sizes the law was fit on (${fits.model.form}). Dashed bar: the 80% interval registered for ${pr.size} at ${fits.model.registered_at.slice(11, 16)} before it trained. Ring: what ${pr.size} scored, ${fmt(ob.loss, 4)}.`;
+  }
+  /* figure 5: hours of data */
+  {
+    const dp = fits.data.points;
+    const c = chart($("#ch-data"), { x: [0.1, 1000], y: [0.08, 0.3], ylog: true, xticks: [0.1, 1, 10, 100, 1000], yticks: [0.08, 0.1, 0.15, 0.2, 0.3],
+      xfmt: (v) => (v < 1 ? v : fmt(v)), yfmt: (v) => v.toFixed(2), xlabel: "hours of training data", ylabel: "validation loss" });
+    const law = (h) => fits.data.E + fits.data.B * Math.pow(h, -fits.data.beta);
+    const fitp = [], ext = [];
+    for (let h = 0.12; h <= 1000; h *= 1.08) (h <= dp[dp.length - 1].hours ? fitp : ext).push([c.sx(h), c.sy(law(h))]);
+    svgEl("path", { d: path(fitp), fill: "none", stroke: QUIET, "stroke-width": 1.2 }, c.s);
+    svgEl("path", { d: path([fitp[fitp.length - 1], ...ext]), fill: "none", stroke: QUIET, "stroke-width": 1.2, "stroke-dasharray": "3 4" }, c.s);
+    for (const p of dp) svgEl("circle", { cx: c.sx(p.hours), cy: c.sy(p.loss), r: 4, fill: INK }, c.s);
+    label(c, 617, law(617), "HiPHI, 617 h", 0, -10, "middle");
+    svgEl("line", { x1: c.sx(617), x2: c.sx(617), y1: c.sy(law(617)) - 6, y2: c.sy(law(617)) + 6, stroke: INK }, c.s);
+    $("#cap-data").innerHTML = `<b>Figure 5.</b> The ${fits.data.size} model trained on 1/64, 1/16, 1/4 and all of the hours, fit to ${fits.data.form} (β = ${fmt(fits.data.beta, 2)}). Dashed: extrapolation, which flattens for a model this small; the GPU ladder tests it with larger models.`;
+  }
+  /* figure: seen vs new people */
+  {
+    const lad = runs.filter((r) => r.fraction === 1).sort((a, b) => a.params - b.params);
+    const c = chart($("#ch-people"), { H: 230, x: [6e3, 2e6], y: [0.08, 0.6], ylog: true, xticks: lad.map((r) => r.params), yticks: [0.1, 0.2, 0.3, 0.5],
+      xfmt: (v) => { const r = lad.find((q) => q.params === v); return r.size; }, yfmt: (v) => v.toFixed(1), xlabel: "model size", ylabel: "loss" });
+    const seen = lad.map((r) => [c.sx(r.params), c.sy(r.val.full)]), fresh = lad.map((r) => [c.sx(r.params), c.sy(r.test.full)]);
+    svgEl("path", { d: path(fresh), fill: "none", stroke: INK, "stroke-width": 1.4 }, c.s);
+    svgEl("path", { d: path(seen), fill: "none", stroke: QUIET, "stroke-width": 1.4 }, c.s);
+    for (const p of fresh) svgEl("circle", { cx: p[0], cy: p[1], r: 3.5, fill: INK }, c.s);
+    for (const p of seen) svgEl("circle", { cx: p[0], cy: p[1], r: 3.5, fill: "#fff", stroke: QUIET, "stroke-width": 1.4 }, c.s);
+    const lastR = lad[lad.length - 1];
+    label(c, lastR.params, lastR.test.full, "new people", -8, -10, "end"); label(c, lastR.params, lastR.val.full, "new takes, seen people", -8, 18, "end");
+    $("#cap-people").innerHTML = `<b>Figure 7.</b> Loss on held-out takes of people in the training set (open) and on ${D.dataset.splits_hours.test.toFixed(1)} hours from people never trained on (filled). Bigger models close little of the gap; more people would.`;
+  }
+
+  /* figure 6: suit to body */
+  {
+    const ex = D.exo;
+    const fig = new Figure($("#c-exo"), { height: 215, ground: 0.88 });
+    const tr = follow(ex.truth_g1, ex.frames);
+    const legs = (a, b) => LEGSET.has(D.skeleton.keypoints[a]) && LEGSET.has(D.skeleton.keypoints[b]);
+    const upper = (a, b) => !legs(a, b);
+    fig.set([{ data: ex.truth_g1, color: GHOST, width: 1.2, only: upper },
+             { data: ex.pred_g1, color: INK, width: 2.2, dash: [4, 3], only: upper },
+             { data: ex.truth_g1, color: INK, width: 2.6, only: legs, trail: false }], ex.frames, tr);
+    fig.draw(REDUCE ? (ex.frames / 2) | 0 : 0); register(fig, $("#c-exo"));
+    $("#exo-prose").textContent = `The model sees only what a leg suit would: ${ex.observed.length} channels from hip, knee and ankle encoders and a pelvis IMU. It infers the waist and arms, ${ex.hidden.length} joints, frame by frame, on a ${ex.desc} take from the held-out set.`;
+    $("#exo-kv").innerHTML = `<div><div class="big num">${fmt(ex.rmse_deg, 1)}°<small>model</small></div><span>average error on the inferred joints</span></div><div><div class="big num" style="color:var(--faint)">${fmt(ex.meanpose_rmse_deg, 1)}°<small>baseline</small></div><span>guessing the average pose</span></div>`;
+  }
+  /* figure 8: forecast */
+  {
+    const ro = D.rollout, ev = ro.eval;
+    const fig = new Figure($("#c-roll"), { height: 215, ground: 0.88, overlay: (g, f, me) => {
+      g.font = "500 12px " + getComputedStyle(document.body).fontFamily; g.fillStyle = f < ro.context ? QUIET : INK;
+      g.fillText(f < ro.context ? "Real motion" : "Model on its own", 14, 22);
+      if (f >= ro.context) { g.fillStyle = QUIET; g.fillText(`${((f - ro.context + 1) / 20).toFixed(2)} s after the cut`, 14, 40); }
+    } });
+    const tr = follow(ro.truth, ro.context + ro.horizon);
+    fig.set([{ data: ro.truth, color: GHOST, width: 1.2 }, { data: ro.pred, color: INK, width: 2.4, dots: 1.6, trail: true }], ro.context + ro.horizon, tr);
+    fig.draw(REDUCE ? ro.context + 10 : 0); register(fig, $("#c-roll"));
+    const tf = ev.from_real_frames, hz = ev.horizons;
+    const t200 = tf["200ms"], gain = 100 * (1 - t200.model_deg / t200.freeze_deg);
+    $("#roll-prose").textContent = `Given 1.6 s of real motion, the model predicts what comes next. From real frames, on people it has never seen, its 200 ms prediction beats simply holding the last pose by ${fmt(gain)}%. Fed its own predictions, the original model drifts past holding the pose within a second. The table below tests fixes for that.`;
+    const c = chart($("#ch-roll"), { x: [0.05, 2], y: [0, 50], xlog: true, xticks: [0.05, 0.1, 0.2, 0.5, 1, 2], yticks: [0, 10, 20, 30, 40, 50],
+      xfmt: (v) => (v < 1 ? v * 1000 + " ms" : v + " s"), yfmt: (v) => v + "°", xlabel: "how far ahead", ylabel: "joint error" });
+    const hold = [[0.05, tf["50ms"].freeze_deg], [0.1, tf["100ms"].freeze_deg], [0.15, tf["150ms"].freeze_deg], [0.2, tf["200ms"].freeze_deg], [0.25, hz["0.25s"].freeze_deg], [0.5, hz["0.5s"].freeze_deg], [1, hz["1.0s"].freeze_deg], [2, hz["2.0s"].freeze_deg]];
+    const real = [[0.05, tf["50ms"].model_deg], [0.1, tf["100ms"].model_deg], [0.15, tf["150ms"].model_deg], [0.2, tf["200ms"].model_deg]];
+    const free = [[0.25, hz["0.25s"].model_deg], [0.5, hz["0.5s"].model_deg], [1, hz["1.0s"].model_deg], [2, hz["2.0s"].model_deg]];
+    const line = (pts, st) => svgEl("path", { d: path(pts.map(([x, y]) => [c.sx(x), c.sy(y)])), fill: "none", ...st }, c.s);
+    line(hold, { stroke: QUIET, "stroke-width": 1.2, "stroke-dasharray": "4 3" }); line(real, { stroke: INK, "stroke-width": 2 }); line(free, { stroke: INK, "stroke-width": 1.2 });
+    for (const [x, y] of free) svgEl("circle", { cx: c.sx(x), cy: c.sy(y), r: 3, fill: "#fff", stroke: INK, "stroke-width": 1.2 }, c.s);
+    label(c, 2, hold[hold.length - 1][1], "hold last pose", -4, 16, "end"); label(c, 0.2, real[3][1], "from real frames", 4, -10, "start"); label(c, 1, free[2][1], "on its own", -6, -8, "end");
+    $("#cap-roll").innerHTML = `<b>Figure 8.</b> Joint-angle error over ${ev.windows} windows from people never trained on (${ro.model} model). Thick: predictions from real frames. Thin: the model running on its own. Dashed: holding the last pose.`;
+  }
+  /* pi pass */
+  if (D.pi_pass && D.pi_pass.variants) {
+    const v = D.pi_pass.variants;
+    $("#pi").innerHTML = `<thead><tr><th>Change</th><th>From</th><th class="r">0.5 s</th><th class="r">1 s</th><th class="r">2 s</th><th class="r">Mean, 2 s</th><th class="r">200 ms from real</th></tr></thead><tbody>` +
+      v.map((r) => `<tr${r.best ? ' class="total"' : ""}><td>${r.label}</td><td>${r.from}</td><td class="r">${fmt(r["0.5s"], 1)}°</td><td class="r">${fmt(r["1.0s"], 1)}°</td><td class="r">${fmt(r["2.0s"], 1)}°</td><td class="r">${fmt(r.mean, 1)}°</td><td class="r">${r.real200 == null ? "" : fmt(r.real200, 1) + "°"}</td></tr>`).join("") + `</tbody>`;
+    $("#cap-pi").innerHTML = `<b>Table 1.</b> ${D.pi_pass.caption}`;
+  } else {
+    $("#pi").outerHTML = `<p class="pending">Running now: offsets from the current frame, π0-style action chunks, and FAST-style cosine-transform chunks, each trained under the same budget.</p>`;
+  }
+
+  /* next: gpu */
+  const gp = D.gpu_plan;
+  const rowsG = gp && gp.datasets ? gp.datasets : [
+    { name: "Everything above", hours: ds.hours, license: "as above" },
+    { name: "LAFAN1 (Ubisoft)", hours: 4.6, license: "CC BY-NC-ND 4.0" },
+    { name: "HiPHI (Noitom)", hours: 617.5, license: "Non-commercial research" },
+  ];
+  $("#gpu").innerHTML = `<thead><tr><th>Dataset</th><th class="r">Hours</th><th>Licence</th></tr></thead><tbody>` +
+    rowsG.map((d) => `<tr><td>${d.url ? `<a href="${d.url}">${d.name}</a>` : d.name}</td><td class="r">${fmt(d.hours, 1)}</td><td>${d.license}</td></tr>`).join("") +
+    `<tr class="total"><td>Total</td><td class="r">${fmt(rowsG.reduce((a, d) => a + d.hours, 0), 0)}</td><td></td></tr></tbody>`;
+  if (gp && gp.command) $("#cmd").textContent = gp.command;
+  if (gp && gp.est_gpu_hours) $("#gpu-cap").textContent = `Estimated ${fmt(gp.est_gpu_hours, 0)} GPU hours on ${gp.gpus}, about $${fmt(gp.est_cost_usd, 0)}. The launcher asks for confirmation before anything bills.`;
+  $("#copy").addEventListener("click", () => {
+    const t = $("#cmd").textContent;
+    const sel = () => { const r = document.createRange(); r.selectNodeContents($("#cmd")); const s = getSelection(); s.removeAllRanges(); s.addRange(r); };
+    if (navigator.clipboard) navigator.clipboard.writeText(t).then(() => { $("#copy").textContent = "Copied"; }, sel); else sel();
+  });
+
+  requestAnimationFrame(tick);
+}
+})();
+</script>
+</body>
+</html>
