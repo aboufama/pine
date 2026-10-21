@@ -223,7 +223,12 @@ fi
 
 # ---------------------------------------------------------------------- 3. data
 status "fetching datasets"
-"$PY" gpu/fetch_data.py || say "WARNING: fetch_data.py exited with $? (continuing with whatever was fetched)"
+"$PY" gpu/fetch_data.py; frc=$?
+if [ "$frc" = 3 ]; then
+  echo "$(date -u) network: the robot model could not be fetched from GitHub" > "$WS/BAD_HOST"
+  finish 2 "aborted: network too slow on this host (bad host)"
+fi
+[ "$frc" = 0 ] || say "WARNING: fetch_data.py exited with $frc (continuing with whatever was fetched)"
 
 status "building shards"
 if ! "$PY" gpu/build_shards.py; then

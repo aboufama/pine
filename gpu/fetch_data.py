@@ -138,10 +138,12 @@ def git_clone(name: str) -> dict:
             return dict(status="present", path=dest, commit=out.strip().splitlines()[-1])
         shutil.rmtree(dest, ignore_errors=True)
     os.makedirs(os.path.dirname(dest), exist_ok=True)
-    cmd = ["git", "clone", "--quiet"] + (["--depth", str(spec["depth"])] if spec["depth"] else []) + [spec["url"], dest]
+    # Abort a stalled transfer (under 200 KB/s for 90 s) instead of waiting out the hour-long timeout, then retry.
+    cmd = ["git", "-c", "http.lowSpeedLimit=200000", "-c", "http.lowSpeedTime=90", "clone", "--quiet"] \
+        + (["--depth", str(spec["depth"])] if spec["depth"] else []) + [spec["url"], dest]
     env = {"GIT_LFS_SKIP_SMUDGE": "1"} if name == "lafan1" else None
     for attempt in range(3):
-        rc, out = sh(cmd, timeout=3600, env=env)
+        rc, out = sh(cmd, timeout=1800, env=env)
         if rc == 0:
             break
         SAY(f"  {name}: git clone failed (attempt {attempt + 1}/3): {out}")
@@ -324,7 +326,15 @@ def fetch_hiphi(max_parts: int) -> dict:
             SAY(f"  hiphi: stopping, {du_gb(os.path.dirname(dest)):.0f} GB used of the volume"); break
         t0 = time.time()
         try:
-            local = hh.hf_hub_download(repo, f, repo_type="dataset", local_dir=dest, token=hf_token())
+            for attempt in range(3):
+                try:
+                    local = hh.hf_hub_download(repo, f, repo_type="dataset", local_dir=dest, token=hf_token())
+                    break
+                except Exception as e:  # noqa: BLE001
+                    if attempt == 2:
+                        raise
+                    SAY(f"  hiphi: {os.path.basename(f)} download failed (attempt {attempt + 1}/3): {e}"[:300])
+                    time.sleep(20 * (attempt + 1))
             # Unpacked BVH is several times the archive: parse each archive straight into canonical keypoints
             # (pine.canon, 20 fps) and delete the text before the next archive, so the disk never holds more than one.
             tmp = os.path.join(dest, "tmp_extract")
@@ -413,6 +423,9 @@ def main(argv=None) -> int:
     fns = dict(cmu=fetch_cmu, bandai=fetch_bandai, lafan1=fetch_lafan1, unitree_mujoco=fetch_unitree,
                lafan1_g1=fetch_lafan1_g1, amass_g1=fetch_amass_g1, hiphi=lambda: fetch_hiphi(a.hiphi_parts))
     for name in ORDER:
+        um = report["sources"].get("unitree_mujoco", {})
+        if name != "unitree_mujoco" and not only and um and um.get("status") not in ("ok", "present"):
+            break
         if only and name not in only:
             continue
         if name in skip:
@@ -445,7 +458,8 @@ def main(argv=None) -> int:
     write_json(report_path, report)
     um = report["sources"].get("unitree_mujoco", {})
     if not only and um.get("status") not in ("ok", "present"):
-        SAY("WARNING: the robot model (unitree_mujoco) is not available; build_shards.py cannot retarget")
+        SAY("FATAL: the robot model (unitree_mujoco) could not be fetched; this host's network is too slow or blocked")
+        return 3
     SAY(f"fetch report: {report_path}")
     return 0
 
