@@ -7,8 +7,9 @@ performers, so whole people can be held out:
              performers is VAL (new takes, seen people); everything else is the training pool. Other sources are unused.
   E1 people  H hours of training data split evenly across P performers, P = 4, 8, 16, 32, 64 (2 draws for P <= 16)
   E2 hours   32 performers, H/4 and 4H hours (with E1's 32-performer run that is three points)
-  E3 recipe  all of the training pool, the 2XL size: the CPU recipe vs dct16mix + noisy history (phase-1 extra run's
-             recipe), on this held-out-people split
+  E3 recipe  all training data (HiPHI pool + the other sources' training takes) at 2XL: the CPU recipe vs dct16mix +
+             noisy history, then the FLAGSHIP: the largest size (5XL, ~85M parameters) with the new recipe, trained on
+             everything for the rest of the budget, scored on the held-out performers
 
 E1 and E2 runs are all the same size (2XL) and the same number of steps (about 2.5 min each at phase 1's measured
 throughput), scored on the held-out performers. H is the largest of 16, 8, 4 hours for which at least 8 performers
@@ -141,7 +142,28 @@ def summarize():
     return rows
 
 
+def flagship_tps(size: str) -> float:
+    """Tokens/s expected for `size`: the largest phase-1 run's measured speed, scaled by parameter count."""
+    sys.path.insert(0, os.path.dirname(HERE))
+    from pine.train_np import SIZES
+    from pine.model_np import count_params
+    import pine.features as F
+    best = None
+    for p in glob.glob(os.path.join(common.RUNS, "run_*.json")):
+        try:
+            r = json.load(open(p)); tps = float((r.get("device") or {}).get("tokens_per_s") or 0)
+            if tps > 0 and (best is None or r["params"] > best[0]):
+                best = (r["params"], tps)
+        except Exception:  # noqa: BLE001
+            pass
+    if not best:
+        return 0.0
+    d, L, H = SIZES[size]
+    return best[1] * best[0] / count_params(2 * F.D, 4 * F.D, d, L, 32)
+
+
 def main():
+    global SIZE
     os.makedirs(SPLITS, exist_ok=True)
     cs = clips(); base = base_split(cs)
     n_test = len({c["subject"] for c, s in zip(cs, base) if s == "test"})
@@ -163,17 +185,32 @@ def main():
         summarize()
         if not ok and DEADLINE - time.time() < 15 * 60:
             break
-    # E3: the whole pool, the CPU recipe vs the phase-1 extra recipe, on held-out people
-    split = ["train" if s == "pool" else s for s in base]; length = [int(c["length"]) for c in cs]
-    meta = dict(experiment="E3", performers=n_pool, hours=round(sum(hrs), 1), seed=0)
-    left = DEADLINE - time.time() - 10 * 60
-    steps3 = steps_for(left / 2.6, STEPS, 30000)        # two runs share what is left, with room for scoring
-    for name, extra in (("E3_all_next4", ("--save-weights",)),       # its weights let the dct16mix run score it too
-                        ("E3_all_dct16mix", ("--objective", "dct16mix", "--noisy-history"))):
-        if DEADLINE - time.time() < 30 * 60:
-            SAY(f"skip {name}: under 30 min left"); break
-        train(name, split, length, dict(meta, recipe=name.split("_")[-1], steps=steps3), extra, steps=steps3)
+    # E3: everything except the held-out performers. First the recipe at 2XL (CPU recipe vs dct16mix + noisy history,
+    # same steps), then the flagship: the largest size (5XL, ~85M parameters) with the new recipe on whatever is left.
+    split = ["train" if s == "pool" else s for s in base]
+    for i, c in enumerate(cs):   # other sources' training takes join the flagship's data; their test/val stay unused
+        if c["source"] != "hiphi" and c.get("split") == "train" and int(c["length"]) >= MIN_LEN:
+            split[i] = "train"
+    length = [int(c["length"]) for c in cs]
+    hours_all = sum(l for s_, l in zip(split, length) if s_ == "train") / FPS / 3600
+    meta = dict(experiment="E3", performers=n_pool, hours=round(hours_all, 1), seed=0)
+    steps_b = steps_for(8 * 60, STEPS, 30000)                   # about 8 min each
+    for name, extra in (("E3_recipe_next4", ()), ("E3_recipe_dct16mix", ("--objective", "dct16mix", "--noisy-history"))):
+        if DEADLINE - time.time() < 40 * 60:
+            SAY(f"skip {name}: under 40 min left"); break
+        train(name, split, length, dict(meta, recipe=name.split("_")[-1], steps=steps_b), extra, steps=steps_b)
         summarize()
+    left = DEADLINE - time.time() - 12 * 60
+    if left > 25 * 60:
+        SIZE = os.environ.get("PINE_FLAGSHIP_SIZE", "5XL")
+        tps = flagship_tps(SIZE)
+        frames = sum(l for s_, l in zip(split, length) if s_ == "train")
+        by_time = left * 0.8 * tps / TOK_PER_STEP if tps else 20000
+        steps_f = int(max(4000, min(by_time, 30 * frames / TOK_PER_STEP)))      # at most 30 passes over the data
+        SAY(f"flagship {SIZE}: {steps_f} steps on {hours_all:.0f} h, {left/3600:.2f} h left")
+        train("E3_flagship", split, length, dict(meta, recipe="dct16mix", steps=steps_f, flagship=True),
+              ("--objective", "dct16mix", "--noisy-history", "--save-weights"), steps=steps_f)
+        SIZE = "2XL"
     rows = summarize()
     SAY(f"phase 2 done: {len(rows)} runs")
     return 0
