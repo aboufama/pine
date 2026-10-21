@@ -134,13 +134,23 @@ cd "$REPO"
 # ---------------------------------------------------------------------- 1. environment
 status "environment"
 nvidia-smi || say "WARNING: nvidia-smi failed"
-"$PY" - <<'EOF' || { say "FATAL: torch with CUDA is not usable"; finish 2 "aborted: no torch/CUDA"; }
+cuda_ok=0
+for attempt in $(seq 1 12); do   # some hosts report "CUDA unknown error" for the first minutes after boot
+  if "$PY" - <<'EOF'
 import sys, torch
 print("python", sys.version.split()[0], "torch", torch.__version__, "cuda", torch.version.cuda,
       "devices", torch.cuda.device_count())
 assert torch.cuda.is_available(), "CUDA is not available"
+torch.ones(8, device="cuda").sum().item()
 print("gpu", torch.cuda.get_device_name(0), "bf16", torch.cuda.is_bf16_supported())
 EOF
+  then cuda_ok=1; break; fi
+  say "CUDA not usable yet (attempt $attempt of 12); retrying in 20 s"; sleep 20
+done
+if [ "$cuda_ok" != 1 ]; then
+  say "FATAL: torch with CUDA is not usable on this host"; echo "$(date -u) CUDA unusable" > "$WS/BAD_HOST"
+  finish 2 "aborted: no torch/CUDA (bad host)"
+fi
 need=""
 "$PY" -c "import huggingface_hub" 2>/dev/null || need="$need huggingface_hub"
 "$PY" -c "import scipy" 2>/dev/null || need="$need scipy"

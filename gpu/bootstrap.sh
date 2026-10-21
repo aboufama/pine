@@ -43,6 +43,7 @@ while true; do
   "$PY" "$CODE/gpu/report_github.py" --final || true
   if grep -q "^PINE DONE" "$WS/DONE" 2>/dev/null; then stop_pod "finished"; sleep infinity; fi
   if grep -q "watchdog" "$WS/DONE" 2>/dev/null || over_cap; then stop_pod "GPU-hour cap reached"; sleep infinity; fi
+  if [ -f "$WS/BAD_HOST" ]; then stop_pod "this host's GPU is unusable; a new pod will be created on another host"; sleep infinity; fi
   say "run did not finish cleanly; waiting up to 60 min for a fix on $BR"
   for _ in $(seq 1 12); do sleep 300; [ "$(remote_sha)" != "$sha" ] && continue 2; over_cap && break; done
   stop_pod "no fix arrived"; sleep infinity
