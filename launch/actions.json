@@ -1,10 +1,6 @@
 {
  "terminate": [
-  "041ojj2whg46vg",
-  "agohv1hcx59lhm",
-  "dz32dwi6x50kj2",
-  "fs8veeg3pe6bxa",
-  "gy5n6hd4i79z8k"
+  "f68jsd9litlacf"
  ],
- "note": "relaunch with the disk-safe pipeline (engine-code e654115+)"
+ "note": "f68jsd9litlacf stalled 35 min cloning a 428 MB repo from GitHub (25 s on the previous host); relaunch with stall-abort fetch (engine-code b765af0)"
 }
