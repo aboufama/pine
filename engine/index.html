@@ -296,7 +296,7 @@ function svgEl(tag, attrs, parent) {
 }
 function chart(el, { W, H, x, y, xlog = true, ylog = false, xticks, yticks, xfmt, yfmt, xlabel, ylabel }) {
   W = W || Math.max(280, Math.round(el.clientWidth)); H = H || Math.round(Math.min(300, Math.max(220, W * 0.62)));
-  const m = { l: 46, r: 14, t: 12, b: 40 };
+  const m = { l: 52, r: 14, t: 12, b: 40 };
   const s = svgEl("svg", { viewBox: `0 0 ${W} ${H}`, role: "img" }, null);
   const sx = (v) => m.l + ((xlog ? Math.log(v) : v) - (xlog ? Math.log(x[0]) : x[0])) / ((xlog ? Math.log(x[1]) : x[1]) - (xlog ? Math.log(x[0]) : x[0])) * (W - m.l - m.r);
   const sy2 = (v) => H - m.b - ((ylog ? Math.log(v) : v) - (ylog ? Math.log(y[0]) : y[0])) / ((ylog ? Math.log(y[1]) : y[1]) - (ylog ? Math.log(y[0]) : y[0])) * (H - m.t - m.b);
@@ -347,7 +347,12 @@ function render(D, MODEL, BIN) {
   const hold = row("hold"), base = row("direct4"), chunk = row("chunk16"), dct = row("dct16");
   const cmu = ds.sources.find((s) => s.id === "cmu");
 
-  $("#stats").innerHTML = [[fmt(ds.hours, 1) + " h", "motion"], [fmt(ds.takes_kept), "takes"], [fmt(ds.people), "people"], [fmt(ds.frames), "frames"], [String(D.annotations.activity.filter((a) => a.name !== "unlabeled" && a.name !== "other").length), "activity classes"], [fmt(D.annotations.grades.A.hours, 1) + " h", "grade A"]]
+  const GS = D.gpu && D.gpu.shards && D.gpu.shards.hours ? D.gpu.shards : null;
+  const named = GS ? Object.entries(GS.per_source).filter(([k]) => !k.startsWith("bandai")).reduce((t, [, v]) => t + v.subjects, 0) : 0;
+  const top = D.gpu && D.gpu.ladder && D.gpu.ladder.length ? D.gpu.ladder.concat((D.gpu.phase2 && D.gpu.phase2.runs) || []).reduce((m, r) => Math.max(m, r.params), 0) : 0;
+  $("#stats").innerHTML = (GS ? [[fmt(GS.hours) + " h", "motion on the H2"], [fmt(GS.takes), "takes"], [fmt(named), "named performers"], [fmt(GS.frames / 1e6, 1) + "M", "frames"],
+      [(top >= 1e6 ? fmt(top / 1e6) + "M" : fmt(top)), "parameters, largest"], [String(D.annotations.activity.filter((a) => a.name !== "unlabeled" && a.name !== "other").length), "activity classes"]]
+    : [[fmt(ds.hours, 1) + " h", "motion"], [fmt(ds.takes_kept), "takes"], [fmt(ds.people), "people"], [fmt(ds.frames), "frames"], [String(D.annotations.activity.filter((a) => a.name !== "unlabeled" && a.name !== "other").length), "activity classes"], [fmt(D.annotations.grades.A.hours, 1) + " h", "grade A"]])
     .map(([b, s]) => `<div><b class="num">${b}</b><span>${s}</span></div>`).join("");
 
   /* hero: the captured take (left) and Unitree's own H2 model doing it (right) */
@@ -466,7 +471,7 @@ function render(D, MODEL, BIN) {
     $("#h-a1").textContent = `${acts.length} activity classes, every take labelled`;
     $("#v-a1").innerHTML = acts.slice(0, 7).map((a) => `<div class="brow"><div>${a.name}</div><div class="t"><span style="width:${(100 * a.hours / mx).toFixed(1)}%"></span></div><div class="v">${fmt(a.hours, 1)} h</div></div>`).join("");
     const other = AN.activity.filter((a) => a.name === "unlabeled" || a.name === "other").reduce((t, a) => t + a.hours, 0);
-    $("#c-a1").innerHTML = `Top 7 of ${acts.length} classes by hours, from the capture notes of each take. ${fmt(AN.styled_takes)} takes also carry a style (tired, elderly, angry and ${AN.styles.length - 3} more). ${fmt(other, 1)} h has no usable note and stays unlabelled.`;
+    $("#c-a1").innerHTML = `${GS ? `On the ${fmt(ds.hours, 1)} h annotated set (CMU, Bandai Namco). ` : ""}Top 7 of ${acts.length} classes by hours, from the capture notes of each take. ${fmt(AN.styled_takes)} takes also carry a style (tired, elderly, angry and ${AN.styles.length - 3} more). ${fmt(other, 1)} h has no usable note and stays unlabelled.`;
   }
   {
     const g = AN.grades, tot = g.A.hours + g.B.hours + g.C.hours;
@@ -485,7 +490,55 @@ function render(D, MODEL, BIN) {
     $("#c-c1").innerHTML = `Contacts are labelled twice, on the human and on the robot, from different skeletons. A random spot check of ${sc.length} activity labels found ${ok} right; the miss was a take that mixes walking and sweeping.`;
   }
 
-  /* c: scaling with a registered prediction */
+  /* d, e: scaling on the GPU run (D.gpu) when it is there, else the CPU run */
+  const G = D.gpu && D.gpu.ladder && D.gpu.ladder.length >= 3 ? D.gpu : null;
+  const pfmt = (v) => (v >= 1e6 ? fmt(v / 1e6, v < 1e7 ? 1 : 0) + "M" : fmt(v / 1e3) + "k");
+  const ticks = (lo, hi, c) => c.filter((v) => v >= lo && v <= hi);
+  if (G) {
+    const lad = G.ladder, P = G.prediction, big = P ? lad.find((r) => r.size === P.size) : null;
+    const fitOn = P ? lad.filter((r) => P.fit_on.includes(r.size)) : lad, first = lad[0];
+    const best = lad.reduce((m, r) => (r.val < m.val ? r : m), lad[0]);
+    const ys = lad.map((r) => r.val).concat(P ? [P.lo, P.hi] : []), y0 = Math.min(...ys) * 0.92, y1 = Math.max(...ys) * 1.06;
+    $("#h-c").innerHTML = big ? `Predicted before training, ${fmt(P.loss, 4)}. Measured, ${fmt(big.val, 4)}.`
+      : P ? `${P.size} registered at ${fmt(P.loss, 4)} before it trained` : `Bigger models keep paying on ${fmt(G.shards.hours_by_split.train)} h`;
+    const x1 = Math.max(P ? P.params : 0, lad[lad.length - 1].params) * 1.9;
+    const c = chart($("#v-c"), { H: 172, x: [first.params * 0.55, x1], y: [y0, y1], ylog: true,
+      xticks: ticks(first.params * 0.55, x1, [3e5, 1e6, 3e6, 1e7, 3e7, 1e8]), yticks: ticks(y0, y1, [0.03, 0.04, 0.05, 0.06, 0.07, 0.08]),
+      xfmt: pfmt, yfmt: (v) => v.toFixed(2), xlabel: "parameters", ylabel: "loss" });
+    if (P) {
+      const law = (n) => P.E + P.A * Math.pow(n, -P.alpha), cv = [];
+      for (let n = first.params * 0.6; n <= x1; n *= 1.06) cv.push([c.sx(n), c.sy(law(n))]);
+      svgEl("path", { d: path(cv), fill: "none", stroke: QUIET, "stroke-width": 1.1 }, c.s);
+      svgEl("line", { x1: c.sx(P.params), x2: c.sx(P.params), y1: c.sy(P.lo), y2: c.sy(P.hi), stroke: INK, "stroke-width": 1.1, "stroke-dasharray": "3 3" }, c.s);
+      for (const v of [P.lo, P.hi]) svgEl("line", { x1: c.sx(P.params) - 4, x2: c.sx(P.params) + 4, y1: c.sy(v), y2: c.sy(v), stroke: INK }, c.s);
+      label(c, P.params, P.lo, `${P.size}, registered first`, -8, 3, "end");
+    }
+    for (const r of fitOn) { svgEl("circle", { cx: c.sx(r.params), cy: c.sy(r.val), r: 3.4, fill: INK }, c.s); label(c, r.params, r.val, r.size, 6, -6); }
+    if (big) svgEl("circle", { cx: c.sx(big.params), cy: c.sy(big.val), r: 5.5, fill: "none", stroke: INK, "stroke-width": 1.5 }, c.s);
+    $("#c-c").innerHTML = `${fitOn.length} sizes from ${pfmt(first.params)} to ${pfmt(fitOn[fitOn.length - 1].params)} on all ${fmt(G.shards.hours_by_split.train)} training hours (dots)` +
+      (P ? `, fit ${P.form}, then an 80% interval registered for <b>${P.size}</b> (dashed) before it trained${big ? " (ring)" : ""}.` : ".") +
+      ` Loss falls <b>${fmt(100 * (1 - best.val / first.val))}%</b> from ${first.size} to ${best.size}; on the 12 h CPU set nothing past 47k parameters helped.`;
+
+    const dl = G.data_ladder, fd = G.fits && G.fits.data;
+    $("#h-d").textContent = dl.length >= 2 ? `From ${fmt(dl[0].train_hours, 1)} h to ${fmt(dl[dl.length - 1].train_hours)} h, loss falls ${fmt(100 * (1 - dl[dl.length - 1].val / dl[0].val))}%` : "Same model, fewer hours";
+    if (dl.length < 2) $("#v-d").innerHTML = `<p class="pending">Training now on the pod.</p>`;
+    if (dl.length >= 2) {
+      const vs = dl.map((r) => r.val), d0 = Math.min(...vs) * 0.85, d1 = Math.max(...vs) * 1.08, h0 = dl[0].train_hours * 0.6, h1 = 1500;
+      const c2 = chart($("#v-d"), { H: 172, x: [h0, h1], y: [d0, d1], ylog: true, xticks: ticks(h0, h1, [1, 3, 10, 30, 100, 300, 1000]),
+        yticks: ticks(d0, d1, [0.03, 0.04, 0.05, 0.06, 0.08, 0.1, 0.12, 0.15]), xfmt: (v) => fmt(v), yfmt: (v) => v.toFixed(2), xlabel: "hours of training data", ylabel: "loss" });
+      if (fd) {
+        const law = (h) => fd.E + fd.B * Math.pow(h, -fd.beta), fp = [], xp = [], last = dl[dl.length - 1].train_hours;
+        for (let h = dl[0].train_hours * 0.8; h <= h1; h *= 1.06) if (law(h) >= d0) (h <= last ? fp : xp).push([c2.sx(h), c2.sy(law(h))]);
+        svgEl("path", { d: path(fp), fill: "none", stroke: QUIET, "stroke-width": 1.1 }, c2.s);
+        svgEl("path", { d: path([fp[fp.length - 1], ...xp]), fill: "none", stroke: QUIET, "stroke-width": 1.1, "stroke-dasharray": "3 4" }, c2.s);
+      }
+      for (const r of dl) { svgEl("circle", { cx: c2.sx(r.train_hours), cy: c2.sy(r.val), r: 3.4, fill: INK }, c2.s); }
+      const lt = dl[dl.length - 1]; label(c2, lt.train_hours, lt.val, "all", 7, -6);
+    }
+    $("#c-d").innerHTML = `${dl.length ? dl[0].size : "2XL"} (${pfmt(dl.length ? dl[0].params : 4.8e6)} parameters) on 1/64, 1/16, 1/4 and all of the hours, same steps, best checkpoint.` +
+      (fd ? ` Fit ${fd.form}, β = ${fmt(fd.beta, 2)}.` : "") +
+      (dl.length >= 3 ? ` The last 4× of data buys this size only <b>${fmt(100 * (1 - dl[dl.length - 1].val / dl[dl.length - 2].val))}%</b>; the bigger models in panel d turn the same hours into more.` : "");
+  } else {
   $("#h-c").innerHTML = `Predicted before training, ${fmt(pr.loss, 4)}. Measured, ${fmt(ob.loss, 4)}.`;
   {
     const c = chart($("#v-c"), { H: 172, x: [6e3, 2e6], y: [0.08, 0.3], ylog: true, xticks: [1e4, 1e5, 1e6], yticks: [0.08, 0.1, 0.15, 0.2, 0.3],
@@ -500,8 +553,6 @@ function render(D, MODEL, BIN) {
     label(c, pr.params, pr.lo, `${pr.size}, registered first`, -8, 3, "end");
   }
   $("#c-c").innerHTML = `Fit ${fits.model.form} on four sizes (dots), registered an 80% interval for <b>${pr.size}</b> (dashed), then trained it (ring).`;
-
-  /* d: data size */
   $("#h-d").textContent = "At 12 hours, data is the limit";
   {
     const dp = fits.data.points;
@@ -512,10 +563,9 @@ function render(D, MODEL, BIN) {
     svgEl("path", { d: path(fp), fill: "none", stroke: QUIET, "stroke-width": 1.1 }, c.s);
     svgEl("path", { d: path([fp[fp.length - 1], ...xp]), fill: "none", stroke: QUIET, "stroke-width": 1.1, "stroke-dasharray": "3 4" }, c.s);
     for (const p of dp) svgEl("circle", { cx: c.sx(p.hours), cy: c.sy(p.loss), r: 3.4, fill: INK }, c.s);
-    svgEl("line", { x1: c.sx(617), x2: c.sx(617), y1: c.sy(law(617)) - 5, y2: c.sy(law(617)) + 5, stroke: INK }, c.s);
-    label(c, 617, law(617), "617 h queued", 0, -9, "middle");
   }
   $("#c-d").innerHTML = `Same model on 1/64 to all of the hours: 1/64 is <b>${fmt(100 * (s64.val.full / S1.val.full - 1))}% worse</b>. Past ${fmt(M.params / 1000)}k parameters, bigger models gain nothing (panel d).`;
+  }
 
   /* e: new people */
   $("#h-e").textContent = `New people score ${fmt(gap, 1)}× worse`;
@@ -532,7 +582,7 @@ function render(D, MODEL, BIN) {
     label(c, lr.params, lr.test.full, "people never seen", -6, -9, "end"); label(c, lr.params, lr.val.full, "new takes, seen people", -6, 15, "end");
   }
   const mir = D.mirror && D.mirror.runs && D.mirror.runs.M;
-  $("#c-e").innerHTML = `Bigger models barely close the gap to ${fmt(ds.splits_hours.test, 1)} h from <b>people never trained on</b>.` +
+  $("#c-e").innerHTML = `${GS ? `CPU run, ${fmt(ds.hours, 1)} h. ` : ""}Bigger models barely close the gap to ${fmt(ds.splits_hours.test, 1)} h from <b>people never trained on</b>.` +
     (mir ? ` Doubling to ${fmt(D.mirror.train_hours, 1)} h by mirroring every take moved it by ${fmt(100 * Math.abs(mir.test / mir.base_test - 1), 1)}%: more of the same people does not help; more people should.` : "");
 
   /* f: sensors */
@@ -571,8 +621,9 @@ function render(D, MODEL, BIN) {
   const t200 = ro.eval.from_real_frames["200ms"];
   $("#c-h").innerHTML = `Joint error running alone for 2 s, people never seen, same budget each. From real frames the 200 ms forecast beats holding the pose by <b>${fmt(100 * (1 - t200.model_deg / t200.freeze_deg))}%</b>; FAST matches chunks with 62% fewer outputs.`;
 
-  $("#method").innerHTML = `<b>Method.</b> Every take gets an activity, a style where the source gives one, and a quality grade; every frame gets foot contacts and a locomotion state. BVH takes are mapped to 19 keypoints at 20 fps, quality-checked, and fitted onto Unitree's MJCF by batched inverse kinematics. Each frame becomes 31 channels (23 joints, gravity at the pelvis, turn rate, velocity, height). A causal transformer reads 1.6 s and predicts the next 200 ms, with sensor groups hidden at random during training. Five sizes from 10k to 822k parameters, 900 steps each, hand-written in NumPy on 2 CPU cores, gradients checked numerically. Test takes come from people never trained on. Data: CMU Graphics Lab (free use, no resale) and Bandai Namco Research (CC BY-NC 4.0); robots from unitree_mujoco.`;
-  $("#next").innerHTML = `<b>Next.</b> The same pipe on GPUs: add LAFAN1 (4.6 h) and HiPHI (617 h), train a ladder to tens of millions of parameters with a prediction registered first, and keep the cosine chunks. The question it answers: do bigger models start paying again once there is 50× more data, as panels d to f predict? <a href="details.html">Full write-up</a>.`;
+  const GPUTXT = GS ? ` The GPU run repeats the pipe on ${fmt(GS.hours)} h (HiPHI ${fmt(GS.per_source.hiphi.hours)} h from ${GS.per_source.hiphi.subjects} performers, mirrored copies left out; Bandai Namco; LAFAN1): IK on the GPU, checked against the NumPy solver (${GS.ik.check.max_mm < 0.001 ? "identical to 0.001 mm" : fmt(GS.ik.check.max_mm, 2) + " mm"}), ${fmt(GS.frames / 1e6, 1)}M frames in ${fmt(GS.ik.seconds)} s; PyTorch in bf16 on one ${D.gpu.gpu || "GPU"}, checked against the NumPy reference (774 checks) before any training; ${fmt(D.gpu.ladder[0].steps)} steps of 512 windows per run (20 epochs). Test takes are held-out takes; held-out performers are scored in phase 2.` : "";
+  $("#method").innerHTML = `<b>Method.</b> Every take gets an activity, a style where the source gives one, and a quality grade; every frame gets foot contacts and a locomotion state. BVH takes are mapped to 19 keypoints at 20 fps, quality-checked, and fitted onto Unitree's MJCF by batched inverse kinematics. Each frame becomes 31 channels (23 joints, gravity at the pelvis, turn rate, velocity, height). A causal transformer reads 1.6 s and predicts the next 200 ms, with sensor groups hidden at random during training. Five sizes from 10k to 822k parameters, 900 steps each, hand-written in NumPy on 2 CPU cores, gradients checked numerically. Test takes come from people never trained on. Data: CMU Graphics Lab (free use, no resale) and Bandai Namco Research (CC BY-NC 4.0); robots from unitree_mujoco.${GPUTXT}${GS ? " HiPHI: Noitom Robotics, non-commercial research licence; LAFAN1: Ubisoft La Forge, CC BY-NC-ND 4.0." : ""}`;
+  $("#next").innerHTML = GS ? `<b>Running now.</b> Phase 2 on the same pod: whole performers held out of HiPHI and BONES-SEED (522 actors), and the same hours split across 4 to 400 people, to measure whether more people or more hours of the same people improves prediction on someone new; then an 85M-parameter model on everything with the cosine-chunk recipe. <a href="details.html">Full write-up</a>.` : `<b>Next.</b> The same pipe on GPUs: add LAFAN1 (4.6 h) and HiPHI (617 h), train a ladder to tens of millions of parameters with a prediction registered first, and keep the cosine chunks. The question it answers: do bigger models start paying again once there is 50× more data, as panels d to f predict? <a href="details.html">Full write-up</a>.`;
   requestAnimationFrame(tick);
 }
 })();
