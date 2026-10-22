@@ -1,12 +1,2 @@
-https://noitom-robotics.github.io/hiphi/
-https://noitomrobotics.com/
-https://noitomrobotics.com/hiphi/
-https://www.noitom.com/
 https://bones.studio/
-https://bones.studio/datasets
-https://bones.studio/seed
-https://seed-viewer.bones.studio/
-https://github.com/noitom-robotics/hiphi
-https://github.com/bones-studio/seed
-https://github.com/ubisoft/ubisoft-laforge-animation-dataset
-https://github.com/BandaiNamcoResearchInc/Bandai-Namco-Research-Motiondataset
+https://bones.studio/datasets/seed

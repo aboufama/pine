@@ -1,6 +1,6 @@
+https://noitom-robotics.github.io/hiphi/static/videos/HiPHI_demo_video_web.mp4?v=20260819
+https://bones.studio/assets/dataset_case.mp4
+https://bones.studio/assets/posters/home_hero_poster-d.jpg
 https://noitom-robotics.github.io/hiphi/static/images/dataset-card/HiPHI_motion_examples.webp
 https://noitom-robotics.github.io/hiphi/static/images/dataset-card/real_world_deployment.webp
-https://noitom-robotics.github.io/hiphi/static/images/dataset-card/scaling_behavior.webp
-https://noitom-robotics.github.io/hiphi/static/videos/HiPHI_demo_video_web.mp4
-https://cdn-thumbnails.huggingface.co/social-thumbnails/datasets/bones-studio/seed.png
-https://cdn-thumbnails.huggingface.co/social-thumbnails/datasets/noitomrobotics/HiPHI.png
+https://arxiv.org/html/2608.16222v2/figures/exp/real_experiment.png
