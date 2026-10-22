@@ -1,0 +1,31 @@
+[2026-10-22 00:31:00Z] robot h2: G1-native sources ['amass_g1', 'lafan1_g1'] are not used (every source goes through IK)
+[2026-10-22 00:31:00Z] robot h2: 3154 BVH takes from ['bandai1', 'bandai2', 'lafan1'], 128 workers
+[2026-10-22 00:31:01Z]   parsed 2000/3154 takes, 1s
+[2026-10-22 01:12:43Z]   HiPHI from keypoint caches: 17626 takes
+[2026-10-22 01:12:43Z] parsed 3154 takes in 2502s: 20327 kept, -17173 rejected
+[2026-10-22 01:12:45Z] IK check vs pine/g1.py: {"frames": 2000, "mean_mm": 3.515763413236208e-13, "max_mm": 2.7025722416050513e-12, "max_joint_diff_deg": 6.377012136334351e-13, "passed": true, "limit_mm": 1.0, "backend": "torch", "seconds_numpy": 0.7439801692962646, "seconds_backend": 0.4531676769256592, "residual_mean_cm_numpy": 4.812983409401837, "residual_mean_cm_backend": 4.812983409401836} -> backend torch
+[2026-10-22 01:12:54Z]   IK (gpu) 10/153 chunks
+[2026-10-22 01:13:02Z]   IK (gpu) 20/153 chunks
+[2026-10-22 01:13:10Z]   IK (gpu) 30/153 chunks
+[2026-10-22 01:13:19Z]   IK (gpu) 40/153 chunks
+[2026-10-22 01:13:27Z]   IK (gpu) 50/153 chunks
+[2026-10-22 01:13:36Z]   IK (gpu) 60/153 chunks
+[2026-10-22 01:13:44Z]   IK (gpu) 70/153 chunks
+[2026-10-22 01:13:53Z]   IK (gpu) 80/153 chunks
+[2026-10-22 01:14:01Z]   IK (gpu) 90/153 chunks
+[2026-10-22 01:14:09Z]   IK (gpu) 100/153 chunks
+[2026-10-22 01:14:18Z]   IK (gpu) 110/153 chunks
+[2026-10-22 01:14:26Z]   IK (gpu) 120/153 chunks
+[2026-10-22 01:14:35Z]   IK (gpu) 130/153 chunks
+[2026-10-22 01:14:43Z]   IK (gpu) 140/153 chunks
+[2026-10-22 01:14:51Z]   IK (gpu) 150/153 chunks
+[2026-10-22 01:14:54Z]   IK (gpu) 153/153 chunks
+[2026-10-22 01:14:54Z] IK: 22,824,575 frames in 129s (0.006 ms/frame) on torch
+[2026-10-22 01:15:14Z] shards: 22,824,575 frames (317.0 h; train 286.5 h), 20327 takes, sources ['bandai1', 'bandai2', 'hiphi', 'lafan1'] -> /workspace/data/shards (2654s)
+[2026-10-22 02:43:08Z]   IK (gpu) 10/69 chunks
+[2026-10-22 02:43:17Z]   IK (gpu) 20/69 chunks
+[2026-10-22 02:43:27Z]   IK (gpu) 30/69 chunks
+[2026-10-22 02:43:37Z]   IK (gpu) 40/69 chunks
+[2026-10-22 02:43:46Z]   IK (gpu) 50/69 chunks
+[2026-10-22 02:43:56Z]   IK (gpu) 60/69 chunks
+[2026-10-22 02:44:04Z]   IK (gpu) 69/69 chunks

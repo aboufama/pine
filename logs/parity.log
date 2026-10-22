@@ -1,0 +1,13 @@
+parity: torch 2.4.1+cu124, numpy 2.4.6, robot h2, D=31
+check      item                                                max rel err     limit  ok
+  structure    16 checks, 0 failed, worst 0.00e+00 of the limit
+  forward       6 checks, 0 failed, worst 1.36e-09 of the limit
+  loss          6 checks, 0 failed, worst 2.12e-10 of the limit
+  grad        234 checks, 0 failed, worst 1.56e-09 of the limit
+  adamw       492 checks, 0 failed, worst 7.86e-05 of the limit
+  evaluate      6 checks, 0 failed, worst 6.45e-05 of the limit
+  schedule      3 checks, 0 failed, worst 2.17e-04 of the limit
+  batch         2 checks, 0 failed, worst 0.00e+00 of the limit
+  masks         5 checks, 0 failed, worst 3.21e-01 of the limit
+  cuda          4 checks, 0 failed, worst 3.42e-04 of the limit
+PARITY OK: 774 checks, max relative error < 1e-06 in float64 (6s)

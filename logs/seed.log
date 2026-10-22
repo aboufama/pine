@@ -1,0 +1,75 @@
+[2026-10-22 02:11:59Z] bones-studio/seed: 541 files; e.g. ['.gitattributes', 'LICENSE.md', 'README.md', 'g1.tar.gz', 'metadata/seed_metadata_v002_temporal_labels.jsonl', 'metadata/seed_metadata_v004.csv', 'metadata/seed_metadata_v004.parquet', 'soma_proportional.tar.gz', 'soma_shapes/soma_base_fit_mhr_params.npz', 'soma_shapes/soma_base_rig/soma_base_skel_minimal.bvh', 'soma_shapes/soma_base_rig/soma_base_skel_minimal.usd', 'soma_shapes/soma_proportion_fit_mhr_params/A001.npz']
+[2026-10-22 02:11:59Z] bones-studio/seed: 541 files; e.g. ['.gitattributes', 'LICENSE.md', 'README.md', 'g1.tar.gz', 'metadata/seed_metadata_v002_temporal_labels.jsonl', 'metadata/seed_metadata_v004.csv', 'metadata/seed_metadata_v004.parquet', 'soma_proportional.tar.gz', 'soma_shapes/soma_base_fit_mhr_params.npz', 'soma_shapes/soma_base_rig/soma_base_skel_minimal.bvh', 'soma_shapes/soma_base_rig/soma_base_skel_minimal.usd', 'soma_shapes/soma_proportion_fit_mhr_params/A001.npz']
+[2026-10-22 02:13:37Z] downloaded soma_proportional.tar.gz (45.5 GB) in 95s
+[2026-10-22 02:13:37Z] downloaded soma_proportional.tar.gz (45.5 GB) in 95s
+[2026-10-22 02:13:38Z]   metadata/seed_metadata_v004.csv: 142220 rows, actor column actor_uid, file columns ['move_name', 'filename', 'move_soma_uniform_path', 'move_soma_uniform_shape_path'], mirror is_mirror
+[2026-10-22 02:13:38Z]   metadata/seed_metadata_v004.csv: 142220 rows, actor column actor_uid, file columns ['move_name', 'filename', 'move_soma_uniform_path', 'move_soma_uniform_shape_path'], mirror is_mirror
+[2026-10-22 02:13:40Z]   metadata/seed_metadata_v002_temporal_labels.jsonl: 142220 rows, actor column None, file columns ['filename'], mirror None
+[2026-10-22 02:13:40Z]   metadata/seed_metadata_v002_temporal_labels.jsonl: 142220 rows, actor column None, file columns ['filename'], mirror None
+[2026-10-22 02:13:40Z] metadata: 212160 files with an actor id (522 actors), 101116 marked mirrored
+[2026-10-22 02:13:40Z] metadata: 212160 files with an actor id (522 actors), 101116 marked mirrored
+[2026-10-22 02:15:01Z] SOMA joints (78): ['Root', 'Hips', 'Spine1', 'Spine2', 'Chest', 'Neck1', 'Neck2', 'Head', 'HeadEnd', 'Jaw', 'LeftEye', 'RightEye', 'LeftShoulder', 'LeftArm', 'LeftForeArm', 'LeftHand', 'LeftHandThumb1', 'LeftHandThumb2', 'LeftHandThumb3', 'LeftHandThumbEnd', 'LeftHandIndex1', 'LeftHandIndex2', 'LeftHandIndex3', 'LeftHandIndex4', 'LeftHandIndexEnd', 'LeftHandMiddle1', 'LeftHandMiddle2', 'LeftHandMiddle3', 'LeftHandMiddle4', 'LeftHandMiddleEnd', 'LeftHandRing1', 'LeftHandRing2', 'LeftHandRing3', 'LeftHandRing4', 'LeftHandRingEnd', 'LeftHandPinky1', 'LeftHandPinky2', 'LeftHandPinky3', 'LeftHandPinky4', 'LeftHandPinkyEnd', 'RightShoulder', 'RightArm', 'RightForeArm', 'RightHand', 'RightHandThumb1', 'RightHandThumb2', 'RightHandThumb3', 'RightHandThumbEnd', 'RightHandIndex1', 'RightHandIndex2', 'RightHandIndex3', 'RightHandIndex4', 'RightHandIndexEnd', 'RightHandMiddle1', 'RightHandMiddle2', 'RightHandMiddle3', 'RightHandMiddle4', 'RightHandMiddleEnd', 'RightHandRing1', 'RightHandRing2', 'RightHandRing3', 'RightHandRing4', 'RightHandRingEnd', 'RightHandPinky1', 'RightHandPinky2', 'RightHandPinky3', 'RightHandPinky4', 'RightHandPinkyEnd', 'LeftLeg', 'LeftShin', 'LeftFoot', 'LeftToeBase', 'LeftToeEnd', 'RightLeg', 'RightShin', 'RightFoot', 'RightToeBase', 'RightToeEnd']
+[2026-10-22 02:15:01Z] SOMA joints (78): ['Root', 'Hips', 'Spine1', 'Spine2', 'Chest', 'Neck1', 'Neck2', 'Head', 'HeadEnd', 'Jaw', 'LeftEye', 'RightEye', 'LeftShoulder', 'LeftArm', 'LeftForeArm', 'LeftHand', 'LeftHandThumb1', 'LeftHandThumb2', 'LeftHandThumb3', 'LeftHandThumbEnd', 'LeftHandIndex1', 'LeftHandIndex2', 'LeftHandIndex3', 'LeftHandIndex4', 'LeftHandIndexEnd', 'LeftHandMiddle1', 'LeftHandMiddle2', 'LeftHandMiddle3', 'LeftHandMiddle4', 'LeftHandMiddleEnd', 'LeftHandRing1', 'LeftHandRing2', 'LeftHandRing3', 'LeftHandRing4', 'LeftHandRingEnd', 'LeftHandPinky1', 'LeftHandPinky2', 'LeftHandPinky3', 'LeftHandPinky4', 'LeftHandPinkyEnd', 'RightShoulder', 'RightArm', 'RightForeArm', 'RightHand', 'RightHandThumb1', 'RightHandThumb2', 'RightHandThumb3', 'RightHandThumbEnd', 'RightHandIndex1', 'RightHandIndex2', 'RightHandIndex3', 'RightHandIndex4', 'RightHandIndexEnd', 'RightHandMiddle1', 'RightHandMiddle2', 'RightHandMiddle3', 'RightHandMiddle4', 'RightHandMiddleEnd', 'RightHandRing1', 'RightHandRing2', 'RightHandRing3', 'RightHandRing4', 'RightHandRingEnd', 'RightHandPinky1', 'RightHandPinky2', 'RightHandPinky3', 'RightHandPinky4', 'RightHandPinkyEnd', 'LeftLeg', 'LeftShin', 'LeftFoot', 'LeftToeBase', 'LeftToeEnd', 'RightLeg', 'RightShin', 'RightFoot', 'RightToeBase', 'RightToeEnd']
+[2026-10-22 02:15:01Z] keypoint map: {'l_ankle': 'LeftFoot', 'l_toe': 'LeftToeBase', 'l_knee': 'LeftShin', 'l_hip': 'LeftLeg', 'l_wrist': 'LeftHand', 'l_elbow': 'LeftForeArm', 'l_shoulder': 'LeftArm', 'r_ankle': 'RightFoot', 'r_toe': 'RightToeBase', 'r_knee': 'RightShin', 'r_hip': 'RightLeg', 'r_wrist': 'RightHand', 'r_elbow': 'RightForeArm', 'r_shoulder': 'RightArm', 'pelvis': 'Hips', 'spine': 'Spine1', 'chest': 'Chest', 'neck': 'Neck1', 'head': 'Head'}
+[2026-10-22 02:15:01Z] keypoint map: {'l_ankle': 'LeftFoot', 'l_toe': 'LeftToeBase', 'l_knee': 'LeftShin', 'l_hip': 'LeftLeg', 'l_wrist': 'LeftHand', 'l_elbow': 'LeftForeArm', 'l_shoulder': 'LeftArm', 'r_ankle': 'RightFoot', 'r_toe': 'RightToeBase', 'r_knee': 'RightShin', 'r_hip': 'RightLeg', 'r_wrist': 'RightHand', 'r_elbow': 'RightForeArm', 'r_shoulder': 'RightArm', 'pelvis': 'Hips', 'spine': 'Spine1', 'chest': 'Chest', 'neck': 'Neck1', 'head': 'Head'}
+[2026-10-22 02:15:24Z]   3000 takes parsed (2952 kept), 104s
+[2026-10-22 02:15:24Z]   3000 takes parsed (2952 kept), 104s
+[2026-10-22 02:17:10Z]   6000 takes parsed (5915 kept), 209s
+[2026-10-22 02:17:10Z]   6000 takes parsed (5915 kept), 209s
+[2026-10-22 02:18:29Z]   9000 takes parsed (8842 kept), 289s
+[2026-10-22 02:18:29Z]   9000 takes parsed (8842 kept), 289s
+[2026-10-22 02:19:36Z]   12000 takes parsed (11770 kept), 355s
+[2026-10-22 02:19:36Z]   12000 takes parsed (11770 kept), 355s
+[2026-10-22 02:20:46Z]   15000 takes parsed (14725 kept), 425s
+[2026-10-22 02:20:46Z]   15000 takes parsed (14725 kept), 425s
+[2026-10-22 02:21:58Z]   18000 takes parsed (17695 kept), 497s
+[2026-10-22 02:21:58Z]   18000 takes parsed (17695 kept), 497s
+[2026-10-22 02:23:07Z]   21000 takes parsed (20641 kept), 566s
+[2026-10-22 02:23:07Z]   21000 takes parsed (20641 kept), 566s
+[2026-10-22 02:24:19Z]   24000 takes parsed (23562 kept), 638s
+[2026-10-22 02:24:19Z]   24000 takes parsed (23562 kept), 638s
+[2026-10-22 02:25:34Z]   27000 takes parsed (26519 kept), 713s
+[2026-10-22 02:25:34Z]   27000 takes parsed (26519 kept), 713s
+[2026-10-22 02:26:44Z]   30000 takes parsed (29495 kept), 784s
+[2026-10-22 02:26:44Z]   30000 takes parsed (29495 kept), 784s
+[2026-10-22 02:27:55Z]   33000 takes parsed (32431 kept), 854s
+[2026-10-22 02:27:55Z]   33000 takes parsed (32431 kept), 854s
+[2026-10-22 02:28:58Z]   36000 takes parsed (35372 kept), 918s
+[2026-10-22 02:28:58Z]   36000 takes parsed (35372 kept), 918s
+[2026-10-22 02:30:01Z]   39000 takes parsed (38323 kept), 980s
+[2026-10-22 02:30:01Z]   39000 takes parsed (38323 kept), 980s
+[2026-10-22 02:31:13Z]   42000 takes parsed (41279 kept), 1053s
+[2026-10-22 02:31:13Z]   42000 takes parsed (41279 kept), 1053s
+[2026-10-22 02:32:35Z]   45000 takes parsed (44216 kept), 1134s
+[2026-10-22 02:32:35Z]   45000 takes parsed (44216 kept), 1134s
+[2026-10-22 02:33:48Z]   48000 takes parsed (47158 kept), 1208s
+[2026-10-22 02:33:48Z]   48000 takes parsed (47158 kept), 1208s
+[2026-10-22 02:34:57Z]   51000 takes parsed (50133 kept), 1276s
+[2026-10-22 02:34:57Z]   51000 takes parsed (50133 kept), 1276s
+[2026-10-22 02:36:10Z]   54000 takes parsed (53119 kept), 1350s
+[2026-10-22 02:36:10Z]   54000 takes parsed (53119 kept), 1350s
+[2026-10-22 02:37:28Z]   57000 takes parsed (56100 kept), 1428s
+[2026-10-22 02:37:28Z]   57000 takes parsed (56100 kept), 1428s
+[2026-10-22 02:38:40Z]   60000 takes parsed (59075 kept), 1499s
+[2026-10-22 02:38:40Z]   60000 takes parsed (59075 kept), 1499s
+[2026-10-22 02:39:45Z]   63000 takes parsed (62062 kept), 1564s
+[2026-10-22 02:39:45Z]   63000 takes parsed (62062 kept), 1564s
+[2026-10-22 02:40:52Z]   66000 takes parsed (64993 kept), 1631s
+[2026-10-22 02:40:52Z]   66000 takes parsed (64993 kept), 1631s
+[2026-10-22 02:42:09Z]   69000 takes parsed (67971 kept), 1708s
+[2026-10-22 02:42:09Z]   69000 takes parsed (67971 kept), 1708s
+[2026-10-22 02:42:53Z] parsed 71121 takes in 1753s: 70068 kept, rejects {'shorter than 2 s': 703, 'non-finite values': 350}; 521 actors
+[2026-10-22 02:42:53Z] parsed 71121 takes in 1753s: 70068 kept, rejects {'shorter than 2 s': 703, 'non-finite values': 350}; 521 actors
+[2026-10-22 02:42:56Z] IK check: passed=True backend torch
+[2026-10-22 02:42:56Z] IK check: passed=True backend torch
+[2026-10-22 02:43:08Z]   IK (gpu) 10/69 chunks
+[2026-10-22 02:43:17Z]   IK (gpu) 20/69 chunks
+[2026-10-22 02:43:27Z]   IK (gpu) 30/69 chunks
+[2026-10-22 02:43:37Z]   IK (gpu) 40/69 chunks
+[2026-10-22 02:43:46Z]   IK (gpu) 50/69 chunks
+[2026-10-22 02:43:56Z]   IK (gpu) 60/69 chunks
+[2026-10-22 02:44:04Z]   IK (gpu) 69/69 chunks
+[2026-10-22 02:44:04Z] IK: 10,296,116 frames in 68s
+[2026-10-22 02:44:04Z] IK: 10,296,116 frames in 68s
+[2026-10-22 02:44:21Z] SEED done: 70068 takes, 143.0 h, 521 actors -> /workspace/data/shards_all (1942s)
+[2026-10-22 02:44:21Z] SEED done: 70068 takes, 143.0 h, 521 actors -> /workspace/data/shards_all (1942s)

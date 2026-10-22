@@ -1,0 +1,94 @@
+[
+ {
+  "size": "M",
+  "fraction": 1.0,
+  "role": "model_ladder",
+  "params": 356860,
+  "est_seconds": 422,
+  "status": "ok",
+  "wall_s": 172
+ },
+ {
+  "size": "L",
+  "fraction": 1.0,
+  "role": "model_ladder",
+  "params": 821500,
+  "est_seconds": 423,
+  "status": "ok",
+  "wall_s": 254
+ },
+ {
+  "size": "XL",
+  "fraction": 1.0,
+  "role": "model_ladder",
+  "params": 2266876,
+  "est_seconds": 736,
+  "status": "ok",
+  "wall_s": 289
+ },
+ {
+  "size": "2XL",
+  "fraction": 1.0,
+  "role": "model_ladder",
+  "params": 4795260,
+  "est_seconds": 649,
+  "status": "ok",
+  "wall_s": 253
+ },
+ {
+  "size": "3XL",
+  "fraction": 1.0,
+  "role": "model_ladder",
+  "params": 14280700,
+  "est_seconds": 791,
+  "status": "ok",
+  "wall_s": 498
+ },
+ {
+  "size": "4XL",
+  "fraction": 1.0,
+  "role": "predicted",
+  "params": 31637116,
+  "est_seconds": 1141,
+  "status": "ok",
+  "wall_s": 785
+ },
+ {
+  "size": "2XL",
+  "fraction": 0.015625,
+  "role": "data_ladder",
+  "params": 4795260,
+  "est_seconds": 295,
+  "status": "ok",
+  "wall_s": 351
+ },
+ {
+  "size": "2XL",
+  "fraction": 0.0625,
+  "role": "data_ladder",
+  "params": 4795260,
+  "est_seconds": 295,
+  "status": "ok",
+  "wall_s": 358
+ },
+ {
+  "size": "2XL",
+  "fraction": 0.25,
+  "role": "data_ladder",
+  "params": 4795260,
+  "est_seconds": 295,
+  "status": "ok",
+  "wall_s": 359
+ },
+ {
+  "role": "extra",
+  "size": "4XL",
+  "fraction": 1.0,
+  "objective": "dct16mix",
+  "noisy_history": true,
+  "params": 31668922,
+  "est_seconds": 1071,
+  "status": "failed (1)",
+  "wall_s": 3
+ }
+]

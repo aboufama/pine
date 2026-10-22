@@ -1,0 +1,56 @@
+[2026-10-21 23:05:39Z] unitree_mujoco: fetching ...
+[2026-10-21 23:05:39Z] unitree_mujoco: ok in 0s {"source": "vendored (unitree_mujoco 1eb6642)", "models": {"h2": true}, "license": "BSD-3-Clause", "bytes": 13136304}
+[2026-10-21 23:05:53Z] network: huggingface 171.9 MB/s, github 10.1 MB/s
+[2026-10-21 23:06:02Z] apt-get install zstd: exit 0
+[2026-10-21 23:06:02Z] lafan1_g1: skipped (G1-native, robot is h2)
+[2026-10-21 23:06:02Z] amass_g1: skipped (G1-native, robot is h2)
+[2026-10-21 23:06:02Z] cmu: fetching ...
+[2026-10-21 23:06:02Z] lafan1: fetching ...
+[2026-10-21 23:06:02Z] bandai: fetching ...
+[2026-10-21 23:06:02Z] hiphi: fetching ...
+[2026-10-21 23:06:20Z] lafan1: ok in 18s {"commit": "94084601bacdf9cc3764b5c73daaeccae6035fac", "url": "https://github.com/ubisoft/ubisoft-laforge-animation-dataset", "bvh_files": 77, "bvh_dir": "/workspace/data/raw/lafan1/repo/lafan1/bvh", "zip_bytes": 144051503, "license": "CC BY-NC-ND 4.0", "format": "BVH, 30 fps, cm, Mixamo-style joint names", "bytes": 637502381}
+[2026-10-21 23:06:43Z] bandai: ok in 40s {"commit": "74ead3ba1ae4696404e6086233779f60de8bf9ef", "url": "https://github.com/BandaiNamcoResearchInc/Bandai-Namco-Research-Motiondataset", "bvh_files": 3077, "license": "CC BY-NC 4.0", "bytes": 1055715968}
+[2026-10-21 23:07:32Z]   cmu: git clone failed (attempt 1/3): error: RPC failed; curl 28 Operation too slow. Less than 200000 bytes/sec transferred the last 90 seconds
+fatal: early EOF
+fatal: fetch-pack: invalid index-pack output
+[2026-10-21 23:09:02Z]   hiphi: HiPHI_data_part_0001_of_0032.tar.zst -> 1629 files, 543 takes kept as keypoints, 179s (waited 16s for the download), 7.4 GB on disk
+[2026-10-21 23:09:13Z]   cmu: git clone failed (attempt 2/3): error: RPC failed; curl 28 Operation too slow. Less than 200000 bytes/sec transferred the last 90 seconds
+fatal: early EOF
+fatal: fetch-pack: invalid index-pack output
+[2026-10-21 23:11:06Z]   cmu: git clone failed (attempt 3/3): error: RPC failed; curl 28 Operation too slow. Less than 200000 bytes/sec transferred the last 90 seconds
+fatal: early EOF
+fatal: fetch-pack: invalid index-pack output
+[2026-10-21 23:11:36Z] cmu: failed in 334s {"error": "error: RPC failed; curl 28 Operation too slow. Less than 200000 bytes/sec transferred the last 90 seconds\nfatal: early EOF\nfatal: fetch-pack: invalid index-pack output", "url": "https://github.com/una-dinosauria/cmu-mocap"}
+[2026-10-21 23:11:43Z]   hiphi: HiPHI_data_part_0002_of_0032.tar.zst -> 1638 files, 546 takes kept as keypoints, 161s (waited 0s for the download), 7.6 GB on disk
+[2026-10-21 23:14:24Z]   hiphi: HiPHI_data_part_0003_of_0032.tar.zst -> 1626 files, 542 takes kept as keypoints, 160s (waited 0s for the download), 7.7 GB on disk
+[2026-10-21 23:17:08Z]   hiphi: HiPHI_data_part_0004_of_0032.tar.zst -> 1629 files, 543 takes kept as keypoints, 164s (waited 0s for the download), 7.5 GB on disk
+[2026-10-21 23:19:50Z]   hiphi: HiPHI_data_part_0005_of_0032.tar.zst -> 1529 files, 556 takes kept as keypoints, 161s (waited 0s for the download), 6.3 GB on disk
+[2026-10-21 23:22:27Z]   hiphi: HiPHI_data_part_0006_of_0032.tar.zst -> 1150 files, 575 takes kept as keypoints, 157s (waited 0s for the download), 6.6 GB on disk
+[2026-10-21 23:25:05Z]   hiphi: HiPHI_data_part_0007_of_0032.tar.zst -> 1144 files, 572 takes kept as keypoints, 158s (waited 0s for the download), 6.7 GB on disk
+[2026-10-21 23:27:41Z]   hiphi: HiPHI_data_part_0008_of_0032.tar.zst -> 1146 files, 573 takes kept as keypoints, 156s (waited 0s for the download), 6.9 GB on disk
+[2026-10-21 23:30:20Z]   hiphi: HiPHI_data_part_0009_of_0032.tar.zst -> 1148 files, 574 takes kept as keypoints, 159s (waited 0s for the download), 7.0 GB on disk
+[2026-10-21 23:32:58Z]   hiphi: HiPHI_data_part_0010_of_0032.tar.zst -> 1150 files, 575 takes kept as keypoints, 157s (waited 0s for the download), 7.2 GB on disk
+[2026-10-21 23:35:35Z]   hiphi: HiPHI_data_part_0011_of_0032.tar.zst -> 1150 files, 575 takes kept as keypoints, 156s (waited 0s for the download), 7.3 GB on disk
+[2026-10-21 23:38:12Z]   hiphi: HiPHI_data_part_0012_of_0032.tar.zst -> 1156 files, 578 takes kept as keypoints, 157s (waited 0s for the download), 7.5 GB on disk
+[2026-10-21 23:40:52Z]   hiphi: HiPHI_data_part_0013_of_0032.tar.zst -> 1156 files, 578 takes kept as keypoints, 160s (waited 0s for the download), 7.6 GB on disk
+[2026-10-21 23:43:29Z]   hiphi: HiPHI_data_part_0014_of_0032.tar.zst -> 1152 files, 576 takes kept as keypoints, 157s (waited 0s for the download), 7.7 GB on disk
+[2026-10-21 23:46:09Z]   hiphi: HiPHI_data_part_0015_of_0032.tar.zst -> 1156 files, 578 takes kept as keypoints, 159s (waited 0s for the download), 7.9 GB on disk
+[2026-10-21 23:48:44Z]   hiphi: HiPHI_data_part_0016_of_0032.tar.zst -> 1156 files, 578 takes kept as keypoints, 155s (waited 0s for the download), 8.1 GB on disk
+[2026-10-21 23:51:24Z]   hiphi: HiPHI_data_part_0017_of_0032.tar.zst -> 1144 files, 572 takes kept as keypoints, 159s (waited 0s for the download), 8.2 GB on disk
+[2026-10-21 23:54:03Z]   hiphi: HiPHI_data_part_0018_of_0032.tar.zst -> 1156 files, 578 takes kept as keypoints, 159s (waited 0s for the download), 8.4 GB on disk
+[2026-10-21 23:56:46Z]   hiphi: HiPHI_data_part_0019_of_0032.tar.zst -> 1159 files, 578 takes kept as keypoints, 162s (waited 0s for the download), 9.5 GB on disk
+[2026-10-21 23:59:28Z]   hiphi: HiPHI_data_part_0020_of_0032.tar.zst -> 1495 files, 560 takes kept as keypoints, 161s (waited 0s for the download), 10.2 GB on disk
+[2026-10-22 00:02:14Z]   hiphi: HiPHI_data_part_0021_of_0032.tar.zst -> 1632 files, 544 takes kept as keypoints, 166s (waited 0s for the download), 10.4 GB on disk
+[2026-10-22 00:05:01Z]   hiphi: HiPHI_data_part_0022_of_0032.tar.zst -> 1617 files, 539 takes kept as keypoints, 167s (waited 0s for the download), 10.5 GB on disk
+[2026-10-22 00:07:48Z]   hiphi: HiPHI_data_part_0023_of_0032.tar.zst -> 1635 files, 545 takes kept as keypoints, 167s (waited 0s for the download), 10.7 GB on disk
+[2026-10-22 00:10:34Z]   hiphi: HiPHI_data_part_0024_of_0032.tar.zst -> 1623 files, 541 takes kept as keypoints, 165s (waited 0s for the download), 10.8 GB on disk
+[2026-10-22 00:13:24Z]   hiphi: HiPHI_data_part_0025_of_0032.tar.zst -> 1626 files, 542 takes kept as keypoints, 170s (waited 0s for the download), 10.8 GB on disk
+[2026-10-22 00:16:03Z]   hiphi: HiPHI_data_part_0026_of_0032.tar.zst -> 1247 files, 540 takes kept as keypoints, 159s (waited 0s for the download), 10.8 GB on disk
+[2026-10-22 00:18:45Z]   hiphi: HiPHI_data_part_0027_of_0032.tar.zst -> 1120 files, 560 takes kept as keypoints, 161s (waited 0s for the download), 10.9 GB on disk
+[2026-10-22 00:21:35Z]   hiphi: HiPHI_data_part_0028_of_0032.tar.zst -> 1420 files, 558 takes kept as keypoints, 169s (waited 0s for the download), 11.4 GB on disk
+[2026-10-22 00:24:28Z]   hiphi: HiPHI_data_part_0029_of_0032.tar.zst -> 1644 files, 548 takes kept as keypoints, 173s (waited 0s for the download), 10.7 GB on disk
+[2026-10-22 00:27:11Z]   hiphi: HiPHI_data_part_0030_of_0032.tar.zst -> 1311 files, 570 takes kept as keypoints, 162s (waited 0s for the download), 10.8 GB on disk
+[2026-10-22 00:29:52Z]   hiphi: HiPHI_data_part_0031_of_0032.tar.zst -> 1281 files, 563 takes kept as keypoints, 161s (waited 0s for the download), 7.1 GB on disk
+[2026-10-22 00:30:59Z]   hiphi: HiPHI_data_part_0032_of_0032.tar.zst -> 456 files, 226 takes kept as keypoints, 66s (waited 0s for the download), 4.8 GB on disk
+[2026-10-22 00:30:59Z] hiphi: ok in 5097s {"canon_archives": 32, "archives": 32, "archives_total": 32, "failed": [], "bvh_files": 32, "license": "ModalityNet Open Research License (non-commercial research)", "format": "BVH, 90 Hz, cm, Y-up; each motion also has a __mirror copy"}
+[2026-10-22 00:30:59Z] fetch report: /workspace/data/raw/fetch_report.json

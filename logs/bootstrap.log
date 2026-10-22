@@ -1,0 +1,300 @@
+[2026-10-22 03:50:07Z]   2XL f=1.0      step  10660/10665 train 0.0788 val 0.0624 exo 0.2683 hidden 18.1deg  1.64M tok/s  109s
+[2026-10-22 03:50:07Z]   2XL f=1.0      step  10665/10665 train 0.0871 val 0.0631 exo 0.2696 hidden 18.1deg  1.64M tok/s  109s
+[2026-10-22 03:50:07Z]    2XL f=1.0: params 4,795,260 best val 0.0619 test 0.1276 hidden 18.2 deg, 109s, 1.64M tok/s -> phase2_HiPHI_P64_H15_s2_2XL.json
+[2026-10-22 03:50:07Z]    HiPHI_P64_H15_s2 exited 0 after 1.9 min
+[2026-10-22 03:50:08Z] == SEED_P8_H6.1083_s2 (2XL, 10665 steps): {"dataset": "seed", "experiment": "SEED", "performers": 8, "hours": 6.1083, "seed": 2}
+/workspace/pine-engine/gpu/train_torch.py:229: UserWarning: The given NumPy array is not writable, and PyTorch does not support non-writable tensors. This means writing to this tensor will result in undefined behavior. You may want to copy the array to protect its data or make it writable before converting it to a tensor. This type of warning will be suppressed for the rest of this program. (Triggered internally at ../torch/csrc/utils/tensor_numpy.cpp:206.)
+  X = torch.from_numpy(np.ascontiguousarray(data.X)).to(dev)            # float16, normalised
+[2026-10-22 03:50:10Z] 2XL f=1.0: 1971 train clips, 439,767 frames (6.11 h), 370,782 window starts, 1 x 512 windows/step, data load 1s
+[2026-10-22 03:50:17Z]   2XL f=1.0      step    533/10665 train 0.1821 val 0.3472 exo 0.6757 hidden 24.1deg  1.47M tok/s  6s
+[2026-10-22 03:50:26Z]   2XL f=1.0      step   1066/10665 train 0.2877 val 0.3316 exo 0.6613 hidden 23.7deg  1.14M tok/s  16s
+[2026-10-22 03:50:36Z]   2XL f=1.0      step   1599/10665 train 0.2101 val 0.3274 exo 0.6622 hidden 23.7deg  1.06M tok/s  25s
+[2026-10-22 03:50:45Z]   2XL f=1.0      step   2132/10665 train 0.1524 val 0.3278 exo 0.7011 hidden 24.8deg  1.02M tok/s  35s
+[2026-10-22 03:50:55Z]   2XL f=1.0      step   2665/10665 train 0.0951 val 0.3415 exo 0.6933 hidden 24.0deg  1.00M tok/s  44s
+[2026-10-22 03:51:01Z]   2XL f=1.0      step   3198/10665 train 0.1051 val 0.3492 exo 0.7263 hidden 24.2deg  1.05M tok/s  51s
+[2026-10-22 03:51:10Z]   2XL f=1.0      step   3731/10665 train 0.1063 val 0.3527 exo 0.7349 hidden 24.6deg  1.03M tok/s  60s
+[2026-10-22 03:51:19Z]   2XL f=1.0      step   4264/10665 train 0.0888 val 0.3659 exo 0.7469 hidden 24.8deg  1.02M tok/s  69s
+[2026-10-22 03:51:28Z]   2XL f=1.0      step   4797/10665 train 0.1073 val 0.3620 exo 0.7402 hidden 24.7deg  1.02M tok/s  78s
+[2026-10-22 03:51:37Z]   2XL f=1.0      step   5330/10665 train 0.0725 val 0.3724 exo 0.7572 hidden 25.1deg  1.01M tok/s  87s
+[2026-10-22 03:51:46Z]   2XL f=1.0      step   5863/10665 train 0.0703 val 0.3671 exo 0.7393 hidden 24.7deg  1.01M tok/s  96s
+[2026-10-22 03:51:55Z]   2XL f=1.0      step   6396/10665 train 0.0608 val 0.3746 exo 0.7496 hidden 24.9deg  1.01M tok/s  105s
+[2026-10-22 03:52:04Z]   2XL f=1.0      step   6929/10665 train 0.1365 val 0.3796 exo 0.7486 hidden 24.7deg  1.01M tok/s  114s
+[2026-10-22 03:52:13Z]   2XL f=1.0      step   7462/10665 train 0.0653 val 0.3907 exo 0.7728 hidden 25.3deg  1.00M tok/s  123s
+[2026-10-22 03:52:22Z]   2XL f=1.0      step   7995/10665 train 0.0504 val 0.3898 exo 0.7685 hidden 25.0deg  1.00M tok/s  132s
+[2026-10-22 03:52:31Z]   2XL f=1.0      step   8528/10665 train 0.0512 val 0.4012 exo 0.7836 hidden 25.2deg  1.00M tok/s  141s
+[2026-10-22 03:52:38Z]   2XL f=1.0      step   9061/10665 train 0.1053 val 0.4031 exo 0.7815 hidden 25.1deg  1.01M tok/s  148s
+[2026-10-22 03:52:47Z]   2XL f=1.0      step   9594/10665 train 0.0447 val 0.4016 exo 0.7770 hidden 25.2deg  1.01M tok/s  156s
+[2026-10-22 03:52:56Z]   2XL f=1.0      step  10127/10665 train 0.0533 val 0.4052 exo 0.7810 hidden 25.1deg  1.01M tok/s  165s
+[2026-10-22 03:53:02Z]   2XL f=1.0      step  10660/10665 train 0.0550 val 0.4023 exo 0.7759 hidden 25.1deg  1.03M tok/s  171s
+[2026-10-22 03:53:02Z]   2XL f=1.0      step  10665/10665 train 0.0503 val 0.4025 exo 0.7751 hidden 25.0deg  1.03M tok/s  171s
+[2026-10-22 03:53:02Z]    2XL f=1.0: params 4,795,260 best val 0.3274 test 0.3809 hidden 23.7 deg, 171s, 1.03M tok/s -> phase2_SEED_P8_H6.1083_s2_2XL.json
+[2026-10-22 03:53:03Z]    SEED_P8_H6.1083_s2 exited 0 after 2.9 min
+[2026-10-22 03:53:03Z] == SEED_P16_H6.1083_s2 (2XL, 10665 steps): {"dataset": "seed", "experiment": "SEED", "performers": 16, "hours": 6.1083, "seed": 2}
+/workspace/pine-engine/gpu/train_torch.py:229: UserWarning: The given NumPy array is not writable, and PyTorch does not support non-writable tensors. This means writing to this tensor will result in undefined behavior. You may want to copy the array to protect its data or make it writable before converting it to a tensor. This type of warning will be suppressed for the rest of this program. (Triggered internally at ../torch/csrc/utils/tensor_numpy.cpp:206.)
+  X = torch.from_numpy(np.ascontiguousarray(data.X)).to(dev)            # float16, normalised
+[2026-10-22 03:53:05Z] 2XL f=1.0: 3232 train clips, 439,715 frames (6.11 h), 326,595 window starts, 1 x 512 windows/step, data load 1s
+[2026-10-22 03:53:12Z]   2XL f=1.0      step    533/10665 train 0.4460 val 0.2859 exo 0.5678 hidden 22.1deg  1.50M tok/s  6s
+[2026-10-22 03:53:21Z]   2XL f=1.0      step   1066/10665 train 0.2584 val 0.2701 exo 0.5615 hidden 22.2deg  1.17M tok/s  15s
+[2026-10-22 03:53:30Z]   2XL f=1.0      step   1599/10665 train 0.2487 val 0.2688 exo 0.5602 hidden 22.1deg  1.10M tok/s  24s
+[2026-10-22 03:53:36Z]   2XL f=1.0      step   2132/10665 train 0.2437 val 0.2673 exo 0.5576 hidden 22.2deg  1.18M tok/s  30s
+[2026-10-22 03:53:41Z]   2XL f=1.0      step   2665/10665 train 0.1559 val 0.2675 exo 0.5548 hidden 22.0deg  1.24M tok/s  36s
+[2026-10-22 03:53:50Z]   2XL f=1.0      step   3198/10665 train 0.1820 val 0.2714 exo 0.5645 hidden 22.3deg  1.19M tok/s  44s
+[2026-10-22 03:53:57Z]   2XL f=1.0      step   3731/10665 train 0.2044 val 0.2749 exo 0.5607 hidden 21.9deg  1.19M tok/s  52s
+[2026-10-22 03:54:03Z]   2XL f=1.0      step   4264/10665 train 0.1416 val 0.2813 exo 0.5758 hidden 22.2deg  1.22M tok/s  58s
+[2026-10-22 03:54:11Z]   2XL f=1.0      step   4797/10665 train 0.1788 val 0.2804 exo 0.5612 hidden 21.9deg  1.22M tok/s  65s
+[2026-10-22 03:54:20Z]   2XL f=1.0      step   5330/10665 train 0.1348 val 0.2858 exo 0.5686 hidden 21.9deg  1.18M tok/s  75s
+[2026-10-22 03:54:30Z]   2XL f=1.0      step   5863/10665 train 0.0983 val 0.2909 exo 0.5814 hidden 22.0deg  1.15M tok/s  84s
+[2026-10-22 03:54:36Z]   2XL f=1.0      step   6396/10665 train 0.0831 val 0.2881 exo 0.5725 hidden 22.1deg  1.18M tok/s  90s
+report pushed: stage='2026-10-22T02:11:58Z phase 2: people vs hours on held-out Hi' runs=9
+[2026-10-22 03:54:45Z]   2XL f=1.0      step   6929/10665 train 0.0857 val 0.2870 exo 0.5731 hidden 22.1deg  1.15M tok/s  99s
+[2026-10-22 03:54:54Z]   2XL f=1.0      step   7462/10665 train 0.0992 val 0.2925 exo 0.5809 hidden 22.1deg  1.13M tok/s  109s
+[2026-10-22 03:55:03Z]   2XL f=1.0      step   7995/10665 train 0.1300 val 0.2940 exo 0.5740 hidden 21.9deg  1.12M tok/s  118s
+[2026-10-22 03:55:12Z]   2XL f=1.0      step   8528/10665 train 0.0948 val 0.2968 exo 0.5827 hidden 22.3deg  1.11M tok/s  127s
+[2026-10-22 03:55:21Z]   2XL f=1.0      step   9061/10665 train 0.0900 val 0.3036 exo 0.5896 hidden 22.2deg  1.10M tok/s  136s
+[2026-10-22 03:55:30Z]   2XL f=1.0      step   9594/10665 train 0.0830 val 0.3023 exo 0.5842 hidden 22.2deg  1.10M tok/s  145s
+[2026-10-22 03:55:39Z]   2XL f=1.0      step  10127/10665 train 0.0989 val 0.3067 exo 0.5839 hidden 22.1deg  1.09M tok/s  154s
+[2026-10-22 03:55:48Z]   2XL f=1.0      step  10660/10665 train 0.1121 val 0.3079 exo 0.5893 hidden 22.3deg  1.08M tok/s  163s
+[2026-10-22 03:55:48Z]   2XL f=1.0      step  10665/10665 train 0.0704 val 0.3095 exo 0.5891 hidden 22.2deg  1.08M tok/s  163s
+[2026-10-22 03:55:48Z]    2XL f=1.0: params 4,795,260 best val 0.2673 test 0.3258 hidden 22.2 deg, 163s, 1.08M tok/s -> phase2_SEED_P16_H6.1083_s2_2XL.json
+[2026-10-22 03:55:49Z]    SEED_P16_H6.1083_s2 exited 0 after 2.8 min
+[2026-10-22 03:55:49Z] == SEED_P32_H6.1083_s2 (2XL, 10665 steps): {"dataset": "seed", "experiment": "SEED", "performers": 32, "hours": 6.1083, "seed": 2}
+/workspace/pine-engine/gpu/train_torch.py:229: UserWarning: The given NumPy array is not writable, and PyTorch does not support non-writable tensors. This means writing to this tensor will result in undefined behavior. You may want to copy the array to protect its data or make it writable before converting it to a tensor. This type of warning will be suppressed for the rest of this program. (Triggered internally at ../torch/csrc/utils/tensor_numpy.cpp:206.)
+  X = torch.from_numpy(np.ascontiguousarray(data.X)).to(dev)            # float16, normalised
+[2026-10-22 03:55:52Z] 2XL f=1.0: 3043 train clips, 439,677 frames (6.11 h), 333,172 window starts, 1 x 512 windows/step, data load 1s
+[2026-10-22 03:55:58Z]   2XL f=1.0      step    533/10665 train 0.6802 val 0.2830 exo 0.5550 hidden 21.3deg  1.47M tok/s  6s
+[2026-10-22 03:56:04Z]   2XL f=1.0      step   1066/10665 train 0.5000 val 0.2582 exo 0.5303 hidden 21.0deg  1.52M tok/s  12s
+[2026-10-22 03:56:13Z]   2XL f=1.0      step   1599/10665 train 0.5043 val 0.2645 exo 0.5490 hidden 21.3deg  1.29M tok/s  21s
+[2026-10-22 03:56:22Z]   2XL f=1.0      step   2132/10665 train 0.2902 val 0.2687 exo 0.5424 hidden 21.0deg  1.19M tok/s  30s
+[2026-10-22 03:56:31Z]   2XL f=1.0      step   2665/10665 train 0.3557 val 0.2732 exo 0.5514 hidden 21.2deg  1.14M tok/s  39s
+[2026-10-22 03:56:40Z]   2XL f=1.0      step   3198/10665 train 0.1804 val 0.2715 exo 0.5593 hidden 21.1deg  1.11M tok/s  48s
+[2026-10-22 03:56:49Z]   2XL f=1.0      step   3731/10665 train 0.2946 val 0.2815 exo 0.5611 hidden 21.0deg  1.09M tok/s  57s
+[2026-10-22 03:56:58Z]   2XL f=1.0      step   4264/10665 train 0.1630 val 0.2816 exo 0.5598 hidden 21.0deg  1.07M tok/s  66s
+[2026-10-22 03:57:07Z]   2XL f=1.0      step   4797/10665 train 0.2038 val 0.2806 exo 0.5690 hidden 21.7deg  1.06M tok/s  75s
+[2026-10-22 03:57:16Z]   2XL f=1.0      step   5330/10665 train 0.1683 val 0.2793 exo 0.5648 hidden 21.1deg  1.05M tok/s  84s
+[2026-10-22 03:57:26Z]   2XL f=1.0      step   5863/10665 train 0.2125 val 0.2789 exo 0.5617 hidden 21.1deg  1.03M tok/s  94s
+[2026-10-22 03:57:33Z]   2XL f=1.0      step   6396/10665 train 0.1727 val 0.2740 exo 0.5510 hidden 21.2deg  1.04M tok/s  101s
+[2026-10-22 03:57:43Z]   2XL f=1.0      step   6929/10665 train 0.0945 val 0.2758 exo 0.5578 hidden 21.1deg  1.03M tok/s  111s
+[2026-10-22 03:57:52Z]   2XL f=1.0      step   7462/10665 train 0.2377 val 0.2770 exo 0.5612 hidden 21.2deg  1.03M tok/s  120s
+[2026-10-22 03:58:02Z]   2XL f=1.0      step   7995/10665 train 0.1663 val 0.2766 exo 0.5578 hidden 21.2deg  1.02M tok/s  130s
+[2026-10-22 03:58:11Z]   2XL f=1.0      step   8528/10665 train 0.1257 val 0.2831 exo 0.5639 hidden 21.3deg  1.02M tok/s  139s
+[2026-10-22 03:58:20Z]   2XL f=1.0      step   9061/10665 train 0.1031 val 0.2815 exo 0.5610 hidden 21.2deg  1.01M tok/s  148s
+[2026-10-22 03:58:29Z]   2XL f=1.0      step   9594/10665 train 0.1264 val 0.2858 exo 0.5648 hidden 21.3deg  1.01M tok/s  157s
+[2026-10-22 03:58:39Z]   2XL f=1.0      step  10127/10665 train 0.1342 val 0.2865 exo 0.5666 hidden 21.4deg  1.00M tok/s  167s
+[2026-10-22 03:58:48Z]   2XL f=1.0      step  10660/10665 train 0.0982 val 0.2860 exo 0.5636 hidden 21.3deg  1.00M tok/s  176s
+[2026-10-22 03:58:48Z]   2XL f=1.0      step  10665/10665 train 0.1148 val 0.2875 exo 0.5640 hidden 21.3deg  1.00M tok/s  176s
+[2026-10-22 03:58:48Z]    2XL f=1.0: params 4,795,260 best val 0.2582 test 0.3153 hidden 21.0 deg, 176s, 1.00M tok/s -> phase2_SEED_P32_H6.1083_s2_2XL.json
+[2026-10-22 03:58:49Z]    SEED_P32_H6.1083_s2 exited 0 after 3.0 min
+[2026-10-22 03:58:49Z] == SEED_P64_H6.1083_s2 (2XL, 10665 steps): {"dataset": "seed", "experiment": "SEED", "performers": 64, "hours": 6.1083, "seed": 2}
+/workspace/pine-engine/gpu/train_torch.py:229: UserWarning: The given NumPy array is not writable, and PyTorch does not support non-writable tensors. This means writing to this tensor will result in undefined behavior. You may want to copy the array to protect its data or make it writable before converting it to a tensor. This type of warning will be suppressed for the rest of this program. (Triggered internally at ../torch/csrc/utils/tensor_numpy.cpp:206.)
+  X = torch.from_numpy(np.ascontiguousarray(data.X)).to(dev)            # float16, normalised
+[2026-10-22 03:58:51Z] 2XL f=1.0: 3041 train clips, 439,521 frames (6.10 h), 333,086 window starts, 1 x 512 windows/step, data load 1s
+[2026-10-22 03:58:58Z]   2XL f=1.0      step    533/10665 train 0.7557 val 0.2736 exo 0.5422 hidden 21.0deg  1.49M tok/s  6s
+[2026-10-22 03:59:07Z]   2XL f=1.0      step   1066/10665 train 0.6932 val 0.2525 exo 0.5116 hidden 20.5deg  1.20M tok/s  15s
+[2026-10-22 03:59:12Z]   2XL f=1.0      step   1599/10665 train 0.3171 val 0.2545 exo 0.5050 hidden 20.2deg  1.32M tok/s  20s
+[2026-10-22 03:59:21Z]   2XL f=1.0      step   2132/10665 train 0.4656 val 0.2637 exo 0.5191 hidden 20.4deg  1.21M tok/s  29s
+[2026-10-22 03:59:30Z]   2XL f=1.0      step   2665/10665 train 0.3001 val 0.2605 exo 0.5205 hidden 20.3deg  1.15M tok/s  39s
+[2026-10-22 03:59:39Z]   2XL f=1.0      step   3198/10665 train 0.2522 val 0.2592 exo 0.5197 hidden 20.3deg  1.12M tok/s  48s
+report pushed: stage='2026-10-22T02:11:58Z phase 2: people vs hours on held-out Hi' runs=9
+[2026-10-22 03:59:49Z]   2XL f=1.0      step   3731/10665 train 0.2223 val 0.2679 exo 0.5295 hidden 20.3deg  1.09M tok/s  57s
+[2026-10-22 03:59:57Z]   2XL f=1.0      step   4264/10665 train 0.2183 val 0.2729 exo 0.5451 hidden 20.8deg  1.08M tok/s  66s
+[2026-10-22 04:00:03Z]   2XL f=1.0      step   4797/10665 train 0.2054 val 0.2649 exo 0.5286 hidden 20.5deg  1.12M tok/s  71s
+[2026-10-22 04:00:09Z]   2XL f=1.0      step   5330/10665 train 0.2267 val 0.2604 exo 0.5196 hidden 20.3deg  1.14M tok/s  78s
+[2026-10-22 04:00:18Z]   2XL f=1.0      step   5863/10665 train 0.2361 val 0.2643 exo 0.5349 hidden 20.6deg  1.12M tok/s  87s
+[2026-10-22 04:00:28Z]   2XL f=1.0      step   6396/10665 train 0.1434 val 0.2708 exo 0.5438 hidden 20.7deg  1.11M tok/s  96s
+[2026-10-22 04:00:33Z]   2XL f=1.0      step   6929/10665 train 0.1354 val 0.2690 exo 0.5512 hidden 20.7deg  1.14M tok/s  101s
+[2026-10-22 04:00:38Z]   2XL f=1.0      step   7462/10665 train 0.1733 val 0.2669 exo 0.5411 hidden 20.8deg  1.17M tok/s  106s
+[2026-10-22 04:00:43Z]   2XL f=1.0      step   7995/10665 train 0.1230 val 0.2702 exo 0.5520 hidden 21.0deg  1.19M tok/s  111s
+[2026-10-22 04:00:48Z]   2XL f=1.0      step   8528/10665 train 0.1442 val 0.2705 exo 0.5460 hidden 20.8deg  1.22M tok/s  116s
+[2026-10-22 04:00:53Z]   2XL f=1.0      step   9061/10665 train 0.1482 val 0.2728 exo 0.5474 hidden 20.8deg  1.24M tok/s  121s
+[2026-10-22 04:00:58Z]   2XL f=1.0      step   9594/10665 train 0.1453 val 0.2737 exo 0.5473 hidden 20.8deg  1.26M tok/s  126s
+[2026-10-22 04:01:03Z]   2XL f=1.0      step  10127/10665 train 0.0991 val 0.2804 exo 0.5556 hidden 20.9deg  1.28M tok/s  131s
+[2026-10-22 04:01:08Z]   2XL f=1.0      step  10660/10665 train 0.1678 val 0.2803 exo 0.5588 hidden 20.9deg  1.29M tok/s  137s
+[2026-10-22 04:01:08Z]   2XL f=1.0      step  10665/10665 train 0.1193 val 0.2810 exo 0.5617 hidden 21.0deg  1.29M tok/s  137s
+[2026-10-22 04:01:08Z]    2XL f=1.0: params 4,795,260 best val 0.2525 test 0.3020 hidden 20.5 deg, 137s, 1.29M tok/s -> phase2_SEED_P64_H6.1083_s2_2XL.json
+[2026-10-22 04:01:10Z]    SEED_P64_H6.1083_s2 exited 0 after 2.3 min
+[2026-10-22 04:01:10Z] == SEED_P128_H6.1083_s2 (2XL, 10665 steps): {"dataset": "seed", "experiment": "SEED", "performers": 128, "hours": 6.1083, "seed": 2}
+/workspace/pine-engine/gpu/train_torch.py:229: UserWarning: The given NumPy array is not writable, and PyTorch does not support non-writable tensors. This means writing to this tensor will result in undefined behavior. You may want to copy the array to protect its data or make it writable before converting it to a tensor. This type of warning will be suppressed for the rest of this program. (Triggered internally at ../torch/csrc/utils/tensor_numpy.cpp:206.)
+  X = torch.from_numpy(np.ascontiguousarray(data.X)).to(dev)            # float16, normalised
+[2026-10-22 04:01:12Z] 2XL f=1.0: 3102 train clips, 439,038 frames (6.10 h), 330,468 window starts, 1 x 512 windows/step, data load 1s
+[2026-10-22 04:01:19Z]   2XL f=1.0      step    533/10665 train 0.4311 val 0.2706 exo 0.5378 hidden 21.0deg  1.47M tok/s  6s
+[2026-10-22 04:01:24Z]   2XL f=1.0      step   1066/10665 train 0.4092 val 0.2472 exo 0.5188 hidden 21.0deg  1.50M tok/s  12s
+[2026-10-22 04:01:31Z]   2XL f=1.0      step   1599/10665 train 0.3524 val 0.2444 exo 0.5123 hidden 20.5deg  1.47M tok/s  18s
+[2026-10-22 04:01:40Z]   2XL f=1.0      step   2132/10665 train 0.2493 val 0.2617 exo 0.5284 hidden 20.6deg  1.28M tok/s  28s
+[2026-10-22 04:01:50Z]   2XL f=1.0      step   2665/10665 train 0.2876 val 0.2645 exo 0.5377 hidden 20.8deg  1.19M tok/s  37s
+[2026-10-22 04:01:58Z]   2XL f=1.0      step   3198/10665 train 0.2053 val 0.2709 exo 0.5472 hidden 20.8deg  1.16M tok/s  46s
+[2026-10-22 04:02:07Z]   2XL f=1.0      step   3731/10665 train 0.1851 val 0.2631 exo 0.5228 hidden 20.5deg  1.13M tok/s  55s
+[2026-10-22 04:02:12Z]   2XL f=1.0      step   4264/10665 train 0.1686 val 0.2690 exo 0.5342 hidden 20.7deg  1.18M tok/s  60s
+[2026-10-22 04:02:17Z]   2XL f=1.0      step   4797/10665 train 0.1564 val 0.2641 exo 0.5331 hidden 20.7deg  1.23M tok/s  65s
+[2026-10-22 04:02:22Z]   2XL f=1.0      step   5330/10665 train 0.1363 val 0.2714 exo 0.5366 hidden 20.7deg  1.26M tok/s  70s
+[2026-10-22 04:02:32Z]   2XL f=1.0      step   5863/10665 train 0.1497 val 0.2655 exo 0.5328 hidden 20.7deg  1.23M tok/s  79s
+[2026-10-22 04:02:41Z]   2XL f=1.0      step   6396/10665 train 0.1562 val 0.2664 exo 0.5365 hidden 20.7deg  1.20M tok/s  89s
+[2026-10-22 04:02:51Z]   2XL f=1.0      step   6929/10665 train 0.1421 val 0.2699 exo 0.5391 hidden 20.7deg  1.17M tok/s  98s
+[2026-10-22 04:02:59Z]   2XL f=1.0      step   7462/10665 train 0.1007 val 0.2776 exo 0.5414 hidden 20.7deg  1.16M tok/s  106s
+[2026-10-22 04:03:05Z]   2XL f=1.0      step   7995/10665 train 0.0822 val 0.2757 exo 0.5429 hidden 20.8deg  1.17M tok/s  113s
+[2026-10-22 04:03:12Z]   2XL f=1.0      step   8528/10665 train 0.0929 val 0.2719 exo 0.5364 hidden 20.8deg  1.18M tok/s  120s
+[2026-10-22 04:03:20Z]   2XL f=1.0      step   9061/10665 train 0.0882 val 0.2724 exo 0.5368 hidden 20.7deg  1.18M tok/s  127s
+[2026-10-22 04:03:29Z]   2XL f=1.0      step   9594/10665 train 0.1074 val 0.2788 exo 0.5436 hidden 20.8deg  1.16M tok/s  137s
+[2026-10-22 04:03:36Z]   2XL f=1.0      step  10127/10665 train 0.1006 val 0.2800 exo 0.5424 hidden 20.8deg  1.17M tok/s  143s
+[2026-10-22 04:03:44Z]   2XL f=1.0      step  10660/10665 train 0.1026 val 0.2791 exo 0.5460 hidden 20.9deg  1.17M tok/s  151s
+[2026-10-22 04:03:44Z]   2XL f=1.0      step  10665/10665 train 0.1069 val 0.2793 exo 0.5461 hidden 20.9deg  1.17M tok/s  151s
+[2026-10-22 04:03:44Z]    2XL f=1.0: params 4,795,260 best val 0.2444 test 0.2994 hidden 20.5 deg, 151s, 1.17M tok/s -> phase2_SEED_P128_H6.1083_s2_2XL.json
+[2026-10-22 04:03:45Z]    SEED_P128_H6.1083_s2 exited 0 after 2.6 min
+[2026-10-22 04:03:45Z] == SEED_P256_H6.1083_s2 (2XL, 10665 steps): {"dataset": "seed", "experiment": "SEED", "performers": 256, "hours": 6.1083, "seed": 2}
+/workspace/pine-engine/gpu/train_torch.py:229: UserWarning: The given NumPy array is not writable, and PyTorch does not support non-writable tensors. This means writing to this tensor will result in undefined behavior. You may want to copy the array to protect its data or make it writable before converting it to a tensor. This type of warning will be suppressed for the rest of this program. (Triggered internally at ../torch/csrc/utils/tensor_numpy.cpp:206.)
+  X = torch.from_numpy(np.ascontiguousarray(data.X)).to(dev)            # float16, normalised
+[2026-10-22 04:03:47Z] 2XL f=1.0: 3267 train clips, 438,868 frames (6.10 h), 324,523 window starts, 1 x 512 windows/step, data load 1s
+[2026-10-22 04:03:54Z]   2XL f=1.0      step    533/10665 train 0.4422 val 0.2805 exo 0.5477 hidden 21.1deg  1.46M tok/s  6s
+[2026-10-22 04:04:01Z]   2XL f=1.0      step   1066/10665 train 0.3819 val 0.2434 exo 0.5086 hidden 20.8deg  1.35M tok/s  13s
+[2026-10-22 04:04:06Z]   2XL f=1.0      step   1599/10665 train 0.2649 val 0.2398 exo 0.4952 hidden 20.4deg  1.41M tok/s  19s
+[2026-10-22 04:04:13Z]   2XL f=1.0      step   2132/10665 train 0.2020 val 0.2429 exo 0.5122 hidden 20.7deg  1.40M tok/s  25s
+[2026-10-22 04:04:22Z]   2XL f=1.0      step   2665/10665 train 0.1738 val 0.2506 exo 0.5105 hidden 20.4deg  1.29M tok/s  34s
+[2026-10-22 04:04:31Z]   2XL f=1.0      step   3198/10665 train 0.1717 val 0.2520 exo 0.5074 hidden 20.4deg  1.22M tok/s  43s
+[2026-10-22 04:04:40Z]   2XL f=1.0      step   3731/10665 train 0.1764 val 0.2543 exo 0.5111 hidden 20.3deg  1.17M tok/s  53s
+report pushed: stage='2026-10-22T02:11:58Z phase 2: people vs hours on held-out Hi' runs=9
+[2026-10-22 04:04:47Z]   2XL f=1.0      step   4264/10665 train 0.1578 val 0.2588 exo 0.5165 hidden 20.5deg  1.18M tok/s  60s
+[2026-10-22 04:04:57Z]   2XL f=1.0      step   4797/10665 train 0.1114 val 0.2507 exo 0.5119 hidden 20.6deg  1.15M tok/s  69s
+[2026-10-22 04:05:03Z]   2XL f=1.0      step   5330/10665 train 0.1010 val 0.2530 exo 0.4997 hidden 20.2deg  1.17M tok/s  75s
+[2026-10-22 04:05:10Z]   2XL f=1.0      step   5863/10665 train 0.1141 val 0.2542 exo 0.5066 hidden 20.2deg  1.18M tok/s  83s
+[2026-10-22 04:05:16Z]   2XL f=1.0      step   6396/10665 train 0.1094 val 0.2551 exo 0.5040 hidden 20.1deg  1.20M tok/s  88s
+[2026-10-22 04:05:24Z]   2XL f=1.0      step   6929/10665 train 0.1334 val 0.2525 exo 0.5028 hidden 20.3deg  1.19M tok/s  96s
+[2026-10-22 04:05:29Z]   2XL f=1.0      step   7462/10665 train 0.1016 val 0.2640 exo 0.5105 hidden 20.2deg  1.21M tok/s  102s
+[2026-10-22 04:05:35Z]   2XL f=1.0      step   7995/10665 train 0.1140 val 0.2557 exo 0.5055 hidden 20.2deg  1.23M tok/s  107s
+[2026-10-22 04:05:44Z]   2XL f=1.0      step   8528/10665 train 0.0728 val 0.2564 exo 0.5062 hidden 20.2deg  1.21M tok/s  116s
+[2026-10-22 04:05:52Z]   2XL f=1.0      step   9061/10665 train 0.0877 val 0.2651 exo 0.5089 hidden 20.2deg  1.20M tok/s  125s
+[2026-10-22 04:05:59Z]   2XL f=1.0      step   9594/10665 train 0.0679 val 0.2646 exo 0.5139 hidden 20.3deg  1.20M tok/s  132s
+[2026-10-22 04:06:06Z]   2XL f=1.0      step  10127/10665 train 0.0931 val 0.2663 exo 0.5110 hidden 20.3deg  1.21M tok/s  138s
+[2026-10-22 04:06:11Z]   2XL f=1.0      step  10660/10665 train 0.1045 val 0.2632 exo 0.5139 hidden 20.4deg  1.23M tok/s  143s
+[2026-10-22 04:06:11Z]   2XL f=1.0      step  10665/10665 train 0.0865 val 0.2635 exo 0.5138 hidden 20.3deg  1.23M tok/s  144s
+[2026-10-22 04:06:11Z]    2XL f=1.0: params 4,795,260 best val 0.2398 test 0.2967 hidden 20.4 deg, 144s, 1.23M tok/s -> phase2_SEED_P256_H6.1083_s2_2XL.json
+[2026-10-22 04:06:12Z]    SEED_P256_H6.1083_s2 exited 0 after 2.5 min
+[2026-10-22 04:06:12Z] == SEED_P400_H6.1083_s2 (2XL, 10665 steps): {"dataset": "seed", "experiment": "SEED", "performers": 400, "hours": 6.1083, "seed": 2}
+/workspace/pine-engine/gpu/train_torch.py:229: UserWarning: The given NumPy array is not writable, and PyTorch does not support non-writable tensors. This means writing to this tensor will result in undefined behavior. You may want to copy the array to protect its data or make it writable before converting it to a tensor. This type of warning will be suppressed for the rest of this program. (Triggered internally at ../torch/csrc/utils/tensor_numpy.cpp:206.)
+  X = torch.from_numpy(np.ascontiguousarray(data.X)).to(dev)            # float16, normalised
+[2026-10-22 04:06:14Z] 2XL f=1.0: 3290 train clips, 437,861 frames (6.08 h), 322,711 window starts, 1 x 512 windows/step, data load 1s
+[2026-10-22 04:06:21Z]   2XL f=1.0      step    533/10665 train 0.2838 val 0.2763 exo 0.5361 hidden 20.9deg  1.46M tok/s  6s
+[2026-10-22 04:06:29Z]   2XL f=1.0      step   1066/10665 train 0.3819 val 0.2437 exo 0.4974 hidden 20.3deg  1.32M tok/s  14s
+[2026-10-22 04:06:35Z]   2XL f=1.0      step   1599/10665 train 0.3247 val 0.2388 exo 0.4901 hidden 20.1deg  1.35M tok/s  20s
+[2026-10-22 04:06:41Z]   2XL f=1.0      step   2132/10665 train 0.2707 val 0.2513 exo 0.5053 hidden 20.3deg  1.36M tok/s  26s
+[2026-10-22 04:06:48Z]   2XL f=1.0      step   2665/10665 train 0.1624 val 0.2543 exo 0.5037 hidden 20.2deg  1.34M tok/s  33s
+[2026-10-22 04:06:54Z]   2XL f=1.0      step   3198/10665 train 0.1543 val 0.2562 exo 0.5106 hidden 20.4deg  1.36M tok/s  39s
+[2026-10-22 04:07:00Z]   2XL f=1.0      step   3731/10665 train 0.1984 val 0.2468 exo 0.4989 hidden 20.1deg  1.37M tok/s  45s
+[2026-10-22 04:07:09Z]   2XL f=1.0      step   4264/10665 train 0.1315 val 0.2451 exo 0.4990 hidden 20.2deg  1.30M tok/s  54s
+[2026-10-22 04:07:14Z]   2XL f=1.0      step   4797/10665 train 0.1940 val 0.2503 exo 0.4960 hidden 20.2deg  1.34M tok/s  59s
+[2026-10-22 04:07:19Z]   2XL f=1.0      step   5330/10665 train 0.1516 val 0.2569 exo 0.5124 hidden 20.2deg  1.37M tok/s  65s
+[2026-10-22 04:07:24Z]   2XL f=1.0      step   5863/10665 train 0.1500 val 0.2512 exo 0.5051 hidden 20.1deg  1.40M tok/s  70s
+[2026-10-22 04:07:33Z]   2XL f=1.0      step   6396/10665 train 0.1145 val 0.2616 exo 0.5040 hidden 20.0deg  1.35M tok/s  79s
+[2026-10-22 04:07:42Z]   2XL f=1.0      step   6929/10665 train 0.0905 val 0.2560 exo 0.4998 hidden 20.0deg  1.31M tok/s  88s
+[2026-10-22 04:07:48Z]   2XL f=1.0      step   7462/10665 train 0.1067 val 0.2616 exo 0.5050 hidden 20.1deg  1.33M tok/s  93s
+[2026-10-22 04:07:53Z]   2XL f=1.0      step   7995/10665 train 0.1154 val 0.2572 exo 0.5013 hidden 20.1deg  1.36M tok/s  98s
+[2026-10-22 04:07:58Z]   2XL f=1.0      step   8528/10665 train 0.1132 val 0.2603 exo 0.5057 hidden 20.0deg  1.37M tok/s  103s
+[2026-10-22 04:08:06Z]   2XL f=1.0      step   9061/10665 train 0.0917 val 0.2639 exo 0.5050 hidden 20.1deg  1.35M tok/s  111s
+[2026-10-22 04:08:12Z]   2XL f=1.0      step   9594/10665 train 0.0804 val 0.2608 exo 0.5030 hidden 20.0deg  1.36M tok/s  117s
+[2026-10-22 04:08:17Z]   2XL f=1.0      step  10127/10665 train 0.0681 val 0.2637 exo 0.5085 hidden 20.1deg  1.37M tok/s  122s
+[2026-10-22 04:08:23Z]   2XL f=1.0      step  10660/10665 train 0.0956 val 0.2650 exo 0.5101 hidden 20.1deg  1.38M tok/s  128s
+[2026-10-22 04:08:23Z]   2XL f=1.0      step  10665/10665 train 0.1242 val 0.2655 exo 0.5103 hidden 20.1deg  1.38M tok/s  128s
+[2026-10-22 04:08:23Z]    2XL f=1.0: params 4,795,260 best val 0.2388 test 0.2928 hidden 20.1 deg, 128s, 1.38M tok/s -> phase2_SEED_P400_H6.1083_s2_2XL.json
+[2026-10-22 04:08:24Z]    SEED_P400_H6.1083_s2 exited 0 after 2.2 min
+[2026-10-22 04:08:24Z] == E3_recipe_next4 (2XL, 30000 steps): {"dataset": "all", "experiment": "E3", "hours": 397.8, "seed": 0, "recipe": "next4"}
+/workspace/pine-engine/gpu/train_torch.py:229: UserWarning: The given NumPy array is not writable, and PyTorch does not support non-writable tensors. This means writing to this tensor will result in undefined behavior. You may want to copy the array to protect its data or make it writable before converting it to a tensor. This type of warning will be suppressed for the rest of this program. (Triggered internally at ../torch/csrc/utils/tensor_numpy.cpp:206.)
+  X = torch.from_numpy(np.ascontiguousarray(data.X)).to(dev)            # float16, normalised
+[2026-10-22 04:08:26Z] 2XL f=1.0: 76795 train clips, 28,638,810 frames (397.76 h), 25,950,985 window starts, 1 x 512 windows/step, data load 1s
+[2026-10-22 04:08:43Z]   2XL f=1.0      step   1500/30000 train 0.3951 val 0.0808 exo 0.2584 hidden 17.2deg  1.51M tok/s  16s
+[2026-10-22 04:08:59Z]   2XL f=1.0      step   3000/30000 train 0.2546 val 0.0597 exo 0.2229 hidden 16.2deg  1.54M tok/s  32s
+[2026-10-22 04:09:14Z]   2XL f=1.0      step   4500/30000 train 0.2588 val 0.0536 exo 0.2182 hidden 16.1deg  1.59M tok/s  47s
+[2026-10-22 04:09:28Z]   2XL f=1.0      step   6000/30000 train 0.1745 val 0.0504 exo 0.2050 hidden 15.7deg  1.61M tok/s  62s
+[2026-10-22 04:09:44Z]   2XL f=1.0      step   7500/30000 train 0.2597 val 0.0485 exo 0.1961 hidden 15.4deg  1.61M tok/s  77s
+report pushed: stage='2026-10-22T02:11:58Z phase 2: people vs hours on held-out Hi' runs=9
+[2026-10-22 04:10:00Z]   2XL f=1.0      step   9000/30000 train 0.2125 val 0.0464 exo 0.1976 hidden 15.6deg  1.60M tok/s  93s
+[2026-10-22 04:10:14Z]   2XL f=1.0      step  10500/30000 train 0.1959 val 0.0452 exo 0.1968 hidden 15.5deg  1.62M tok/s  108s
+[2026-10-22 04:10:29Z]   2XL f=1.0      step  12000/30000 train 0.2021 val 0.0438 exo 0.1906 hidden 15.3deg  1.63M tok/s  122s
+[2026-10-22 04:10:43Z]   2XL f=1.0      step  13500/30000 train 0.1943 val 0.0419 exo 0.1879 hidden 15.2deg  1.64M tok/s  137s
+[2026-10-22 04:10:59Z]   2XL f=1.0      step  15000/30000 train 0.2284 val 0.0411 exo 0.1837 hidden 15.0deg  1.63M tok/s  153s
+[2026-10-22 04:11:14Z]   2XL f=1.0      step  16500/30000 train 0.2657 val 0.0414 exo 0.1846 hidden 15.1deg  1.63M tok/s  167s
+[2026-10-22 04:11:33Z]   2XL f=1.0      step  18000/30000 train 0.2390 val 0.0403 exo 0.1862 hidden 15.1deg  1.60M tok/s  186s
+[2026-10-22 04:11:49Z]   2XL f=1.0      step  19500/30000 train 0.1095 val 0.0401 exo 0.1853 hidden 15.1deg  1.59M tok/s  203s
+[2026-10-22 04:12:08Z]   2XL f=1.0      step  21000/30000 train 0.1902 val 0.0395 exo 0.1776 hidden 14.9deg  1.57M tok/s  221s
+[2026-10-22 04:12:26Z]   2XL f=1.0      step  22500/30000 train 0.1679 val 0.0379 exo 0.1771 hidden 14.8deg  1.55M tok/s  240s
+[2026-10-22 04:12:42Z]   2XL f=1.0      step  24000/30000 train 0.2386 val 0.0373 exo 0.1731 hidden 14.7deg  1.55M tok/s  256s
+[2026-10-22 04:12:57Z]   2XL f=1.0      step  25500/30000 train 0.2762 val 0.0375 exo 0.1727 hidden 14.6deg  1.56M tok/s  270s
+[2026-10-22 04:13:12Z]   2XL f=1.0      step  27000/30000 train 0.1403 val 0.0377 exo 0.1716 hidden 14.6deg  1.57M tok/s  285s
+[2026-10-22 04:13:37Z]   2XL f=1.0      step  28500/30000 train 0.1702 val 0.0397 exo 0.1765 hidden 14.6deg  1.52M tok/s  310s
+[2026-10-22 04:14:01Z]   2XL f=1.0      step  30000/30000 train 0.1166 val 0.0411 exo 0.1806 hidden 14.8deg  1.48M tok/s  334s
+[2026-10-22 04:14:01Z]    2XL f=1.0: params 4,795,260 best val 0.0373 test 0.0717 hidden 14.7 deg, 334s, 1.48M tok/s -> phase2_E3_recipe_next4_2XL.json
+[2026-10-22 04:14:02Z]    E3_recipe_next4 exited 0 after 5.6 min
+[2026-10-22 04:14:02Z] == E3_recipe_dct16mix (2XL, 30000 steps): {"dataset": "all", "experiment": "E3", "hours": 397.8, "seed": 0, "recipe": "dct16mix"}
+/workspace/pine-engine/gpu/train_torch.py:229: UserWarning: The given NumPy array is not writable, and PyTorch does not support non-writable tensors. This means writing to this tensor will result in undefined behavior. You may want to copy the array to protect its data or make it writable before converting it to a tensor. This type of warning will be suppressed for the rest of this program. (Triggered internally at ../torch/csrc/utils/tensor_numpy.cpp:206.)
+  X = torch.from_numpy(np.ascontiguousarray(data.X)).to(dev)            # float16, normalised
+[2026-10-22 04:14:04Z] 2XL f=1.0: 75100 train clips, 28,564,224 frames (396.73 h), 25,034,524 window starts, 1 x 512 windows/step, data load 1s
+[2026-10-22 04:14:04Z] objective dct16mix + noisy history: matches scripts/pi_pass (max diff 1.2e-06)
+[2026-10-22 04:14:22Z]   2XL f=1.0      step   1500/30000 train 1.0112 val 0.5055 exo 0.9554 hidden 17.6deg  1.43M tok/s  17s
+[2026-10-22 04:14:39Z]   2XL f=1.0      step   3000/30000 train 1.0332 val 0.4453 exo 0.8757 hidden 17.3deg  1.45M tok/s  34s
+report pushed: stage='2026-10-22T02:11:58Z phase 2: people vs hours on held-out Hi' runs=9
+[2026-10-22 04:14:56Z]   2XL f=1.0      step   4500/30000 train 0.8493 val 0.4192 exo 0.8168 hidden 16.3deg  1.45M tok/s  51s
+[2026-10-22 04:15:11Z]   2XL f=1.0      step   6000/30000 train 0.9122 val 0.4021 exo 0.7843 hidden 16.0deg  1.48M tok/s  67s
+[2026-10-22 04:15:36Z]   2XL f=1.0      step   7500/30000 train 0.7752 val 0.3963 exo 0.7768 hidden 16.1deg  1.35M tok/s  92s
+[2026-10-22 04:15:52Z]   2XL f=1.0      step   9000/30000 train 0.8249 val 0.3888 exo 0.7548 hidden 15.8deg  1.39M tok/s  107s
+[2026-10-22 04:16:10Z]   2XL f=1.0      step  10500/30000 train 0.8076 val 0.3889 exo 0.7488 hidden 15.7deg  1.39M tok/s  125s
+[2026-10-22 04:16:35Z]   2XL f=1.0      step  12000/30000 train 0.7637 val 0.3824 exo 0.7273 hidden 15.4deg  1.32M tok/s  150s
+[2026-10-22 04:16:55Z]   2XL f=1.0      step  13500/30000 train 0.9608 val 0.3758 exo 0.7277 hidden 15.4deg  1.31M tok/s  170s
+[2026-10-22 04:17:16Z]   2XL f=1.0      step  15000/30000 train 0.6732 val 0.3739 exo 0.7115 hidden 15.2deg  1.29M tok/s  192s
+[2026-10-22 04:17:41Z]   2XL f=1.0      step  16500/30000 train 0.9531 val 0.3672 exo 0.7067 hidden 15.1deg  1.26M tok/s  216s
+[2026-10-22 04:17:58Z]   2XL f=1.0      step  18000/30000 train 0.7784 val 0.3609 exo 0.7072 hidden 15.2deg  1.28M tok/s  233s
+[2026-10-22 04:18:14Z]   2XL f=1.0      step  19500/30000 train 0.6561 val 0.3597 exo 0.6933 hidden 15.0deg  1.29M tok/s  249s
+[2026-10-22 04:18:31Z]   2XL f=1.0      step  21000/30000 train 0.6780 val 0.3632 exo 0.6847 hidden 14.8deg  1.30M tok/s  266s
+[2026-10-22 04:18:56Z]   2XL f=1.0      step  22500/30000 train 0.6228 val 0.3565 exo 0.6802 hidden 14.9deg  1.27M tok/s  292s
+[2026-10-22 04:19:13Z]   2XL f=1.0      step  24000/30000 train 0.7429 val 0.3549 exo 0.6643 hidden 14.6deg  1.28M tok/s  309s
+[2026-10-22 04:19:30Z]   2XL f=1.0      step  25500/30000 train 0.7995 val 0.3486 exo 0.6637 hidden 14.7deg  1.29M tok/s  326s
+[2026-10-22 04:19:47Z]   2XL f=1.0      step  27000/30000 train 0.5320 val 0.3459 exo 0.6630 hidden 14.7deg  1.30M tok/s  343s
+report pushed: stage='2026-10-22T02:11:58Z phase 2: people vs hours on held-out Hi' runs=9
+[2026-10-22 04:20:06Z]   2XL f=1.0      step  28500/30000 train 0.6745 val 0.3512 exo 0.6594 hidden 14.4deg  1.30M tok/s  362s
+[2026-10-22 04:20:23Z]   2XL f=1.0      step  30000/30000 train 0.8183 val 0.3544 exo 0.6701 hidden 14.6deg  1.31M tok/s  379s
+[2026-10-22 04:20:24Z]    2XL f=1.0: params 4,811,194 best val 0.3459 test 0.4140 hidden 14.7 deg, 379s, 1.31M tok/s -> phase2_E3_recipe_dct16mix_2XL_dct16mix_noisyhist.json
+[2026-10-22 04:20:25Z]    E3_recipe_dct16mix exited 0 after 6.4 min
+[2026-10-22 04:20:25Z] flagship 5XL: 52439 steps on 398 h, 2.50 h left, ~201,081 tok/s
+[2026-10-22 04:20:25Z] == E3_flagship (5XL, 52439 steps): {"dataset": "all", "experiment": "E3", "hours": 397.8, "seed": 0, "recipe": "dct16mix", "flagship": true}
+/workspace/pine-engine/gpu/train_torch.py:229: UserWarning: The given NumPy array is not writable, and PyTorch does not support non-writable tensors. This means writing to this tensor will result in undefined behavior. You may want to copy the array to protect its data or make it writable before converting it to a tensor. This type of warning will be suppressed for the rest of this program. (Triggered internally at ../torch/csrc/utils/tensor_numpy.cpp:206.)
+  X = torch.from_numpy(np.ascontiguousarray(data.X)).to(dev)            # float16, normalised
+[2026-10-22 04:20:27Z] 5XL f=1.0: 75100 train clips, 28,564,224 frames (396.73 h), 25,034,524 window starts, 1 x 512 windows/step, data load 1s
+[2026-10-22 04:20:28Z] objective dct16mix + noisy history: matches scripts/pi_pass (max diff 1.2e-06)
+[2026-10-22 04:23:09Z]   5XL f=1.0      step   2621/52439 train 1.0427 val 0.4544 exo 0.8483 hidden 16.6deg  0.27M tok/s  160s
+report pushed: stage='2026-10-22T02:11:58Z phase 2: people vs hours on held-out Hi' runs=9
+[2026-10-22 04:25:49Z]   5XL f=1.0      step   5242/52439 train 0.7639 val 0.3851 exo 0.7651 hidden 16.1deg  0.27M tok/s  320s
+[2026-10-22 04:28:29Z]   5XL f=1.0      step   7863/52439 train 0.8538 val 0.3605 exo 0.7193 hidden 15.3deg  0.27M tok/s  480s
+report pushed: stage='2026-10-22T02:11:58Z phase 2: people vs hours on held-out Hi' runs=9
+[2026-10-22 04:31:08Z]   5XL f=1.0      step  10484/52439 train 0.8194 val 0.3601 exo 0.6879 hidden 15.0deg  0.27M tok/s  640s
+[2026-10-22 04:33:48Z]   5XL f=1.0      step  13105/52439 train 0.6219 val 0.3441 exo 0.6739 hidden 14.9deg  0.27M tok/s  799s
+report pushed: stage='2026-10-22T02:11:58Z phase 2: people vs hours on held-out Hi' runs=9
+[2026-10-22 04:36:28Z]   5XL f=1.0      step  15726/52439 train 0.7953 val 0.3416 exo 0.6664 hidden 14.6deg  0.27M tok/s  959s
+[2026-10-22 04:39:08Z]   5XL f=1.0      step  18347/52439 train 0.9492 val 0.3305 exo 0.6636 hidden 14.9deg  0.27M tok/s  1119s
+report pushed: stage='2026-10-22T02:11:58Z phase 2: people vs hours on held-out Hi' runs=9
+[2026-10-22 04:41:46Z]   5XL f=1.0      step  20968/52439 train 0.7333 val 0.3333 exo 0.6683 hidden 14.9deg  0.27M tok/s  1277s
+[2026-10-22 04:44:24Z]   5XL f=1.0      step  23589/52439 train 0.4632 val 0.3349 exo 0.6475 hidden 14.3deg  0.27M tok/s  1436s
+report pushed: stage='2026-10-22T02:11:58Z phase 2: people vs hours on held-out Hi' runs=9
+[2026-10-22 04:47:04Z]   5XL f=1.0      step  26210/52439 train 0.7379 val 0.3277 exo 0.6401 hidden 14.5deg  0.27M tok/s  1595s
+[2026-10-22 04:49:42Z]   5XL f=1.0      step  28831/52439 train 0.5694 val 0.3314 exo 0.6588 hidden 14.5deg  0.27M tok/s  1753s
+report pushed: stage='2026-10-22T02:11:58Z phase 2: people vs hours on held-out Hi' runs=9
+[2026-10-22 04:52:22Z]   5XL f=1.0      step  31452/52439 train 0.7224 val 0.3213 exo 0.6284 hidden 14.4deg  0.27M tok/s  1913s
+[2026-10-22 04:55:01Z]   5XL f=1.0      step  34073/52439 train 0.6667 val 0.3202 exo 0.6247 hidden 14.1deg  0.27M tok/s  2073s
+report pushed: stage='2026-10-22T02:11:58Z phase 2: people vs hours on held-out Hi' runs=9
+[2026-10-22 04:57:39Z]   5XL f=1.0      step  36694/52439 train 0.5306 val 0.3209 exo 0.6209 hidden 14.2deg  0.27M tok/s  2231s
+[2026-10-22 05:00:19Z]   5XL f=1.0      step  39315/52439 train 0.5416 val 0.3149 exo 0.6040 hidden 14.0deg  0.27M tok/s  2390s
+report pushed: stage='2026-10-22T02:11:58Z phase 2: people vs hours on held-out Hi' runs=9
+[2026-10-22 05:02:57Z]   5XL f=1.0      step  41936/52439 train 0.5906 val 0.3178 exo 0.6148 hidden 14.2deg  0.27M tok/s  2548s
+report pushed: stage='2026-10-22T02:11:58Z phase 2: people vs hours on held-out Hi' runs=9
+[2026-10-22 05:05:35Z]   5XL f=1.0      step  44557/52439 train 0.4864 val 0.3165 exo 0.6081 hidden 14.2deg  0.27M tok/s  2706s
+[2026-10-22 05:08:13Z]   5XL f=1.0      step  47178/52439 train 0.4872 val 0.3203 exo 0.6066 hidden 14.1deg  0.27M tok/s  2864s
+report pushed: stage='2026-10-22T02:11:58Z phase 2: people vs hours on held-out Hi' runs=9
+[2026-10-22 05:10:51Z]   5XL f=1.0      step  49799/52439 train 0.5300 val 0.3254 exo 0.6244 hidden 14.2deg  0.27M tok/s  3022s
+[2026-10-22 05:13:29Z]   5XL f=1.0      step  52420/52439 train 0.5199 val 0.3217 exo 0.6165 hidden 14.1deg  0.27M tok/s  3180s
+[2026-10-22 05:13:31Z]   5XL f=1.0      step  52439/52439 train 0.5848 val 0.3272 exo 0.6207 hidden 14.1deg  0.27M tok/s  3182s
+[2026-10-22 05:13:35Z]    5XL f=1.0: params 85,271,994 best val 0.3149 test 0.4198 hidden 14.0 deg, 3182s, 0.27M tok/s -> phase2_E3_flagship_5XL_dct16mix_noisyhist.json
+[2026-10-22 05:13:36Z]    E3_flagship exited 0 after 53.2 min
+[2026-10-22 05:13:36Z] phase 2 done: 43 runs; SEED ok
+[2026-10-22T05:13:36Z] == packing results
+packed 455M -> /workspace/results.tgz
+[2026-10-22T05:13:56Z] == done: DONE (phase 2)
+PINE DONE (phase 2) | robot h2 | 317.0 h data | 9 runs | best 4XL val 0.0477 test 0.1075 hidden 14.4 deg | predicted 4XL 0.0486 [0.0410,0.0590] observed 0.0477 | 3.04 h wall
+[2026-10-22T05:13:56Z] stopping pod i7y1vuyjlp99n2: finished
+report pushed: stage='2026-10-22T05:13:56Z done: DONE (phase 2)' runs=9
+Runpod config file not found, please run `runpodctl config` to create it
+pod "i7y1vuyjlp99n2" stopped

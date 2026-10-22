@@ -1,0 +1,24 @@
+[2026-10-22 01:15:17Z] sweep: robot h2, 317.0 h of motion (286.5 h train), 25178 steps x 512 windows, 1 x H100 NVL 94GB, cap 8.0 GPU-h, used so far 2.42 GPU-h
+[2026-10-22 01:15:17Z]   plan model_ladder M    f=1             356,860 params  est    7.0 min
+[2026-10-22 01:15:17Z]   plan model_ladder L    f=1             821,500 params  est    7.0 min
+[2026-10-22 01:15:17Z]   plan model_ladder XL   f=1           2,266,876 params  est    7.0 min
+[2026-10-22 01:15:17Z]   plan model_ladder 2XL  f=1           4,795,260 params  est    7.0 min
+[2026-10-22 01:15:17Z]   plan model_ladder 3XL  f=1          14,280,700 params  est    7.0 min
+[2026-10-22 01:15:17Z]   plan predicted    4XL  f=1          31,637,116 params  est    8.3 min
+[2026-10-22 01:15:17Z]   plan data_ladder  2XL  f=0.01562     4,795,260 params  est    7.0 min
+[2026-10-22 01:15:17Z]   plan data_ladder  2XL  f=0.0625      4,795,260 params  est    7.0 min
+[2026-10-22 01:15:17Z]   plan data_ladder  2XL  f=0.25        4,795,260 params  est    7.0 min
+[2026-10-22 01:15:17Z]   plan extra        4XL  f=1          31,668,922 params  est   11.5 min  (dct16mix + noisy history)
+[2026-10-22 01:15:17Z] sweep: robot h2, 317.0 h of motion (286.5 h train), 25178 steps x 512 windows, 1 x H100 NVL 94GB, cap 8.0 GPU-h, used so far 2.42 GPU-h
+[2026-10-22 01:15:17Z] == model_ladder M f=1.0: 356,860 params, est 7 min, 335 min left
+[2026-10-22 01:18:09Z] == model_ladder L f=1.0: 821,500 params, est 7 min, 332 min left
+[2026-10-22 01:22:23Z] == model_ladder XL f=1.0: 2,266,876 params, est 12 min, 328 min left
+[2026-10-22 01:27:11Z] == model_ladder 2XL f=1.0: 4,795,260 params, est 11 min, 323 min left
+[2026-10-22 01:31:25Z] == model_ladder 3XL f=1.0: 14,280,700 params, est 13 min, 319 min left
+[2026-10-22 01:40:40Z] PRE-REGISTERED: 4XL (31,637,116 params) val loss 0.0486 [0.0410, 0.0590] fit on ['M', 'L', 'XL', '2XL', '3XL'] -> /workspace/runs/gpu/prediction.json
+[2026-10-22 01:40:40Z] == predicted 4XL f=1.0: 31,637,116 params, est 19 min, 309 min left
+[2026-10-22 01:53:45Z] == data_ladder 2XL f=0.015625: 4,795,260 params, est 5 min, 296 min left
+[2026-10-22 01:59:35Z] == data_ladder 2XL f=0.0625: 4,795,260 params, est 5 min, 290 min left
+[2026-10-22 02:05:33Z] == data_ladder 2XL f=0.25: 4,795,260 params, est 5 min, 284 min left
+[2026-10-22 02:11:32Z] == extra 4XL dct16mix + noisy history: 31,668,922 params, est 18 min
+[2026-10-22 02:11:35Z] sweep finished: 9/10 runs complete, 3.36 GPU-h used of 8.0

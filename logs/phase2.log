@@ -1,0 +1,92 @@
+[2026-10-22 02:11:58Z] starting gpu/seed_data.py in the background (BONES-SEED download, retargeting, merge)
+[2026-10-22 02:11:58Z] phase 2: 4.64 h budget, sweep runs 2XL x 10665 steps
+[2026-10-22 02:11:58Z] HiPHI: 119 performers in the pool (269 h), 13 held out; H = 15 h
+[2026-10-22 02:11:58Z] == HiPHI_P4_H15_s0 (2XL, 10665 steps): {"dataset": "hiphi", "experiment": "HiPHI", "performers": 4, "hours": 15.0, "seed": 0}
+[2026-10-22 02:14:22Z]    HiPHI_P4_H15_s0 exited 0 after 2.4 min
+[2026-10-22 02:14:22Z] == HiPHI_P8_H15_s0 (2XL, 10665 steps): {"dataset": "hiphi", "experiment": "HiPHI", "performers": 8, "hours": 15.0, "seed": 0}
+[2026-10-22 02:17:03Z]    HiPHI_P8_H15_s0 exited 0 after 2.7 min
+[2026-10-22 02:17:03Z] == HiPHI_P16_H15_s0 (2XL, 10665 steps): {"dataset": "hiphi", "experiment": "HiPHI", "performers": 16, "hours": 15.0, "seed": 0}
+[2026-10-22 02:19:54Z]    HiPHI_P16_H15_s0 exited 0 after 2.9 min
+[2026-10-22 02:19:54Z] == HiPHI_P32_H15_s0 (2XL, 10665 steps): {"dataset": "hiphi", "experiment": "HiPHI", "performers": 32, "hours": 15.0, "seed": 0}
+[2026-10-22 02:22:13Z]    HiPHI_P32_H15_s0 exited 0 after 2.3 min
+[2026-10-22 02:22:13Z] == HiPHI_P64_H15_s0 (2XL, 10665 steps): {"dataset": "hiphi", "experiment": "HiPHI", "performers": 64, "hours": 15.0, "seed": 0}
+[2026-10-22 02:24:33Z]    HiPHI_P64_H15_s0 exited 0 after 2.3 min
+[2026-10-22 02:24:33Z] == HiPHI_P32_H3.75_s0 (2XL, 10665 steps): {"dataset": "hiphi", "experiment": "HiPHI", "performers": 32, "hours": 3.75, "seed": 0}
+[2026-10-22 02:27:03Z]    HiPHI_P32_H3.75_s0 exited 0 after 2.5 min
+[2026-10-22 02:27:03Z] == HiPHI_P32_H60_s0 (2XL, 10665 steps): {"dataset": "hiphi", "experiment": "HiPHI", "performers": 32, "hours": 60.0, "seed": 0}
+[2026-10-22 02:29:50Z]    HiPHI_P32_H60_s0 exited 0 after 2.8 min
+[2026-10-22 02:44:50Z] SEED: 460 performers in the pool (121 h), 61 held out; H = 6.1083 h
+[2026-10-22 02:44:51Z] == SEED_P8_H6.1083_s0 (2XL, 10665 steps): {"dataset": "seed", "experiment": "SEED", "performers": 8, "hours": 6.1083, "seed": 0}
+[2026-10-22 02:47:35Z]    SEED_P8_H6.1083_s0 exited 0 after 2.7 min
+[2026-10-22 02:47:35Z] == SEED_P16_H6.1083_s0 (2XL, 10665 steps): {"dataset": "seed", "experiment": "SEED", "performers": 16, "hours": 6.1083, "seed": 0}
+[2026-10-22 02:49:57Z]    SEED_P16_H6.1083_s0 exited 0 after 2.4 min
+[2026-10-22 02:49:57Z] == SEED_P32_H6.1083_s0 (2XL, 10665 steps): {"dataset": "seed", "experiment": "SEED", "performers": 32, "hours": 6.1083, "seed": 0}
+[2026-10-22 02:51:45Z]    SEED_P32_H6.1083_s0 exited 0 after 1.8 min
+[2026-10-22 02:51:45Z] == SEED_P64_H6.1083_s0 (2XL, 10665 steps): {"dataset": "seed", "experiment": "SEED", "performers": 64, "hours": 6.1083, "seed": 0}
+[2026-10-22 02:54:16Z]    SEED_P64_H6.1083_s0 exited 0 after 2.5 min
+[2026-10-22 02:54:16Z] == SEED_P128_H6.1083_s0 (2XL, 10665 steps): {"dataset": "seed", "experiment": "SEED", "performers": 128, "hours": 6.1083, "seed": 0}
+[2026-10-22 02:56:40Z]    SEED_P128_H6.1083_s0 exited 0 after 2.4 min
+[2026-10-22 02:56:40Z] == SEED_P256_H6.1083_s0 (2XL, 10665 steps): {"dataset": "seed", "experiment": "SEED", "performers": 256, "hours": 6.1083, "seed": 0}
+[2026-10-22 02:59:07Z]    SEED_P256_H6.1083_s0 exited 0 after 2.4 min
+[2026-10-22 02:59:07Z] == SEED_P400_H6.1083_s0 (2XL, 10665 steps): {"dataset": "seed", "experiment": "SEED", "performers": 400, "hours": 6.1083, "seed": 0}
+[2026-10-22 03:01:01Z]    SEED_P400_H6.1083_s0 exited 0 after 1.9 min
+[2026-10-22 03:01:01Z] == SEED_P128_H1.53_s0 (2XL, 10665 steps): {"dataset": "seed", "experiment": "SEED", "performers": 128, "hours": 1.53, "seed": 0}
+[2026-10-22 03:03:29Z]    SEED_P128_H1.53_s0 exited 0 after 2.5 min
+[2026-10-22 03:03:29Z] == SEED_P128_H24.4_s0 (2XL, 10665 steps): {"dataset": "seed", "experiment": "SEED", "performers": 128, "hours": 24.4, "seed": 0}
+[2026-10-22 03:06:13Z]    SEED_P128_H24.4_s0 exited 0 after 2.7 min
+[2026-10-22 03:06:13Z] == HiPHI_P4_H15_s1 (2XL, 10665 steps): {"dataset": "hiphi", "experiment": "HiPHI", "performers": 4, "hours": 15.0, "seed": 1}
+[2026-10-22 03:09:06Z]    HiPHI_P4_H15_s1 exited 0 after 2.9 min
+[2026-10-22 03:09:06Z] == HiPHI_P8_H15_s1 (2XL, 10665 steps): {"dataset": "hiphi", "experiment": "HiPHI", "performers": 8, "hours": 15.0, "seed": 1}
+[2026-10-22 03:11:51Z]    HiPHI_P8_H15_s1 exited 0 after 2.7 min
+[2026-10-22 03:11:51Z] == HiPHI_P16_H15_s1 (2XL, 10665 steps): {"dataset": "hiphi", "experiment": "HiPHI", "performers": 16, "hours": 15.0, "seed": 1}
+[2026-10-22 03:14:20Z]    HiPHI_P16_H15_s1 exited 0 after 2.5 min
+[2026-10-22 03:14:20Z] == HiPHI_P32_H15_s1 (2XL, 10665 steps): {"dataset": "hiphi", "experiment": "HiPHI", "performers": 32, "hours": 15.0, "seed": 1}
+[2026-10-22 03:16:52Z]    HiPHI_P32_H15_s1 exited 0 after 2.5 min
+[2026-10-22 03:16:52Z] == HiPHI_P64_H15_s1 (2XL, 10665 steps): {"dataset": "hiphi", "experiment": "HiPHI", "performers": 64, "hours": 15.0, "seed": 1}
+[2026-10-22 03:19:44Z]    HiPHI_P64_H15_s1 exited 0 after 2.9 min
+[2026-10-22 03:19:45Z] == SEED_P8_H6.1083_s1 (2XL, 10665 steps): {"dataset": "seed", "experiment": "SEED", "performers": 8, "hours": 6.1083, "seed": 1}
+[2026-10-22 03:22:38Z]    SEED_P8_H6.1083_s1 exited 0 after 2.9 min
+[2026-10-22 03:22:38Z] == SEED_P16_H6.1083_s1 (2XL, 10665 steps): {"dataset": "seed", "experiment": "SEED", "performers": 16, "hours": 6.1083, "seed": 1}
+[2026-10-22 03:24:58Z]    SEED_P16_H6.1083_s1 exited 0 after 2.3 min
+[2026-10-22 03:24:58Z] == SEED_P32_H6.1083_s1 (2XL, 10665 steps): {"dataset": "seed", "experiment": "SEED", "performers": 32, "hours": 6.1083, "seed": 1}
+[2026-10-22 03:27:51Z]    SEED_P32_H6.1083_s1 exited 0 after 2.9 min
+[2026-10-22 03:27:51Z] == SEED_P64_H6.1083_s1 (2XL, 10665 steps): {"dataset": "seed", "experiment": "SEED", "performers": 64, "hours": 6.1083, "seed": 1}
+[2026-10-22 03:30:37Z]    SEED_P64_H6.1083_s1 exited 0 after 2.8 min
+[2026-10-22 03:30:37Z] == SEED_P128_H6.1083_s1 (2XL, 10665 steps): {"dataset": "seed", "experiment": "SEED", "performers": 128, "hours": 6.1083, "seed": 1}
+[2026-10-22 03:32:37Z]    SEED_P128_H6.1083_s1 exited 0 after 2.0 min
+[2026-10-22 03:32:37Z] == SEED_P256_H6.1083_s1 (2XL, 10665 steps): {"dataset": "seed", "experiment": "SEED", "performers": 256, "hours": 6.1083, "seed": 1}
+[2026-10-22 03:35:04Z]    SEED_P256_H6.1083_s1 exited 0 after 2.4 min
+[2026-10-22 03:35:04Z] == SEED_P400_H6.1083_s1 (2XL, 10665 steps): {"dataset": "seed", "experiment": "SEED", "performers": 400, "hours": 6.1083, "seed": 1}
+[2026-10-22 03:37:46Z]    SEED_P400_H6.1083_s1 exited 0 after 2.7 min
+[2026-10-22 03:37:46Z] == HiPHI_P4_H15_s2 (2XL, 10665 steps): {"dataset": "hiphi", "experiment": "HiPHI", "performers": 4, "hours": 15.0, "seed": 2}
+[2026-10-22 03:40:45Z]    HiPHI_P4_H15_s2 exited 0 after 3.0 min
+[2026-10-22 03:40:45Z] == HiPHI_P8_H15_s2 (2XL, 10665 steps): {"dataset": "hiphi", "experiment": "HiPHI", "performers": 8, "hours": 15.0, "seed": 2}
+[2026-10-22 03:43:20Z]    HiPHI_P8_H15_s2 exited 0 after 2.6 min
+[2026-10-22 03:43:20Z] == HiPHI_P16_H15_s2 (2XL, 10665 steps): {"dataset": "hiphi", "experiment": "HiPHI", "performers": 16, "hours": 15.0, "seed": 2}
+[2026-10-22 03:45:51Z]    HiPHI_P16_H15_s2 exited 0 after 2.5 min
+[2026-10-22 03:45:51Z] == HiPHI_P32_H15_s2 (2XL, 10665 steps): {"dataset": "hiphi", "experiment": "HiPHI", "performers": 32, "hours": 15.0, "seed": 2}
+[2026-10-22 03:48:15Z]    HiPHI_P32_H15_s2 exited 0 after 2.4 min
+[2026-10-22 03:48:15Z] == HiPHI_P64_H15_s2 (2XL, 10665 steps): {"dataset": "hiphi", "experiment": "HiPHI", "performers": 64, "hours": 15.0, "seed": 2}
+[2026-10-22 03:50:07Z]    HiPHI_P64_H15_s2 exited 0 after 1.9 min
+[2026-10-22 03:50:08Z] == SEED_P8_H6.1083_s2 (2XL, 10665 steps): {"dataset": "seed", "experiment": "SEED", "performers": 8, "hours": 6.1083, "seed": 2}
+[2026-10-22 03:53:03Z]    SEED_P8_H6.1083_s2 exited 0 after 2.9 min
+[2026-10-22 03:53:03Z] == SEED_P16_H6.1083_s2 (2XL, 10665 steps): {"dataset": "seed", "experiment": "SEED", "performers": 16, "hours": 6.1083, "seed": 2}
+[2026-10-22 03:55:49Z]    SEED_P16_H6.1083_s2 exited 0 after 2.8 min
+[2026-10-22 03:55:49Z] == SEED_P32_H6.1083_s2 (2XL, 10665 steps): {"dataset": "seed", "experiment": "SEED", "performers": 32, "hours": 6.1083, "seed": 2}
+[2026-10-22 03:58:49Z]    SEED_P32_H6.1083_s2 exited 0 after 3.0 min
+[2026-10-22 03:58:49Z] == SEED_P64_H6.1083_s2 (2XL, 10665 steps): {"dataset": "seed", "experiment": "SEED", "performers": 64, "hours": 6.1083, "seed": 2}
+[2026-10-22 04:01:10Z]    SEED_P64_H6.1083_s2 exited 0 after 2.3 min
+[2026-10-22 04:01:10Z] == SEED_P128_H6.1083_s2 (2XL, 10665 steps): {"dataset": "seed", "experiment": "SEED", "performers": 128, "hours": 6.1083, "seed": 2}
+[2026-10-22 04:03:45Z]    SEED_P128_H6.1083_s2 exited 0 after 2.6 min
+[2026-10-22 04:03:45Z] == SEED_P256_H6.1083_s2 (2XL, 10665 steps): {"dataset": "seed", "experiment": "SEED", "performers": 256, "hours": 6.1083, "seed": 2}
+[2026-10-22 04:06:12Z]    SEED_P256_H6.1083_s2 exited 0 after 2.5 min
+[2026-10-22 04:06:12Z] == SEED_P400_H6.1083_s2 (2XL, 10665 steps): {"dataset": "seed", "experiment": "SEED", "performers": 400, "hours": 6.1083, "seed": 2}
+[2026-10-22 04:08:24Z]    SEED_P400_H6.1083_s2 exited 0 after 2.2 min
+[2026-10-22 04:08:24Z] == E3_recipe_next4 (2XL, 30000 steps): {"dataset": "all", "experiment": "E3", "hours": 397.8, "seed": 0, "recipe": "next4"}
+[2026-10-22 04:14:02Z]    E3_recipe_next4 exited 0 after 5.6 min
+[2026-10-22 04:14:02Z] == E3_recipe_dct16mix (2XL, 30000 steps): {"dataset": "all", "experiment": "E3", "hours": 397.8, "seed": 0, "recipe": "dct16mix"}
+[2026-10-22 04:20:25Z]    E3_recipe_dct16mix exited 0 after 6.4 min
+[2026-10-22 04:20:25Z] flagship 5XL: 52439 steps on 398 h, 2.50 h left, ~201,081 tok/s
+[2026-10-22 04:20:25Z] == E3_flagship (5XL, 52439 steps): {"dataset": "all", "experiment": "E3", "hours": 397.8, "seed": 0, "recipe": "dct16mix", "flagship": true}
+[2026-10-22 05:13:36Z]    E3_flagship exited 0 after 53.2 min
+[2026-10-22 05:13:36Z] phase 2 done: 43 runs; SEED ok

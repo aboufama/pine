@@ -1,0 +1,73 @@
+{
+ "robot": "h2",
+ "started": "2026-10-21T23:05:39+0000",
+ "free_gb_before": 262436.4,
+ "sources": {
+  "unitree_mujoco": {
+   "status": "ok",
+   "path": "/workspace/data/raw/unitree_mujoco/repo/unitree_robots/h2",
+   "source": "vendored (unitree_mujoco 1eb6642)",
+   "models": {
+    "h2": true
+   },
+   "license": "BSD-3-Clause",
+   "seconds": 0.3,
+   "bytes": 13136304
+  },
+  "lafan1_g1": {
+   "status": "skipped",
+   "reason": "G1-native data; used only when PINE_ROBOT=g1 (robot is h2)"
+  },
+  "amass_g1": {
+   "status": "skipped",
+   "reason": "G1-native data; used only when PINE_ROBOT=g1 (robot is h2)"
+  },
+  "lafan1": {
+   "status": "ok",
+   "path": "/workspace/data/raw/lafan1/repo",
+   "commit": "94084601bacdf9cc3764b5c73daaeccae6035fac",
+   "url": "https://github.com/ubisoft/ubisoft-laforge-animation-dataset",
+   "bvh_files": 77,
+   "bvh_dir": "/workspace/data/raw/lafan1/repo/lafan1/bvh",
+   "zip_bytes": 144051503,
+   "license": "CC BY-NC-ND 4.0",
+   "format": "BVH, 30 fps, cm, Mixamo-style joint names",
+   "seconds": 17.8,
+   "bytes": 637502381
+  },
+  "bandai": {
+   "status": "ok",
+   "path": "/workspace/data/raw/bandai/repo",
+   "commit": "74ead3ba1ae4696404e6086233779f60de8bf9ef",
+   "url": "https://github.com/BandaiNamcoResearchInc/Bandai-Namco-Research-Motiondataset",
+   "bvh_files": 3077,
+   "license": "CC BY-NC 4.0",
+   "seconds": 39.8,
+   "bytes": 1055715968
+  },
+  "cmu": {
+   "status": "failed",
+   "error": "error: RPC failed; curl 28 Operation too slow. Less than 200000 bytes/sec transferred the last 90 seconds\nfatal: early EOF\nfatal: fetch-pack: invalid index-pack output",
+   "url": "https://github.com/una-dinosauria/cmu-mocap",
+   "seconds": 334.4
+  },
+  "hiphi": {
+   "status": "ok",
+   "path": "/workspace/data/raw/hiphi",
+   "canon_archives": 32,
+   "archives": 32,
+   "archives_total": 32,
+   "failed": [],
+   "bvh_files": 32,
+   "license": "ModalityNet Open Research License (non-commercial research)",
+   "format": "BVH, 90 Hz, cm, Y-up; each motion also has a __mirror copy",
+   "seconds": 5097.2
+  }
+ },
+ "network_mb_per_s": {
+  "huggingface": 171.9,
+  "github": 10.1
+ },
+ "finished": "2026-10-22T00:30:59+0000",
+ "free_gb_after": 261564.2
+}
