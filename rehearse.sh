@@ -42,6 +42,7 @@ fake_hiphi() { python - <<'PYEOF'
 # metadata/hiphi_metadata.csv with motion_id, actor_id, text_annotation. LAFAN1 BVH (Mixamo-style) stands in; every take
 # appears twice under different motion ids so there are 50 performers. Two archives, cached with fetch_data.canon_cache.
 import csv, glob, os, shutil, sys
+import __main__; __main__.__dict__.pop("__file__", None)   # a script read from stdin: let spawn workers start (pod runs a file)
 sys.path.insert(0, "gpu")
 import fetch_data as FD
 RAW = os.environ["PINE_RAW"]
