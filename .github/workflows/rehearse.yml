@@ -10,7 +10,7 @@ permissions:
 jobs:
   rehearse:
     runs-on: ubuntu-latest
-    timeout-minutes: 60
+    timeout-minutes: 115
     steps:
       - uses: actions/checkout@v4
         with:

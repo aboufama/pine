@@ -34,7 +34,7 @@ progress() { [ -n "${PUSH_URL:-}" ] || return 0; local d; d=$(mktemp -d); cp "$R
 stage() { local n="$1"; shift; echo; echo "=== STAGE $n"; local t=$(date +%s)
   if "$@"; then echo "=== STAGE $n OK ($(( $(date +%s) - t ))s)"; else echo "=== STAGE $n FAILED (exit $?, $(( $(date +%s) - t ))s)"; FAILED="$FAILED $n"; fi; sleep 1; progress; }
 
-stage fetch python gpu/fetch_data.py --only unitree_mujoco,bandai,lafan1,cmu
+stage fetch python gpu/fetch_data.py --only unitree_mujoco,bandai,lafan1
 progress
 
 fake_hiphi() { python - <<'PYEOF'
@@ -111,13 +111,14 @@ PYEOF
 }
 stage ik_check ik_check
 
-stage build_shards python gpu/build_shards.py --only cmu,bandai,hiphi --max-takes 15
+stage build_shards python gpu/build_shards.py --only bandai,hiphi --max-takes 15
 python -c "import json; s=json.load(open('$PINE_SHARDS/stats.json')); print('shards:', round(s['hours'],2), 'h', s['per_source'], 'ik', s['ik']['backend'], s['ik']['mean_err_cm'])" || true
 
 export PINE_STEPS=40 PINE_BATCH=64 PINE_VAL_WINDOWS=256 PINE_T0=$(date +%s) PINE_MAX_GPU_HOURS=8
 stage sweep_dry python gpu/sweep_gpu.py --dry-run
 stage sweep python gpu/sweep_gpu.py
 ls "$PINE_RUNS"
+grep -h "extra\|FAILED" "$PINE_LOGS/sweep.log" | tail -4 | cut -c1-300
 
 phase_switch() {   # the run_all.sh condition for phase 2 (results.tgz/T0 stand-ins), then its budget arithmetic
   touch "$WS/results.tgz"; date +%s > "$WS/T0"
@@ -125,7 +126,10 @@ phase_switch() {   # the run_all.sh condition for phase 2 (results.tgz/T0 stand-
 }
 stage phase_switch phase_switch
 
-export PINE_PHASE2_STEPS=30 PINE_SKIP_SEED=1 PINE_PHASE2_DEADLINE=$(python -c "import time; print(time.time() + 50 * 60)")
+stage seed python "$ROOT/rh/seed_stub.py"
+tail -6 "$PINE_LOGS/seed.log" 2>/dev/null | cut -c1-300
+
+export PINE_PHASE2_STEPS=30 PINE_PHASE2_DEADLINE=$(python -c "import time; print(time.time() + 85 * 60)")
 stage phase2 python gpu/phase2.py
 python - <<'PYEOF' || true
 import json, os
