@@ -1,0 +1,8 @@
+[2026-10-22 00:50:32Z] robot h2: 30 BVH takes from ['bandai1', 'bandai2'], 4 workers
+[2026-10-22 00:50:32Z]   HiPHI from keypoint caches: 80 takes
+[2026-10-22 00:50:32Z] parsed 30 takes in 0s: 95 kept, -65 rejected
+[2026-10-22 00:50:36Z] IK check vs pine/g1.py: {"frames": 2000, "mean_mm": 3.4387521511064124e-13, "max_mm": 3.563539207208429e-12, "max_joint_diff_deg": 9.565518204501527e-13, "passed": true, "limit_mm": 1.0, "backend": "torch", "seconds_numpy": 1.1866164207458496, "seconds_backend": 1.1093192100524902, "residual_mean_cm_numpy": 5.593068600168121, "residual_mean_cm_backend": 5.593068600168119} -> backend torch
+[2026-10-22 00:50:56Z]   IK (gpu) 1/1 chunks
+[2026-10-22 00:50:56Z] IK: 33,406 frames in 21s (0.615 ms/frame) on torch
+[2026-10-22 00:50:57Z] shards: 33,406 frames (0.5 h; train 0.4 h), 95 takes, sources ['bandai1', 'hiphi'] -> /home/runner/work/pine/pine/ws/data/shards (24s)
+[2026-10-22 00:57:47Z]   IK (gpu) 3/3 chunks

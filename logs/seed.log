@@ -1,0 +1,8 @@
+[2026-10-22 00:54:05Z]   metadata/seed_metadata.csv: 77 rows, actor column actor_uid, file columns ['filename'], mirror is_mirror
+[2026-10-22 00:54:05Z] metadata: 77 files with an actor id (40 actors), 0 marked mirrored
+[2026-10-22 00:54:05Z] SOMA joints (27): ['Hips', 'LeftUpLeg', 'LeftLeg', 'LeftFoot', 'LeftToe', 'LeftToe_end', 'RightUpLeg', 'RightLeg', 'RightFoot', 'RightToe', 'RightToe_end', 'Spine', 'Spine1', 'Spine2', 'Neck', 'Head', 'Head_end', 'LeftShoulder', 'LeftArm', 'LeftForeArm', 'LeftHand', 'LeftHand_end', 'RightShoulder', 'RightArm', 'RightForeArm', 'RightHand', 'RightHand_end']
+[2026-10-22 00:54:05Z] keypoint map: {'l_ankle': 'LeftFoot', 'l_toe': 'LeftToe', 'l_knee': 'LeftLeg', 'l_hip': 'LeftUpLeg', 'l_wrist': 'LeftHand', 'l_elbow': 'LeftForeArm', 'l_shoulder': 'LeftArm', 'r_ankle': 'RightFoot', 'r_toe': 'RightToe', 'r_knee': 'RightLeg', 'r_hip': 'RightUpLeg', 'r_wrist': 'RightHand', 'r_elbow': 'RightForeArm', 'r_shoulder': 'RightArm', 'pelvis': 'Hips', 'spine': 'Spine', 'chest': 'Spine2', 'neck': 'Neck', 'head': 'Head'}
+[2026-10-22 00:54:19Z] parsed 77 takes in 14s: 76 kept, rejects {'teleport': 1}; 40 actors
+[2026-10-22 00:54:22Z] IK check: passed=True backend torch
+[2026-10-22 00:57:47Z] IK: 326,172 frames in 205s
+[2026-10-22 00:57:47Z] SEED done: 76 takes, 4.5 h, 40 actors -> /home/runner/work/pine/pine/ws/data/shards_all (223s)

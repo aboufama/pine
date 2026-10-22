@@ -1,0 +1,24 @@
+{
+ "size": "4XL",
+ "params": 114236,
+ "steps": 40,
+ "registered_at": "2026-10-22T00:53:33+0000",
+ "registered_unix": 1792630413.4685986,
+ "fit_on": [
+  "M",
+  "L",
+  "XL",
+  "2XL",
+  "3XL"
+ ],
+ "form": "L(N) = E + A * N^-alpha",
+ "robot": "h2",
+ "metric": "val full-observation MSE (normalised features), best checkpoint",
+ "E": 0.6020822850428446,
+ "A": 7.772383236164817,
+ "alpha": 0.3842216150514188,
+ "loss": 0.6906421557494267,
+ "lo": 0.6118617089857601,
+ "hi": 0.7660757239769257,
+ "n_boot": 600
+}
