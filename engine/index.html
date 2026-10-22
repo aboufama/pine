@@ -98,6 +98,18 @@ figcaption b, .figcap b { color: var(--ink); font-weight: 600; }
 .chart .lbl { font-family: var(--sans); font-size: 12.5px; fill: var(--ink2); letter-spacing: -0.01em; }
 .chart .big { font-family: var(--display); font-size: 15px; font-weight: 600; fill: var(--ink); letter-spacing: -0.02em; }
 
+.tablewrap { overflow-x: auto; margin-top: 6px; }
+table.pred { width: 100%; border-collapse: collapse; font-size: 15px; }
+table.pred th { text-align: left; font-size: 12px; font-weight: 500; color: var(--faint); padding: 0 10px 8px 0; border-bottom: 1px solid var(--hair); }
+table.pred td { padding: 11px 10px 11px 0; border-bottom: 1px solid #ececf0; vertical-align: top; }
+table.pred td.n { font-family: var(--display); font-weight: 600; font-size: 17px; letter-spacing: -0.02em; white-space: nowrap; font-variant-numeric: tabular-nums; }
+table.pred td.x { font-family: var(--display); font-weight: 600; font-size: 17px; white-space: nowrap; text-align: right; font-variant-numeric: tabular-nums; }
+table.pred th.r { text-align: right; padding-right: 0; }
+table.pred td.x { padding-right: 0; }
+table.pred td .s { display: block; font-size: 12.5px; color: var(--quiet); margin-top: 2px; }
+table.pred tr.hi td { background: #f5f5f7; }
+table.pred tr.hi td:first-child { padding-left: 10px; border-radius: 8px 0 0 8px; }
+table.pred tr.hi td:last-child { padding-right: 10px; border-radius: 0 8px 8px 0; }
 .fine { font-size: 14px; color: var(--quiet); line-height: 1.55; margin-top: 30px; }
 footer { margin-top: 64px; padding-top: 16px; border-top: 1px solid var(--hair); font-size: 12.5px; color: var(--faint); line-height: 1.55; }
 footer p { margin-bottom: 8px; }
@@ -131,7 +143,6 @@ footer b { color: var(--quiet); font-weight: 600; }
     <div class="eyebrow">Pine Engine · Research preview</div>
     <h1>High&#8209;quality full&#8209;body annotated motion data at scale</h1>
     <p class="claim" id="claim"></p>
-    <div class="links"><a href="#findings">Findings</a><a href="details.html">Full write-up</a></div>
   </header>
 
   <div class="stats" id="stats"></div>
@@ -166,12 +177,15 @@ footer b { color: var(--quiet); font-weight: 600; }
   <figure class="mid" id="scaling"><div class="chart" id="chart"></div></figure>
   <p class="figcap" id="cap3"></p>
 
+  <h2 id="predictions">Predictions</h2>
+  <div class="tablewrap"><table class="pred" id="pred"></table></div>
+  <p class="figcap" id="cap4"></p>
+
   <h2 id="findings">Findings</h2>
   <ol class="findings" id="argument"></ol>
   <p class="fine" id="fine"></p>
 
   <footer>
-    <p id="method"></p>
     <p id="credits"></p>
   </footer>
 </main>
@@ -377,10 +391,14 @@ function render(D, MODEL, BIN) {
   const hr = (p2.runs || []).filter((r) => r.split && r.split.experiment === "HiPHI"), gap = hr.length ? hr.reduce((t, r) => t + r.test / r.val, 0) / hr.length : 1.9;
   const npSlope = fb ? fb.b : null;
   const better = now[1] / predH, strangerBetter = now[1] / (gap * predH);
-  $("#claim").innerHTML = `Robot motion models get better on a predictable curve as they see more human motion. <b>Followed to 10 million hours, the curve predicts a model ${fmt(better)}× more accurate than ours today, and ${fmt(strangerBetter)}× better on strangers than ours is on the people it trained on.</b>`;
+  // reference points: text-model training sets read as frames, one token = one frame at 20 fps (72,000 per hour)
+  const TOK = (t) => t / 72000, GPT3 = TOK(300e9), CHIN = TOK(1.4e12);
+  const timesAt = (h) => now[1] / fa.at(h);
+  const Hg = 10 ** ((Math.log10(now[1] / gap) - fa.a) / fa.b);     // strangers predicted as well as known people are today
+  $("#claim").innerHTML = `Human motion data obeys a scaling law, like text. <b>Ten million hours is more frames than GPT-3 saw tokens; at that scale the law predicts a model ${fmt(better)}× more accurate than ours, and better on strangers than ours is on the people it trained on.</b>`;
   $("#stats").innerHTML = [[fmt(hours) + " h", "of human motion"], [fmt(people), "people"], [`within ${fmt(Math.max(1, regOff))}%`, "of a prediction made before training"], [`${fmt(better)}×`, "lower error predicted at 10M hours"]]
     .map(([b, s]) => `<div><b class="num">${b}</b><span>${s}</span></div>`).join("");
-  $("#cap1").innerHTML = `<b>Figure 1. The data: real people in capture suits.</b> ${fmt(hours)} hours from ${fmt(people)} people across HiPHI (Noitom Robotics), BONES-SEED (Bones Studio), Bandai Namco Research and LAFAN1. Stills from the datasets' own videos and READMEs.`;
+  $("#cap1").innerHTML = `<b>Figure 1. The data: real people in capture suits.</b> HiPHI, BONES-SEED, Bandai Namco Research and LAFAN1; stills from the datasets' own videos.`;
   /* hero: the captured take (left) and Unitree's own H2 model doing it (right) */
   class Robot3D {
     constructor(el, M, bin) {
@@ -489,14 +507,14 @@ function render(D, MODEL, BIN) {
   $("#cap-right").innerHTML = `The same take on Unitree's MJCF with its real link meshes, posed every frame by our inverse kinematics: ${fmt(rt.frames)} frames solved, feet within <b>${fmt(rt.feet_err_cm, 1)} cm</b> of the human's on average. Wrists and head held still. Tap either view to pause.`;
   pickTake(0);
 
-  $("#cap2").innerHTML = `<b>Figure 2. Every frame, on a humanoid.</b> A recorded person (left) and the ${R.name} doing the same motion (right). Our solver posed ${fmt(fullFrames / 1e6, 1)} million frames on a GPU; feet land within ${fmt(rt.feet_err_cm, 1)} cm of the person's. Pick a take; tap to pause.`;
+  $("#cap2").innerHTML = `<b>Figure 2. Every frame, on a humanoid.</b> A recorded person and the ${R.name} doing the same motion; ${fmt(fullFrames / 1e6, 1)} million frames solved on a GPU, feet within ${fmt(rt.feet_err_cm, 1)} cm.`;
 
   /* the one chart */
   {
     const el = $("#chart");
-    const W = Math.max(400, Math.min(760, Math.round(el.clientWidth) || 640)), Hh = Math.round(Math.max(330, W * 0.66)), m = { l: 54, r: 18, t: 22, b: 46 };
+    const W = Math.max(400, Math.min(760, Math.round(el.clientWidth) || 640)), Hh = Math.round(Math.max(340, W * 0.68)), m = { l: 54, r: 18, t: 34, b: 46 };
     const narrow = W < 560;
-    const x0 = 1, x1 = 3e7, y0 = 0.0015, y1 = 0.3;
+    const x0 = 1, x1 = 8e7, y0 = 0.0015, y1 = 0.3;
     const sx = (v) => m.l + (Math.log(v) - Math.log(x0)) / (Math.log(x1) - Math.log(x0)) * (W - m.l - m.r);
     const sy = (v) => Hh - m.b - (Math.log(v) - Math.log(y0)) / (Math.log(y1) - Math.log(y0)) * (Hh - m.t - m.b);
     const s = svgEl("svg", { viewBox: `0 0 ${W} ${Hh}`, role: "img", "aria-label": "Prediction error against hours of training data, measured and extrapolated to ten million hours" }, el);
@@ -525,38 +543,51 @@ function render(D, MODEL, BIN) {
     const lab = (x, y, txt, cls = "lbl", anchor = "start") => { const t = svgEl("text", { x, y, "text-anchor": anchor, class: cls }, s); t.textContent = txt; return t; };
     // legend, bottom left
     const lx = m.l + 18, ly = sy(0.0035);
+    if (!narrow) {
     svgEl("circle", { cx: lx, cy: ly - 4, r: 4.2, fill: INK }, s); lab(lx + 12, ly, narrow ? "held-out takes" : "held-out takes, best model at each size");
     if (fb) { svgEl("circle", { cx: lx, cy: ly + 16, r: 4, fill: "#fff", stroke: QUIET, "stroke-width": 1.5 }, s); lab(lx + 12, ly + 20, "people never trained on"); }
-    svgEl("line", { x1: lx - 6, x2: lx + 6, y1: ly + 36, y2: ly + 36, stroke: INK, "stroke-width": 1.6, "stroke-dasharray": "4 3" }, s); lab(lx + 12, ly + 40, narrow ? "fit, carried forward" : "fit carried forward, 80% band");
+    svgEl("line", { x1: lx - 6, x2: lx + 6, y1: ly + 36, y2: ly + 36, stroke: INK, "stroke-width": 1.6, "stroke-dasharray": "4 3" }, s); lab(lx + 12, ly + 40, "fit carried forward, 80% band");
+    }
     // markers: this run, ten million hours
     svgEl("line", { x1: sx(now[0]), x2: sx(now[0]), y1: m.t, y2: Hh - m.b, stroke: HAIR }, s);
-    lab(sx(now[0]) + 8, m.t + 16, narrow ? `this run: ${fmt(now[0])} h` : `this run: ${fmt(now[0])} h of training data`);
+    lab(sx(now[0]) + 8, m.t + 16, `this run: ${fmt(now[0])} h`);
     svgEl("line", { x1: sx(H), x2: sx(H), y1: m.t, y2: Hh - m.b, stroke: INK, "stroke-dasharray": "2 3" }, s);
     svgEl("circle", { cx: sx(H), cy: sy(predH), r: 5.5, fill: "#fff", stroke: INK, "stroke-width": 1.8 }, s);
-    for (const mh of [1e4, 1e5, 1e6]) { const v = fa.at(mh); svgEl("circle", { cx: sx(mh), cy: sy(v), r: 2.6, fill: INK }, s); lab(sx(mh) + 4, sy(v) + 17, `${fmt(now[1] / v, 1)}×`, "lbl", "middle"); }
+    // where text models trained, read as frames; and the generalization point on our own line
+    for (const [h, t, anc] of [[GPT3, "GPT-3", "end"], [CHIN, "Chinchilla", "start"]]) {
+      svgEl("line", { x1: sx(h), x2: sx(h), y1: m.t - 2, y2: Hh - m.b, stroke: QUIET, "stroke-width": 0.8, "stroke-dasharray": "1 3" }, s);
+      if (!narrow || anc === "end") lab(sx(h) + (anc === "end" ? -4 : 4), m.t - 4, t, "lbl", anc);
+    }
+    svgEl("rect", { x: sx(Hg) - 4.5, y: sy(fa.at(Hg)) - 4.5, width: 9, height: 9, fill: "#fff", stroke: INK, "stroke-width": 1.6, transform: `rotate(45 ${sx(Hg)} ${sy(fa.at(Hg))})` }, s);
+    lab(sx(Hg) + 10, sy(fa.at(Hg)) - 10, "generalization point");
+    for (const mh of [1e5, 1e6]) { const v = fa.at(mh); svgEl("circle", { cx: sx(mh), cy: sy(v), r: 2.6, fill: INK }, s); lab(sx(mh) + 4, sy(v) + 17, `${fmt(now[1] / v, 1)}×`, "lbl", "middle"); }
     lab(sx(H) - 12, sy(predH) + 26, "10M hours", "big", "end");
     lab(sx(H) - 12, sy(predH) + 44, `~${fmt(now[1] / predH)}× lower error`, "lbl", "end");
   }
 
-  $("#cap3").innerHTML = `<b>Figure 3. More data, predictably less error.</b> How far off the model's prediction of the next 200 ms of motion is, against hours of training data, both axes logarithmic. Black: best model at each amount of data. Grey: the same on people it never trained on. Dashed: the measured trend carried forward, with its 80% band; the numbers on it are how many times lower than today the predicted error is.`;
+  $("#cap3").innerHTML = `<b>Figure 3. More data, predictably less error.</b> Error of the model's next-200 ms prediction against hours of training data, both axes logarithmic. Black: best model at each amount of data; grey: people it never trained on. Dashed: the fit carried forward with its 80% band. Dotted verticals: GPT-3's and Chinchilla's training sets, counting one token as one frame.`;
+  const rows = [
+    [`${fmt(hours)} h`, "This run", `${fmt(now[0])} h used for training; error measured.`, "1×"],
+    [`≈${fmt(Math.round(Hg / 500) * 500)} h`, "Generalization point", `A person the model has never seen is predicted as well as a person it trained on is today.`, `${fmt(timesAt(Hg), 1)}×`],
+    [`${fmt(GPT3 / 1e6, 1)}M h`, "GPT-3's data, as frames", `300 billion tokens: the scale at which language models became few-shot generalists.`, `${fmt(timesAt(GPT3))}×`],
+    [`10M h`, "Pine's target", `About 5,000 people wearing a suit for a working year. Strangers ${fmt(strangerBetter)}× below today's error on known people; compute-optimal model ≈ ${fmt(10e6 * 72000 / 20 / 1e9)}B parameters.`, `${fmt(better)}×`, true],
+    [`${fmt(CHIN / 1e6)}M h`, "Chinchilla's data, as frames", `1.4 trillion tokens, about 20 per parameter for a 70B model.`, `${fmt(timesAt(CHIN))}×`],
+  ];
+  $("#pred").innerHTML = `<thead><tr><th>Hours of motion</th><th>What it means</th><th class="r">Error vs today</th></tr></thead><tbody>` +
+    rows.map((r) => `<tr${r[4] ? ' class="hi"' : ""}><td class="n">${r[0]}</td><td><b>${r[1]}</b><span class="s">${r[2]}</span></td><td class="x">${r[3] === "1×" ? "1×" : r[3] + " lower"}</td></tr>`).join("") + `</tbody>`;
+  $("#cap4").innerHTML = `Predicted from the Figure 3 fit (80% band at 10M hours: ${fmt(now[1] / bandH[1])}–${fmt(now[1] / bandH[0])}× lower). Text-model sizes from <a href="https://arxiv.org/abs/2005.14165">Brown et al. 2020</a> and <a href="https://arxiv.org/abs/2203.15556">Hoffmann et al. 2022</a>, read at one token per frame, 20 frames a second.`;
   $("#argument").innerHTML = [
-    [`More data, less error, on a straight line.`,
-     `Each 10× more motion cut error by <b>${fmt(perDecade)}%</b>, from ${fmt(A[0][0], 1)} to ${fmt(now[0])} hours (log–log slope ${fmt(fa.b, 2)} ± ${fmt(fa.se_b, 2)}, four points, no bend).`],
-    [`The curve predicts. We tested it before training.`,
-     G.prediction ? `From models of ${pf(G.ladder[0].params)}–${pf(G.ladder[G.ladder.length - 2].params)} parameters we registered the ${pf(G.prediction.params)} model's error in advance: <b>${fmt(G.prediction.loss, 4)} predicted, ${fmt(full.val, 4)} measured</b> (80% interval ${fmt(G.prediction.lo, 3)}–${fmt(G.prediction.hi, 3)}).` : ""],
+    [`Motion obeys a scaling law, like text.`,
+     `Each 10× more motion cut error <b>${fmt(perDecade)}%</b> (log–log slope ${fmt(fa.b, 2)} ± ${fmt(fa.se_b, 2)}, ${fmt(A[0][0], 1)} → ${fmt(now[0])} h, no bend). Language models follow the same power law in data (<a href="https://arxiv.org/abs/2001.08361">Kaplan et al. 2020</a>; Chinchilla's data exponent: 0.28). The law predicted our ${pf(G.prediction.params)} model before training: <b>${fmt(G.prediction.loss, 4)} predicted, ${fmt(full.val, 4)} measured</b>.`],
     [`It generalizes to people it has never seen.`,
-     `On ${fmt(13)} HiPHI performers held out of training, error falls at the same rate (slope ${fmt(npSlope, 2)} vs ${fmt(fa.b, 2)}); strangers stay a constant <b>${fmt(gap, 1)}×</b> harder than known people at every scale we tried, so the gap does not grow. Across 61 held-out BONES-SEED actors, 8 → 400 training people cut stranger error 21%.`],
-    [`At 10 million hours: ${fmt(better)}× lower error, strangers included.`,
-     `The fit carried 4.5 orders of magnitude gives <b>${fmt(better)}×</b> (80% band ${fmt(now[1] / bandH[1])}–${fmt(now[1] / bandH[0])}×); with the ${fmt(gap, 1)}× stranger gap, error on new people falls ${fmt(strangerBetter)}× below today's error on known people. 10M hours at 20 fps is 720B frames, more than GPT-3's 300B training tokens.`],
-    [`That data trains text-to-motion for any humanoid.`,
-     `Every HiPHI take ships with a written description and BONES-SEED with timed action labels; our pipeline adds activity, style, contacts and quality grades, and solves each frame onto a robot (${R.name}: ${R.dof} joints).`],
-    [`Only wearable capture can collect it.`,
-     `Past about 100 people, more hours per person helped more than more people (4× hours: −35% on HiPHI, −12% on SEED). 10M hours is <b>5,000 people wearing a suit for a working year</b>; studios record hundreds of hours.`],
+     `On 13 HiPHI performers held out entirely, error falls at the same rate (slope ${fmt(npSlope, 2)}), a constant <b>${fmt(gap, 1)}×</b> above known people at every scale, so the gap does not grow. On 61 held-out BONES-SEED actors, 8 → 400 training people cut it 21%.`],
+    [`Ten million hours is GPT-3 scale for the body.`,
+     `${fmt(10e6 * 72000 / 1e9)}B frames, between GPT-3's 300B and Chinchilla's 1.4T tokens. Predicted: <b>${fmt(better)}× lower error</b>, strangers included. HiPHI takes carry text descriptions and BONES-SEED action labels, so the same data trains instruction → whole-body motion.`],
+    [`Only wearables can collect it.`,
+     `Past about 100 people, more hours per person helped more than more people (4× hours: −35% on HiPHI). Ten million hours is <b>5,000 people in a suit for a working year</b>; studios record hundreds.`],
   ].map(([c, e]) => `<li><div class="c">${c}</div><div class="e">${e}</div></li>`).join("");
-  $("#fine").innerHTML = `<b>Limits.</b> A 4.5-decade extrapolation that assumes models keep growing with the data (here ${pf(G.ladder[0].params)} → ${pf(top)}). Error is next-200 ms prediction on normalised joint features, not robot task success; no text-conditioned model is trained yet. HiPHI and BONES-SEED are non-commercial research licences.`;
-
-  $("#method").innerHTML = `<b>Compute.</b> One ${G.gpu || "GPU"}, ${fmt(G.gpu_hours, 1)} GPU hours, about $${fmt(G.cost_usd)}; the PyTorch trainer passed 774 checks against a NumPy reference before any run. Every run, table and caveat is in the <a href="details.html">full write-up</a>.`;
-  $("#credits").innerHTML = `<b>Data and images.</b> HiPHI (Noitom Robotics, non-commercial research licence; photos from its demo video), BONES-SEED (Bones Studio; still from its stage video), Bandai Namco Research Motion Dataset (CC BY-NC 4.0; studio photo from its README), LAFAN1 (Ubisoft La Forge, CC BY-NC-ND 4.0). Robot model: unitreerobotics/unitree_mujoco (BSD-3-Clause). Research measurements, not a product claim.`;
+  $("#fine").innerHTML = `<b>Limits.</b> Predictions extrapolate 4.5 orders of magnitude and assume models grow with the data (here ${pf(G.ladder[0].params)} → ${pf(top)}). A frame (31 numbers) is not a word piece, so the text comparison is a scale reference, not an equivalence. Error is next-200 ms prediction on normalised joint features, not robot task success, and no text-conditioned model is trained yet.`;
+  $("#credits").innerHTML = `<b>Data and images.</b> HiPHI (Noitom Robotics) and BONES-SEED (Bones Studio), non-commercial research licences; Bandai Namco Research Motion Dataset (CC BY-NC 4.0); LAFAN1 (Ubisoft La Forge, CC BY-NC-ND 4.0); Unitree H2 model from unitree_mujoco (BSD-3-Clause). One ${G.gpu || "GPU"}, ${fmt(G.gpu_hours, 1)} GPU hours. Every run and table: <a href="details.html">full write-up</a>.`;
   requestAnimationFrame(tick);
 }
 })();
