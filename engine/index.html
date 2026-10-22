@@ -351,7 +351,7 @@ function render(D, MODEL, BIN) {
   const named = GS ? Object.entries(GS.per_source).filter(([k]) => !k.startsWith("bandai")).reduce((t, [, v]) => t + v.subjects, 0) : 0;
   const top = D.gpu && D.gpu.ladder && D.gpu.ladder.length ? D.gpu.ladder.concat((D.gpu.phase2 && D.gpu.phase2.runs) || []).reduce((m, r) => Math.max(m, r.params), 0) : 0;
   $("#stats").innerHTML = (GS ? [[fmt(GS.hours) + " h", "motion on the H2"], [fmt(GS.takes), "takes"], [fmt(named), "named performers"], [fmt(GS.frames / 1e6, 1) + "M", "frames"],
-      [(top >= 1e6 ? fmt(top / 1e6) + "M" : fmt(top)), "parameters, largest"], [String(D.annotations.activity.filter((a) => a.name !== "unlabeled" && a.name !== "other").length), "activity classes"]]
+      [(top >= 1e6 ? fmt(top / 1e6) + "M" : fmt(top / 1e3) + "k"), "parameters, largest"], [String(D.annotations.activity.filter((a) => a.name !== "unlabeled" && a.name !== "other").length), "activity classes"]]
     : [[fmt(ds.hours, 1) + " h", "motion"], [fmt(ds.takes_kept), "takes"], [fmt(ds.people), "people"], [fmt(ds.frames), "frames"], [String(D.annotations.activity.filter((a) => a.name !== "unlabeled" && a.name !== "other").length), "activity classes"], [fmt(D.annotations.grades.A.hours, 1) + " h", "grade A"]])
     .map(([b, s]) => `<div><b class="num">${b}</b><span>${s}</span></div>`).join("");
 
@@ -494,6 +494,12 @@ function render(D, MODEL, BIN) {
   const G = D.gpu && D.gpu.ladder && D.gpu.ladder.length >= 3 ? D.gpu : null;
   const pfmt = (v) => (v >= 1e6 ? fmt(v / 1e6, v < 1e7 ? 1 : 0) + "M" : fmt(v / 1e3) + "k");
   const ticks = (lo, hi, c) => c.filter((v) => v >= lo && v <= hi);
+  const nice = (lo, hi) => {   // 3 to 6 round values inside [lo, hi] for a log axis
+    for (const m of [[1, 2, 5], [1, 1.5, 2, 3, 5, 7], [1, 1.2, 1.4, 1.6, 1.8, 2, 2.5, 3, 3.5, 4, 4.5, 5, 6, 7, 8, 9]]) {
+      const out = []; for (let e = Math.floor(Math.log10(lo)) - 1; e <= Math.ceil(Math.log10(hi)); e++) for (const k of m) { const v = +(k * Math.pow(10, e)).toPrecision(3); if (v >= lo && v <= hi) out.push(v); }
+      if (out.length >= 3) return out.length > 6 ? out.filter((_, i) => i % Math.ceil(out.length / 5) === 0) : out; }
+    return [lo, hi]; };
+  const dec = (v) => (v >= 1 ? v.toFixed(1) : v >= 0.1 ? v.toFixed(2) : v.toFixed(3));
   if (G) {
     const lad = G.ladder, P = G.prediction, big = P ? lad.find((r) => r.size === P.size) : null;
     const fitOn = P ? lad.filter((r) => P.fit_on.includes(r.size)) : lad, first = lad[0];
@@ -503,8 +509,8 @@ function render(D, MODEL, BIN) {
       : P ? `${P.size} registered at ${fmt(P.loss, 4)} before it trained` : `Bigger models keep paying on ${fmt(G.shards.hours_by_split.train)} h`;
     const x1 = Math.max(P ? P.params : 0, lad[lad.length - 1].params) * 1.9;
     const c = chart($("#v-c"), { H: 172, x: [first.params * 0.55, x1], y: [y0, y1], ylog: true,
-      xticks: ticks(first.params * 0.55, x1, [3e5, 1e6, 3e6, 1e7, 3e7, 1e8]), yticks: ticks(y0, y1, [0.03, 0.04, 0.05, 0.06, 0.07, 0.08]),
-      xfmt: pfmt, yfmt: (v) => v.toFixed(2), xlabel: "parameters", ylabel: "loss" });
+      xticks: ticks(first.params * 0.55, x1, [3e5, 1e6, 3e6, 1e7, 3e7, 1e8]), yticks: nice(y0, y1),
+      xfmt: pfmt, yfmt: dec, xlabel: "parameters", ylabel: "loss" });
     if (P) {
       const law = (n) => P.E + P.A * Math.pow(n, -P.alpha), cv = [];
       for (let n = first.params * 0.6; n <= x1; n *= 1.06) cv.push([c.sx(n), c.sy(law(n))]);
@@ -525,7 +531,7 @@ function render(D, MODEL, BIN) {
     if (dl.length >= 2) {
       const vs = dl.map((r) => r.val), d0 = Math.min(...vs) * 0.85, d1 = Math.max(...vs) * 1.08, h0 = dl[0].train_hours * 0.6, h1 = 1500;
       const c2 = chart($("#v-d"), { H: 172, x: [h0, h1], y: [d0, d1], ylog: true, xticks: ticks(h0, h1, [1, 3, 10, 30, 100, 300, 1000]),
-        yticks: ticks(d0, d1, [0.03, 0.04, 0.05, 0.06, 0.08, 0.1, 0.12, 0.15]), xfmt: (v) => fmt(v), yfmt: (v) => v.toFixed(2), xlabel: "hours of training data", ylabel: "loss" });
+        yticks: nice(d0, d1), xfmt: (v) => fmt(v), yfmt: dec, xlabel: "hours of training data", ylabel: "loss" });
       if (fd) {
         const law = (h) => fd.E + fd.B * Math.pow(h, -fd.beta), fp = [], xp = [], last = dl[dl.length - 1].train_hours;
         for (let h = dl[0].train_hours * 0.8; h <= h1; h *= 1.06) if (law(h) >= d0) (h <= last ? fp : xp).push([c2.sx(h), c2.sy(law(h))]);
@@ -567,7 +573,44 @@ function render(D, MODEL, BIN) {
   $("#c-d").innerHTML = `Same model on 1/64 to all of the hours: 1/64 is <b>${fmt(100 * (s64.val.full / S1.val.full - 1))}% worse</b>. Past ${fmt(M.params / 1000)}k parameters, bigger models gain nothing (panel d).`;
   }
 
-  /* e: new people */
+  /* f: more people or more hours (phase 2 on the GPU), else the CPU generalisation panel */
+  const P2 = D.gpu && D.gpu.phase2 && D.gpu.phase2.runs ? D.gpu.phase2.runs.filter((r) => r.split && (r.split.experiment === "HiPHI" || r.split.experiment === "SEED")) : [];
+  const sweepOf = (ex) => { const rs = P2.filter((r) => r.split.experiment === ex); if (!rs.length) return null;
+    const H0 = rs.filter((r) => r.split.performers === Math.min(...rs.map((q) => q.split.performers)))[0].split.hours;
+    const by = {}; for (const r of rs.filter((q) => Math.abs(q.split.hours - H0) < 1e-6)) (by[r.split.performers] = by[r.split.performers] || []).push(r.test);
+    const pts = Object.entries(by).map(([k, v]) => ({ P: +k, mean: v.reduce((t, x) => t + x, 0) / v.length, lo: Math.min(...v), hi: Math.max(...v), n: v.length })).sort((x, y) => x.P - y.P);
+    const hrs = rs.filter((q) => Math.abs(q.split.hours - H0) > 1e-6).map((q) => ({ P: q.split.performers, H: q.split.hours, loss: q.test }));
+    return { H0, pts, hrs }; };
+  const SW = { HiPHI: sweepOf("HiPHI"), SEED: sweepOf("SEED") };
+  if (SW.HiPHI && SW.HiPHI.pts.length >= 3) {
+    const all = [SW.HiPHI, SW.SEED].filter(Boolean), ps = all.flatMap((w) => w.pts), ys = ps.flatMap((p) => [p.lo, p.hi]).concat(all.flatMap((w) => w.hrs.map((q) => q.loss)));
+    const y0 = Math.min(...ys) * 0.93, y1 = Math.max(...ys) * 1.07, x0 = Math.min(...ps.map((p) => p.P)) * 0.7, x1 = Math.max(...ps.map((p) => p.P)) * 1.5;
+    const hp = SW.HiPHI.pts, gain = 100 * (1 - hp[hp.length - 1].mean / hp[0].mean);
+    const wd = SW.SEED && SW.SEED.pts.length >= 3 ? SW.SEED : SW.HiPHI, wg = 100 * (1 - Math.min(...wd.pts.map((p) => p.mean)) / wd.pts[0].mean);
+    const hx = (w) => { const h = w.hrs.filter((q) => q.H > w.H0).sort((x, y) => x.H - y.H)[0], b = h && w.pts.find((p) => p.P === h.P); return h && b ? { r: h.H / w.H0, g: 100 * (1 - h.loss / b.mean) } : null; };
+    const hH = hx(SW.HiPHI), hS = SW.SEED ? hx(SW.SEED) : null;
+    $("#h-e").textContent = hH ? `More people helps; ${fmt(hH.r)}× the hours helps more` : `Same hours from more people: ${fmt(gain)}% lower error on new people`;
+    const c = chart($("#v-e"), { H: 172, x: [x0, x1], y: [y0, y1], ylog: true, xticks: ticks(x0, x1, [4, 8, 16, 32, 64, 128, 256, 400]),
+      yticks: nice(y0, y1), xfmt: (v) => fmt(v), yfmt: dec, xlabel: "performers (same total hours)", ylabel: "loss, new people" });
+    [["HiPHI", INK], ["SEED", QUIET]].forEach(([k, col]) => { const w = SW[k]; if (!w) return;
+      svgEl("path", { d: path(w.pts.map((p) => [c.sx(p.P), c.sy(p.mean)])), fill: "none", stroke: col, "stroke-width": 1.3 }, c.s);
+      for (const p of w.pts) { if (p.n > 1) svgEl("line", { x1: c.sx(p.P), x2: c.sx(p.P), y1: c.sy(p.lo), y2: c.sy(p.hi), stroke: col }, c.s);
+        svgEl("circle", { cx: c.sx(p.P), cy: c.sy(p.mean), r: 3, fill: k === "HiPHI" ? col : "#fff", stroke: col, "stroke-width": 1.3 }, c.s); }
+      const l = w.pts[w.pts.length - 1], above = !SW.SEED || (k === "SEED") === (SW.SEED.pts[0].mean > SW.HiPHI.pts[0].mean);
+      const f0 = w.pts[0]; label(c, f0.P, f0.mean, `${k}, ${fmt(w.H0, w.H0 < 10 ? 1 : 0)} h each run`, 2, above ? -9 : 16, "start");
+      const hv = w.hrs.filter((q) => w.pts.find((p) => p.P === q.P));
+      if (hv.length) { const P0 = hv[0].P, b = w.pts.find((p) => p.P === P0), v = hv.map((q) => q.loss).concat([b.mean]);
+        svgEl("line", { x1: c.sx(P0) + 7, x2: c.sx(P0) + 7, y1: c.sy(Math.min(...v)), y2: c.sy(Math.max(...v)), stroke: col, "stroke-dasharray": "2 2" }, c.s);
+        for (const q of hv) { svgEl("rect", { x: c.sx(P0) + 4, y: c.sy(q.loss) - 3, width: 6, height: 6, fill: "#fff", stroke: col, "stroke-width": 1.2 }, c.s);
+          label(c, P0, q.loss, `${fmt(q.H, q.H < 10 ? 1 : 0)} h`, 13, 4); } } });
+    const hv = SW.HiPHI.hrs.slice().sort((x, y) => x.H - y.H), base = hv.length ? hp.find((p) => p.P === hv[0].P) : null;
+    const trio = base ? [...hv.filter((q) => q.H < SW.HiPHI.H0), { H: SW.HiPHI.H0, loss: base.mean }, ...hv.filter((q) => q.H > SW.HiPHI.H0)] : [];
+    const draws = Math.max(...all.flatMap((w) => w.pts.map((p) => p.n)));
+    $("#c-e").innerHTML = `Loss on whole performers never trained on (13 of HiPHI's 132, 61 of SEED's 521). Dots: the same hours split evenly across more people; squares: more or fewer hours at one headcount. Same 2XL model and steps everywhere.` +
+      ` ${wd === SW.SEED ? "SEED" : "HiPHI"}: ${fmt(wd.pts[0].P)} → ${fmt(wd.pts.reduce((m, p) => (p.mean < m.mean ? p : m), wd.pts[0]).P)} people <b>−${fmt(wg)}%</b>, flat past ~32` +
+      (hH ? `; ${fmt(hH.r)}× the hours <b>−${fmt(hH.g)}%</b> on HiPHI${hS ? `, −${fmt(hS.g)}% on SEED` : ""}.` : ".") +
+      (draws > 1 ? ` Bars: spread over ${draws} draws of people.` : " One draw of people per point so far; repeat draws are running.");
+  } else {
   $("#h-e").textContent = `New people score ${fmt(gap, 1)}× worse`;
   {
     const lad = runs.filter((r) => r.fraction === 1).sort((a, b) => a.params - b.params);
@@ -584,6 +627,8 @@ function render(D, MODEL, BIN) {
   const mir = D.mirror && D.mirror.runs && D.mirror.runs.M;
   $("#c-e").innerHTML = `${GS ? `CPU run, ${fmt(ds.hours, 1)} h. ` : ""}Bigger models barely close the gap to ${fmt(ds.splits_hours.test, 1)} h from <b>people never trained on</b>.` +
     (mir ? ` Doubling to ${fmt(D.mirror.train_hours, 1)} h by mirroring every take moved it by ${fmt(100 * Math.abs(mir.test / mir.base_test - 1), 1)}%: more of the same people does not help; more people should.` : "");
+
+  }
 
   /* f: sensors */
   $("#h-f").textContent = "Legs carry the signal; arm encoders would help";
@@ -610,7 +655,20 @@ function render(D, MODEL, BIN) {
   }
   $("#c-g").innerHTML = `Held-out walk. Solid: the ${ex.observed.length} channels a leg suit measures. Dashed: waist and arms inferred by the model. Grey: the truth.`;
 
-  /* h: forecast and the pi-paper pass */
+  /* i: forecast; the GPU recipes and the flagship when phase 2 has them, else the CPU pi-paper pass */
+  const E3 = D.gpu && D.gpu.phase2 ? D.gpu.phase2.runs.filter((r) => r.split && r.split.experiment === "E3") : [];
+  const FL = E3.find((r) => r.split.flagship), RD = E3.find((r) => r.split.recipe === "dct16mix" && !r.split.flagship), RN = E3.find((r) => r.split.recipe === "next4");
+  const sc = (r) => r && r.pi_pass && r.pi_pass.dct16mix && r.pi_pass.dct16mix.execute_8 ? r.pi_pass.dct16mix : null;
+  if (FL && sc(FL)) {
+    const f = sc(FL), d2 = sc(RD), nb = RD && RD.pi_pass && RD.pi_pass.next4_baseline ? RD.pi_pass.next4_baseline.execute_1 : null;
+    const rows = [[f.hold_pose.mean_2s, "ghost", "Hold last pose"]].concat(nb ? [[nb.mean_2s, "light", `${RN ? RN.size : "2XL"} next-4`]] : [])
+      .concat(d2 ? [[d2.execute_8.mean_2s, "light", `${RD.size} chunks`]] : []).concat([[f.execute_8.mean_2s, "", `${pfmt(FL.params)} flagship`]]);
+    const mx = Math.max(...rows.map((r) => r[0]));
+    $("#h-h").textContent = `${pfmt(FL.params)} flagship: ${fmt(f.execute_8.mean_2s, 1)}° over 2 s on people never seen`;
+    $("#v-h").innerHTML = `<div class="brow hd"><div>2 s on its own</div><div></div><div class="v" style="color:inherit">error</div></div>` +
+      rows.map(([v, cls, n]) => `<div class="brow"><div>${n}</div><div class="t"><span class="${cls}" style="width:${(100 * v / mx).toFixed(1)}%"></span></div><div class="v">${fmt(v, 1)}°</div></div>`).join("");
+    $("#c-h").innerHTML = `Joint error running on its own predictions for 2 s, performers never trained on. The flagship (${pfmt(FL.params)} parameters, cosine chunks with noisy history) trained on ${fmt(FL.split.hours)} h${D.gpu.phase2.seed && D.gpu.phase2.seed.status === "ok" ? " including BONES-SEED" : ""}; suit fill-in on new people <b>${fmt(FL.hidden_deg_test, 1)}°</b> vs ${fmt(FL.meanpose_deg, 1)}° for the average pose.`;
+  } else {
   $("#h-h").textContent = "π0-style chunks halve forecast drift";
   {
     const el = $("#v-h"), rows = [[hold, "ghost", "Hold last pose"], [base, "light", "Original"], [row("resid4"), "light", "Offsets"], [chunk, "", "π0 chunks"], [dct, "", "FAST cosine"]];
@@ -620,6 +678,8 @@ function render(D, MODEL, BIN) {
   }
   const t200 = ro.eval.from_real_frames["200ms"];
   $("#c-h").innerHTML = `Joint error running alone for 2 s, people never seen, same budget each. From real frames the 200 ms forecast beats holding the pose by <b>${fmt(100 * (1 - t200.model_deg / t200.freeze_deg))}%</b>; FAST matches chunks with 62% fewer outputs.`;
+
+  }
 
   const GPUTXT = GS ? ` The GPU run repeats the pipe on ${fmt(GS.hours)} h (HiPHI ${fmt(GS.per_source.hiphi.hours)} h from ${GS.per_source.hiphi.subjects} performers, mirrored copies left out; Bandai Namco; LAFAN1): IK on the GPU, checked against the NumPy solver (${GS.ik.check.max_mm < 0.001 ? "identical to 0.001 mm" : fmt(GS.ik.check.max_mm, 2) + " mm"}), ${fmt(GS.frames / 1e6, 1)}M frames in ${fmt(GS.ik.seconds)} s; PyTorch in bf16 on one ${D.gpu.gpu || "GPU"}, checked against the NumPy reference (774 checks) before any training; ${fmt(D.gpu.ladder[0].steps)} steps of 512 windows per run (20 epochs). Test takes are held-out takes; held-out performers are scored in phase 2.` : "";
   $("#method").innerHTML = `<b>Method.</b> Every take gets an activity, a style where the source gives one, and a quality grade; every frame gets foot contacts and a locomotion state. BVH takes are mapped to 19 keypoints at 20 fps, quality-checked, and fitted onto Unitree's MJCF by batched inverse kinematics. Each frame becomes 31 channels (23 joints, gravity at the pelvis, turn rate, velocity, height). A causal transformer reads 1.6 s and predicts the next 200 ms, with sensor groups hidden at random during training. Five sizes from 10k to 822k parameters, 900 steps each, hand-written in NumPy on 2 CPU cores, gradients checked numerically. Test takes come from people never trained on. Data: CMU Graphics Lab (free use, no resale) and Bandai Namco Research (CC BY-NC 4.0); robots from unitree_mujoco.${GPUTXT}${GS ? " HiPHI: Noitom Robotics, non-commercial research licence; LAFAN1: Ubisoft La Forge, CC BY-NC-ND 4.0." : ""}`;
