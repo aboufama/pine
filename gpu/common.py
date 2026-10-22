@@ -89,3 +89,24 @@ def env_int(name: str, default: int) -> int:
 def die(msg: str, code: int = 1):
     log("FATAL: " + msg)
     raise SystemExit(code)
+
+
+def cpu_limit() -> int:
+    """CPUs this container may use: the cgroup quota if there is one (os.cpu_count() reports the whole host)."""
+    n = os.cpu_count() or 4
+    try:
+        q, per = open("/sys/fs/cgroup/cpu.max").read().split()[:2]
+        if q != "max":
+            n = min(n, max(1, int(int(q) / int(per))))
+    except (OSError, ValueError):
+        try:
+            q = int(open("/sys/fs/cgroup/cpu/cpu.cfs_quota_us").read()); per = int(open("/sys/fs/cgroup/cpu/cpu.cfs_period_us").read())
+            if q > 0:
+                n = min(n, max(1, q // per))
+        except (OSError, ValueError):
+            pass
+    try:
+        n = min(n, len(os.sched_getaffinity(0)))
+    except AttributeError:
+        pass
+    return n

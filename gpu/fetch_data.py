@@ -102,7 +102,7 @@ def canon_cache(bvh_dir: str, out_npz: str) -> int:
                          drop=0, check_unit=True, desc=text))
     reps, kps = [], []
     # spawn, not fork: GitHub clones run in threads alongside, and forking a threaded process can copy a held lock
-    with get_context("spawn").Pool(os.cpu_count() or 4, initializer=_one_thread) as pool:
+    with get_context("spawn").Pool(common.cpu_limit(), initializer=_one_thread) as pool:
         for rep, kp in pool.imap(BS.bvh_work, jobs, chunksize=4):
             if kp is not None:
                 rep["_n"] = len(kp); kps.append(kp.astype(np.float32))

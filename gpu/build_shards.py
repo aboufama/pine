@@ -377,7 +377,7 @@ def describe(rep: dict, desc: dict) -> str:
 
 def main(argv=None) -> int:
     ap = argparse.ArgumentParser()
-    ap.add_argument("--workers", type=int, default=os.cpu_count() or 4)
+    ap.add_argument("--workers", type=int, default=common.cpu_limit())
     ap.add_argument("--device", choices=("cuda", "cpu"), default="cuda")
     ap.add_argument("--only", default="cmu,bandai,lafan1,hiphi,lafan1_g1,amass_g1")
     ap.add_argument("--out", default=SHARDS)
@@ -414,12 +414,14 @@ def main(argv=None) -> int:
     if "hiphi" in only:
         for p in sorted(glob.glob(os.path.join(RAW, "hiphi", "canon", "*.npz"))):
             z = np.load(p, allow_pickle=False)
-            rr = json.loads(str(z["reps"])); off = z["offsets"]; k = 0
+            # read each array ONCE: NpzFile re-reads the whole member from disk on every z["kp"] access
+            rr = json.loads(str(z["reps"])); off = z["offsets"]; kp_all = z["kp"]; k = 0
             for rep in rr:
                 n = rep.pop("_n", None)
                 if n is None:
                     reps.append(rep); kps.append(None); continue
-                reps.append(rep); kps.append(z["kp"][off[k]:off[k + 1]].astype(np.float64)); k += 1
+                reps.append(rep); kps.append(kp_all[off[k]:off[k + 1]].astype(np.float64)); k += 1
+            del kp_all
         SAY(f"  HiPHI from keypoint caches: {sum(1 for r in reps if r.get('source') == 'hiphi')} takes")
     t_parse = time.time() - t0
     keep = [i for i, k in enumerate(kps) if k is not None]

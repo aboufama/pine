@@ -215,7 +215,8 @@ def run() -> int:
             state["mapped"] = True
         jobs = [dict(source="seed", path=f, clip=stem(f), subject="seed_" + actors.get(stem(f), "unknown"), unit=0.01,
                      skel="seed", drop=0, check_unit=True) for f in paths]
-        with get_context("fork").Pool(os.cpu_count() or 4, initializer=os.environ.__setitem__, initargs=("OMP_NUM_THREADS", "1")) as pool:
+        # leave CPUs for the training run that phase 2 has on the GPU at the same time
+        with get_context("fork").Pool(max(1, common.cpu_limit() - 3), initializer=os.environ.__setitem__, initargs=("OMP_NUM_THREADS", "1")) as pool:
             for r, k in pool.imap(BS.bvh_work, jobs, chunksize=8):
                 reps.append(r); kps.append(None if k is None else k.astype(np.float32))
 
@@ -251,7 +252,7 @@ def run() -> int:
         f"{len({reps[i]['subject'] for i in keep})} actors")
     if not keep:
         raise RuntimeError(f"every SEED take was rejected: {rej}; first: {reps[0].get('reject') if reps else None}")
-    rt = BS.Retargeter("cuda", os.cpu_count() or 4)
+    rt = BS.Retargeter("cuda", max(1, common.cpu_limit() - 3))
     rng = np.random.default_rng(0)
     chk = rt.calibrate([kps[i].astype(np.float64) for i in rng.permutation(keep)[:60]])
     SAY(f"IK check: passed={chk.get('passed')} backend {rt.backend}")
