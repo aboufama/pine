@@ -264,18 +264,19 @@ footer p { margin: 14px 0 0; max-width: 60em; }
 </div></section>
 
 <section id="scale-s"><div class="wrap">
-  <p class="kicker">Next</p>
-  <h2>The same pipe on GPUs.</h2>
-  <p class="prose">Everything above ran on a two-core laptop-class CPU. The GPU version of the trainer is a PyTorch copy of this model, checked gradient for gradient against the CPU reference before it spends GPU time. It adds the larger public sets below, then trains a ladder of models up to a few tens of millions of parameters with a prediction registered before the largest run, as here.</p>
+  <p class="kicker" id="g-kicker">Next</p>
+  <h2 id="g-title">The same pipe on GPUs.</h2>
+  <p class="prose" id="g-prose">Everything above ran on a two-core laptop-class CPU. The GPU version of the trainer is a PyTorch copy of this model, checked gradient for gradient against the CPU reference before it spends GPU time. It adds the larger public sets below, then trains a ladder of models up to a few tens of millions of parameters with a prediction registered before the largest run, as here.</p>
   <div class="tablewrap"><table id="gpu"></table></div>
-  <div class="cmd"><code id="cmd">python3 runpod/launch.py plan</code><button id="copy" type="button">Copy</button></div>
+  <div id="g-more"></div>
+  <div class="cmd" id="g-cmd"><code id="cmd">python3 runpod/launch.py plan</code><button id="copy" type="button">Copy</button></div>
   <p class="caption" id="gpu-cap">The launcher prints the GPU, hours and cost and asks for confirmation before anything bills.</p>
 </div></section>
 </main>
 
 <footer><div class="wrap">
   <div><span>Pine 2026</span><span><a href="./">One page</a></span></div>
-  <p>Motion data: CMU Graphics Lab Motion Capture Database (mocap.cs.cmu.edu), created with funding from NSF EIA-0196217, in the BVH conversion by B. Hahne; Bandai Namco Research Motion Datasets 1 and 2 (CC BY-NC 4.0). Robot models: Unitree H2 and G1 from unitreerobotics/unitree_mujoco. Results are from a CPU proof of concept and are not a product claim.</p>
+  <p>Motion data: CMU Graphics Lab Motion Capture Database (mocap.cs.cmu.edu), created with funding from NSF EIA-0196217, in the BVH conversion by B. Hahne; Bandai Namco Research Motion Datasets 1 and 2 (CC BY-NC 4.0). Robot models: Unitree H2 and G1 from unitreerobotics/unitree_mujoco. Also HiPHI (Noitom Robotics, non-commercial research licence), LAFAN1 (Ubisoft La Forge, CC BY-NC-ND 4.0) and BONES-SEED (Bones Studio, its own licence) in the GPU run. Results are research measurements, not a product claim.</p>
 </div></footer>
 
 <script>
@@ -610,18 +611,75 @@ function render(D) {
     $("#pi").outerHTML = `<p class="pending">Running now: offsets from the current frame, π0-style action chunks, and FAST-style cosine-transform chunks, each trained under the same budget.</p>`;
   }
 
-  /* next: gpu */
-  const gp = D.gpu_plan;
-  const rowsG = gp && gp.datasets ? gp.datasets : [
-    { name: "Everything above", hours: ds.hours, license: "as above" },
-    { name: "LAFAN1 (Ubisoft)", hours: 4.6, license: "CC BY-NC-ND 4.0" },
-    { name: "HiPHI (Noitom)", hours: 617.5, license: "Non-commercial research" },
-  ];
-  $("#gpu").innerHTML = `<thead><tr><th>Dataset</th><th class="r">Hours</th><th>Licence</th></tr></thead><tbody>` +
-    rowsG.map((d) => `<tr><td>${d.url ? `<a href="${d.url}">${d.name}</a>` : d.name}</td><td class="r">${fmt(d.hours, 1)}</td><td>${d.license}</td></tr>`).join("") +
-    `<tr class="total"><td>Total</td><td class="r">${fmt(rowsG.reduce((a, d) => a + d.hours, 0), 0)}</td><td></td></tr></tbody>`;
-  if (gp && gp.command) $("#cmd").textContent = gp.command;
-  if (gp && gp.est_gpu_hours) $("#gpu-cap").textContent = `Estimated ${fmt(gp.est_gpu_hours, 0)} GPU hours on ${gp.gpus}, about $${fmt(gp.est_cost_usd, 0)}. The launcher asks for confirmation before anything bills.`;
+  /* the GPU run (D.gpu), else the plan */
+  const G = D.gpu && D.gpu.shards && D.gpu.ladder && D.gpu.ladder.length ? D.gpu : null;
+  if (G) {
+    const sh = G.shards, ps = sh.per_source, p2 = G.phase2 || {}, P2 = (p2.runs || []);
+    const pf = (v) => (v >= 1e6 ? fmt(v / 1e6, v < 1e7 ? 1 : 0) + "M" : fmt(v / 1e3) + "k");
+    const seed = p2.seed_stats && p2.seed_stats.hours ? p2.seed_stats : null;
+    const totalH = sh.hours + (seed ? seed.hours : 0);
+    $("#g-kicker").textContent = "GPU run, 21–22 October";
+    $("#g-title").textContent = `The same pipe on ${fmt(totalH)} hours.`;
+    const pred = G.prediction, big = pred ? G.ladder.find((r) => r.size === pred.size) : null;
+    $("#g-prose").innerHTML = `One ${G.gpu || "GPU"} on RunPod, started and stopped by a GitHub Action, reporting to a branch every five minutes. ` +
+      `HiPHI's 32 archives (Noitom, ${fmt(ps.hiphi.subjects)} performers) were downloaded and parsed one at a time into keypoints, with the mirrored copy of every take left out: ${fmt(ps.hiphi.hours)} h of the listed 617 h are distinct motion. ` +
+      `With Bandai Namco and LAFAN1 that is ${fmt(sh.hours)} h, ${fmt(sh.takes)} takes and ${fmt(sh.frames / 1e6, 1)}M frames, all solved onto the ${D.robot.name} by IK on the GPU in ${fmt(sh.ik.seconds)} s after matching the NumPy solver to ${sh.ik.check.max_mm < 0.001 ? "under a micrometre" : fmt(sh.ik.check.max_mm, 2) + " mm"}. ` +
+      (seed ? `BONES-SEED added ${fmt(seed.hours)} h from ${fmt(seed.actors)} actors (${fmt(seed.takes)} takes, mirrors left out) for phase 2. ` : "") +
+      `The trainer passed 774 checks against the NumPy reference before any run. CMU did not download on this host (GitHub stalled the 4 GB clone three times) and is not in the GPU numbers.` +
+      (big ? ` The registered prediction for ${pred.size} was ${fmt(pred.loss, 4)} (80% interval ${fmt(pred.lo, 4)}–${fmt(pred.hi, 4)}); it measured <b>${fmt(big.val, 4)}</b>.` : "");
+    const srcName = { hiphi: "HiPHI (Noitom)", bandai1: "Bandai Namco 1", bandai2: "Bandai Namco 2", lafan1: "LAFAN1 (Ubisoft)" };
+    const lic = { hiphi: "Non-commercial research", bandai1: "CC BY-NC 4.0", bandai2: "CC BY-NC 4.0", lafan1: "CC BY-NC-ND 4.0" };
+    const srows = Object.entries(ps).map(([k, v]) => [srcName[k] || k, v.takes, v.hours, k.startsWith("bandai") ? "" : v.subjects, lic[k] || ""]);
+    if (seed) srows.push(["BONES-SEED (phase 2)", seed.takes, seed.hours, seed.actors, "BONES-SEED licence"]);
+    $("#gpu").innerHTML = `<thead><tr><th>On the ${D.robot.name}</th><th class="r">Takes</th><th class="r">Hours</th><th class="r">Performers</th><th>Licence</th></tr></thead><tbody>` +
+      srows.map((r) => `<tr><td>${r[0]}</td><td class="r">${fmt(r[1])}</td><td class="r">${fmt(r[2], 1)}</td><td class="r">${r[3] === "" ? "" : fmt(r[3])}</td><td>${r[4]}</td></tr>`).join("") +
+      `<tr class="total"><td>Total</td><td class="r">${fmt(srows.reduce((t, r) => t + r[1], 0))}</td><td class="r">${fmt(srows.reduce((t, r) => t + r[2], 0))}</td><td></td><td></td></tr></tbody>`;
+    const tbl = (head, rows, cap) => `<div class="tablewrap" style="margin-top:22px"><table><thead><tr>${head.map((h, i) => `<th${i ? ' class="r"' : ""}>${h}</th>`).join("")}</tr></thead><tbody>${rows.map((r) => `<tr${r.total ? ' class="total"' : ""}>${r.map((c, i) => `<td${i ? ' class="r"' : ""}>${c}</td>`).join("")}</tr>`).join("")}</tbody></table></div><p class="caption">${cap}</p>`;
+    let more = tbl(["Model, all training hours", "Parameters", "Val loss", "Test loss", "Waist and arms from the suit", "Tokens/s", "Minutes"],
+      G.ladder.map((r) => { const row = [r.size + (pred && r.size === pred.size ? ", predicted " + fmt(pred.loss, 4) : ""), pf(r.params), fmt(r.val, 4), fmt(r.test, 4), fmt(r.hidden_deg_test, 1) + "°", fmt(r.tokens_per_s / 1e6, 2) + "M", fmt(r.wall_s / 60, 1)]; if (pred && r.size === pred.size) row.total = true; return row; }),
+      `<b>Table 2.</b> Phase 1: every size on all ${fmt(sh.hours_by_split.train)} training hours, ${fmt(G.ladder[0].steps)} steps of 512 windows (20 epochs), bf16, best checkpoint by validation. Val: new takes; test: held-out takes (CPU rule, per take). Suit column: waist and arm joints inferred 200 ms ahead from the EXO-1 channels alone, test takes.`);
+    if (G.data_ladder.length) more += tbl(["2XL on a share of the hours", "Hours", "Val loss", "Test loss"],
+      G.data_ladder.map((r) => [r.fraction === 1 ? "all" : "1/" + fmt(1 / r.fraction), fmt(r.train_hours, 1), fmt(r.val, 4), fmt(r.test, 4)]),
+      `<b>Table 3.</b> The data ladder: the same model and steps on fewer hours.` + (G.fits && G.fits.data ? ` Fit ${G.fits.data.form}, β = ${fmt(G.fits.data.beta, 2)}.` : ""));
+    const sw = P2.filter((r) => r.split && (r.split.experiment === "HiPHI" || r.split.experiment === "SEED"));
+    if (sw.length) {
+      const grp = {}; for (const r of sw) { const k = `${r.split.experiment}|${r.split.performers}|${r.split.hours}`; (grp[k] = grp[k] || []).push(r); }
+      const rows = Object.entries(grp).map(([k, v]) => { const [ex, P, H] = k.split("|"); const m = (f) => v.reduce((t, r) => t + f(r), 0) / v.length;
+        return [ex, +P, +H, v.length, m((r) => r.test), m((r) => r.val)]; }).sort((a, b) => (a[0] > b[0] ? 1 : a[0] < b[0] ? -1 : a[2] - b[2] || a[1] - b[1]));
+      more += tbl(["Dataset", "Performers", "Hours", "Draws", "Loss, people never seen", "Loss, new takes of seen people"],
+        rows.map((r) => [r[0], fmt(r[1]), fmt(r[2], r[2] < 10 ? 2 : 1), fmt(r[3]), fmt(r[4], 4), fmt(r[5], 4)]),
+        `<b>Table 4.</b> Phase 2, more people or more hours: performers with crc32(id) % 10 = 3 are held out entirely (never trained on) and score every run; the training hours are split evenly across the chosen people. 2XL, ${fmt(sw[0].steps)} steps each.`);
+    }
+    const e3 = P2.filter((r) => r.split && r.split.experiment === "E3");
+    if (e3.length) {
+      const sc = (r, k) => r.pi_pass && r.pi_pass.dct16mix ? r.pi_pass.dct16mix[k] : null;
+      const nb = (e3.find((r) => r.pi_pass && r.pi_pass.next4_baseline) || {}).pi_pass;   // the next-4 model, scored by the chunk run
+      more += tbl(["Everything but held-out people", "Parameters", "Hours", "Steps", "Loss, seen people", "2 s on its own, new people", "200 ms from real frames", "Suit fill-in, new people"],
+        e3.map((r) => { const own = sc(r, "execute_8"), n4 = r.objective !== "dct16mix" && nb ? nb.next4_baseline.execute_1 : null;
+          return [(r.split.flagship ? "Flagship, " : "") + r.size + (r.objective === "dct16mix" ? ", cosine chunks + noisy history" : ", next 4 frames"), pf(r.params), fmt(r.split.hours), fmt(r.steps),
+            r.objective === "dct16mix" ? fmt(r.val, 4) : "—",
+            own ? fmt(own.mean_2s, 1) + "°" : n4 ? fmt(n4.mean_2s, 1) + "°" : "—",
+            sc(r, "from_real_200ms") ? fmt(sc(r, "from_real_200ms"), 2) + "°" : "—", fmt(r.hidden_deg_test, 1) + "°"]; }),
+        `<b>Table 5.</b> Trained on every take except the held-out performers' (HiPHI${seed ? " and SEED" : ""} pools plus the other sources' training takes), scored on held-out HiPHI performers. Seen people: the chunk objective's loss on new takes of trained performers (comparable between the two chunk models only). 2 s on its own: mean joint error while the model runs on its own forecasts (scripts/pi_pass), executing 8 of every 16 predicted frames; holding the last pose scores ${nb && nb.dct16mix ? fmt(nb.dct16mix.hold_pose.mean_2s, 1) + "°" : "15.3°"}. The 85M model beats the 4.8M one on seen people (−9%) and 200 ms ahead on new people (−11%), but drifts more over 2 s on its own (+11%) and fills in the upper body equally well.`);
+    }
+    $("#g-more").innerHTML = more;
+    $("#g-cmd").style.display = "none";
+    const fin = G.stage && G.stage.includes("DONE (phase 2)");
+    $("#gpu-cap").textContent = fin ? `${fmt(G.gpu_hours, 1)} GPU hours on this pod, about $${fmt(G.cost_usd)}; it stopped itself when phase 2 finished (${G.updated.replace("T", " ").slice(0, 16)} UTC).`
+      : `${fmt(G.gpu_hours, 1)} GPU hours so far, about $${fmt(G.cost_usd)}. Last report ${G.updated ? G.updated.replace("T", " ").slice(0, 16) + " UTC" : ""}.`;
+  } else {
+    const gp = D.gpu_plan;
+    const rowsG = gp && gp.datasets ? gp.datasets : [
+      { name: "Everything above", hours: ds.hours, license: "as above" },
+      { name: "LAFAN1 (Ubisoft)", hours: 4.6, license: "CC BY-NC-ND 4.0" },
+      { name: "HiPHI (Noitom)", hours: 617.5, license: "Non-commercial research" },
+    ];
+    $("#gpu").innerHTML = `<thead><tr><th>Dataset</th><th class="r">Hours</th><th>Licence</th></tr></thead><tbody>` +
+      rowsG.map((d) => `<tr><td>${d.url ? `<a href="${d.url}">${d.name}</a>` : d.name}</td><td class="r">${fmt(d.hours, 1)}</td><td>${d.license}</td></tr>`).join("") +
+      `<tr class="total"><td>Total</td><td class="r">${fmt(rowsG.reduce((a, d) => a + d.hours, 0), 0)}</td><td></td></tr></tbody>`;
+    if (gp && gp.command) $("#cmd").textContent = gp.command;
+    if (gp && gp.est_gpu_hours) $("#gpu-cap").textContent = `Estimated ${fmt(gp.est_gpu_hours, 0)} GPU hours on ${gp.gpus}, about $${fmt(gp.est_cost_usd, 0)}. The launcher asks for confirmation before anything bills.`;
+  }
   $("#copy").addEventListener("click", () => {
     const t = $("#cmd").textContent;
     const sel = () => { const r = document.createRange(); r.selectNodeContents($("#cmd")); const s = getSelection(); s.removeAllRanges(); s.addRange(r); };
