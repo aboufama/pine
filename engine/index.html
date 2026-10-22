@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Pine Engine</title>
-<meta name="description" content="460 hours of real people moving, mapped onto a full-size humanoid. Error falls as a power law in hours; at 10 million hours it points to a general full-body action model.">
+<meta name="description" content="Human motion scales like text. We forecast a GPT-3 moment for humanoid robots at about one million hours of full-body motion with head-camera video.">
 <meta property="og:title" content="Pine Engine">
 <meta property="og:description" content="High-quality full-body annotated motion data at scale.">
 <link rel="icon" href="../mark-c2.svg" type="image/svg+xml">
@@ -12,182 +12,162 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
-/* A paper's project page: one reading column, wide figures, numbered captions. */
+/* One landscape screen: a title, one claim, three panels. Sources below the fold. */
 :root {
   --ink: #1d1d1f; --ink2: #3a3a3c; --quiet: #6e6e73; --faint: #8e8e93; --ghost: #c7c7cc;
   --hair: #d2d2d7; --wash: #f5f5f7; --paper: #ffffff;
   --sans: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Inter", "Helvetica Neue", Helvetica, Arial, sans-serif;
   --display: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Inter", "Helvetica Neue", Helvetica, Arial, sans-serif;
   --mono: ui-monospace, "SF Mono", SFMono-Regular, "JetBrains Mono", Menlo, monospace;
-  --col: 680px; --wide: 1120px;
-  --gl: max(22px, env(safe-area-inset-left, 0px)); --gr: max(22px, env(safe-area-inset-right, 0px));
+  --pad: clamp(16px, 2.6vw, 48px);
 }
 * { box-sizing: border-box; }
 html { -webkit-text-size-adjust: 100%; }
-body { margin: 0; background: var(--paper); color: var(--ink); font-family: var(--sans); font-size: 17px; line-height: 1.6;
-  letter-spacing: -0.012em; -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility; }
+body { margin: 0; background: var(--paper); color: var(--ink); font-family: var(--sans); font-size: 15px; line-height: 1.5;
+  letter-spacing: -0.01em; -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility; }
 a { color: inherit; text-decoration: underline; text-decoration-color: var(--ghost); text-underline-offset: 3px; }
 a:hover { text-decoration-color: var(--ink); }
-.num { font-variant-numeric: tabular-nums; }
-.paper { padding: calc(20px + env(safe-area-inset-top, 0px)) var(--gr) calc(56px + env(safe-area-inset-bottom, 0px)) var(--gl); }
-.paper > * { max-width: var(--col); margin-left: auto; margin-right: auto; }
-.paper > .wide { max-width: var(--wide); }
-.paper > .mid { max-width: 820px; }
+.poster { max-width: 1680px; margin: 0 auto; padding: calc(16px + env(safe-area-inset-top, 0px)) max(var(--pad), env(safe-area-inset-right, 0px)) calc(36px + env(safe-area-inset-bottom, 0px)) max(var(--pad), env(safe-area-inset-left, 0px)); }
 
-.top { display: flex; align-items: center; gap: 10px; font-size: 13px; color: var(--quiet); max-width: var(--wide) !important; }
-.top svg { width: 16px; height: auto; display: block; }
+.top { display: flex; align-items: center; gap: 9px; font-size: 12.5px; color: var(--quiet); }
+.top svg { width: 15px; height: auto; display: block; }
 .top b { color: var(--ink); font-weight: 600; }
 .top .sp { flex: 1; }
-
-.masthead { text-align: center; margin-top: 56px; margin-bottom: 30px; max-width: 900px !important; }
-.eyebrow { font-size: 13px; color: var(--faint); letter-spacing: 0.02em; }
-h1 { font-family: var(--display); font-weight: 600; font-size: clamp(36px, 5.4vw, 64px); line-height: 1.03; letter-spacing: -0.045em; margin: 14px 0 18px; text-wrap: balance; }
-.links { font-size: 14px; color: var(--quiet); display: flex; gap: 18px; justify-content: center; flex-wrap: wrap; }
-.links a { text-decoration: none; border: 1px solid var(--hair); border-radius: 980px; padding: 5px 14px; color: var(--ink); }
-.links a:hover { border-color: var(--ink); }
-
-.claim { font-size: clamp(19px, 2vw, 24px); line-height: 1.38; color: var(--ink2); max-width: 30em; margin: 0 auto 22px; letter-spacing: -0.02em; text-wrap: balance; }
+.top a { text-decoration: none; border: 1px solid var(--hair); border-radius: 980px; padding: 2px 11px; color: var(--ink); }
+.top a:hover { border-color: var(--ink); }
+header { margin: clamp(14px, 3vh, 40px) 0 clamp(16px, 3.4vh, 44px); }
+h1 { font-family: var(--display); font-weight: 600; font-size: clamp(30px, min(3.4vw, 6.2vh), 60px); line-height: 1.03; letter-spacing: -0.045em; margin: 0 0 12px; text-wrap: balance; }
+.claim { font-size: clamp(16px, min(1.45vw, 2.6vh), 24px); line-height: 1.38; color: var(--ink2); margin: 0; max-width: 52em; letter-spacing: -0.02em; text-wrap: pretty; }
 .claim b { color: var(--ink); font-weight: 600; }
-.findings { list-style: none; counter-reset: f; margin: 8px auto 0; padding: 0; display: grid; gap: 26px; }
-.findings li { counter-increment: f; display: grid; grid-template-columns: 34px minmax(0, 1fr); column-gap: 6px; }
-.findings li::before { content: counter(f); grid-row: span 2; font-family: var(--display); font-size: 15px; font-weight: 600; color: var(--paper); background: var(--ink); width: 26px; height: 26px; border-radius: 50%; display: grid; place-items: center; margin-top: 3px; }
-.findings .c { font-family: var(--display); font-size: 22px; line-height: 1.25; font-weight: 600; letter-spacing: -0.025em; color: var(--ink); text-wrap: balance; }
-.findings .e { font-size: 14px; line-height: 1.5; color: var(--quiet); margin-top: 5px; text-wrap: pretty; }
-.findings .e b { color: var(--ink2); font-weight: 600; }
-.abstract { font-size: 19px; line-height: 1.55; color: var(--ink2); margin-bottom: 28px; text-wrap: pretty; }
-.abstract b { color: var(--ink); font-weight: 600; }
-.stats { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 0; border-top: 1px solid var(--hair); border-bottom: 1px solid var(--hair); margin-bottom: 40px; max-width: 860px !important; }
-.stats div { padding: 14px 4px; text-align: center; }
-.stats div + div { border-left: 1px solid var(--hair); }
-.stats b { display: block; font-family: var(--display); font-size: 26px; font-weight: 600; letter-spacing: -0.035em; line-height: 1.15; }
-.stats span { font-size: 12.5px; color: var(--quiet); }
 
-h2 { font-family: var(--display); font-size: 26px; line-height: 1.2; font-weight: 600; letter-spacing: -0.03em; margin-top: 64px; margin-bottom: 12px; text-wrap: balance; }
-p { margin-top: 0; margin-bottom: 16px; text-wrap: pretty; }
-p b { font-weight: 600; }
+.grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.12fr) minmax(0, 1fr); gap: 28px clamp(24px, 2.6vw, 48px); align-items: start; }
+.panel { min-width: 0; }
+h2 { font-family: var(--display); font-size: clamp(17px, 1.35vw, 22px); line-height: 1.2; font-weight: 600; letter-spacing: -0.025em; margin: 0 0 12px; text-wrap: balance; }
+h2 .k { display: inline-grid; place-items: center; width: 20px; height: 20px; border-radius: 50%; background: var(--ink); color: var(--paper); font-size: 11.5px; margin-right: 8px; vertical-align: 2px; }
+.note { font-size: 13px; line-height: 1.45; color: var(--quiet); margin: 10px 0 0; text-wrap: pretty; }
+.note b { color: var(--ink); font-weight: 600; }
+.big { font-family: var(--display); font-size: clamp(15px, 1.15vw, 18px); line-height: 1.35; color: var(--ink2); margin: 12px 0 0; letter-spacing: -0.02em; text-wrap: pretty; }
+.big b { color: var(--ink); font-weight: 600; }
 
-figure { margin-top: 28px; margin-bottom: 0; }
-figcaption, .figcap { font-size: 13.5px; line-height: 1.5; color: var(--quiet); margin: 12px auto 36px; max-width: var(--col); text-wrap: pretty; }
-figcaption b, .figcap b { color: var(--ink); font-weight: 600; }
-
-/* Figure 1: people */
-.photos { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); grid-template-rows: 300px 230px; gap: 6px; }
-.photos .ph { position: relative; overflow: hidden; border-radius: 10px; background: var(--wash); margin: 0; }
-.photos .ph.w { grid-column: span 2; }
-.photos .ph.t { grid-row: span 1; }
+/* panel 1 */
+.photos { display: grid; grid-template-columns: 1.5fr 1fr 1fr; gap: 4px; height: clamp(70px, 12vh, 150px); margin-bottom: 4px; }
+.photos .ph { position: relative; overflow: hidden; border-radius: 8px; background: var(--wash); }
 .photos img { width: 100%; height: 100%; object-fit: cover; display: block; }
-.photos .tag { position: absolute; left: 10px; bottom: 8px; color: #fff; font-size: 11.5px; font-weight: 500; text-shadow: 0 1px 6px rgba(0,0,0,.6); letter-spacing: 0; }
-
-/* Figure 2: robot */
-.hero { display: grid; grid-template-columns: minmax(0, 0.82fr) minmax(0, 1.18fr); gap: 6px; }
-.side { background: var(--wash); border-radius: 10px; position: relative; overflow: hidden; min-width: 0; }
-.side .lab { position: absolute; left: 12px; top: 10px; z-index: 2; font-size: 12px; color: var(--quiet); pointer-events: none; }
+.photos .tag { position: absolute; left: 8px; bottom: 5px; color: #fff; font-size: 10.5px; font-weight: 500; text-shadow: 0 1px 5px rgba(0,0,0,.6); letter-spacing: 0; }
+.hero { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 4px; }
+.side { background: var(--wash); border-radius: 8px; position: relative; overflow: hidden; min-width: 0; }
+.side .lab { position: absolute; left: 9px; top: 6px; z-index: 2; font-size: 11px; color: var(--quiet); pointer-events: none; line-height: 1.3; }
 .side .lab b { color: var(--ink); font-weight: 600; }
-.stage { position: relative; height: 440px; overflow: hidden; cursor: pointer; }
+.stage { position: relative; height: clamp(180px, 30vh, 380px); overflow: hidden; cursor: pointer; }
 .stage canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
 #captured .stage { background: var(--paper); }
-.chips { display: flex; flex-wrap: wrap; gap: 6px; justify-content: center; margin-top: 12px; }
-.chips button { font: inherit; font-size: 12.5px; border: 1px solid var(--hair); background: var(--paper); color: var(--ink); border-radius: 980px; padding: 4px 12px; cursor: pointer; letter-spacing: -0.01em; }
+#captured { border: 1px solid #ececf0; }
+.chips { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 6px; }
+.chips button { font: inherit; font-size: 11px; border: 1px solid var(--hair); background: var(--paper); color: var(--ink); border-radius: 980px; padding: 1px 9px; cursor: pointer; }
 .chips button[aria-pressed="true"] { background: var(--ink); color: var(--paper); border-color: var(--ink); }
 .chips button:focus-visible, .stage:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
 .hidden { display: none !important; }
 
-/* Figure 3: the curve */
+/* panel 2 */
 .chart svg { width: 100%; height: auto; display: block; overflow: visible; }
-.chart text { font-family: var(--mono); font-size: 11px; fill: var(--quiet); letter-spacing: 0; }
-.chart .lbl { font-family: var(--sans); font-size: 12.5px; fill: var(--ink2); letter-spacing: -0.01em; }
-.chart .big { font-family: var(--display); font-size: 15px; font-weight: 600; fill: var(--ink); letter-spacing: -0.02em; }
+.chart text { font-family: var(--mono); font-size: 10.5px; fill: var(--quiet); letter-spacing: 0; }
+.chart .lbl { font-family: var(--sans); font-size: 11.5px; fill: var(--ink2); letter-spacing: -0.01em; }
+.chart .bigl { font-family: var(--display); font-size: 14px; font-weight: 600; fill: var(--ink); letter-spacing: -0.02em; }
+.legend { display: flex; flex-wrap: wrap; gap: 3px 14px; font-size: 11.5px; color: var(--quiet); margin-top: 4px; }
+.legend span { display: inline-flex; align-items: center; gap: 6px; }
+.legend i { display: inline-block; width: 9px; height: 9px; border-radius: 50%; background: var(--ink); }
+.legend i.o { background: #fff; border: 1.5px solid #86868b; }
+.legend i.band { width: 14px; height: 9px; border-radius: 2px; background: rgba(29,29,31,0.14); }
+.legend i.dot { width: 14px; height: 0; border-radius: 0; background: none; border-top: 1.5px dotted #86868b; }
 
-.tablewrap { overflow-x: auto; margin-top: 6px; }
-table.pred { width: 100%; border-collapse: collapse; font-size: 15px; }
-table.pred th { text-align: left; font-size: 12px; font-weight: 500; color: var(--faint); padding: 0 10px 8px 0; border-bottom: 1px solid var(--hair); }
-table.pred td { padding: 11px 10px 11px 0; border-bottom: 1px solid #ececf0; vertical-align: top; }
-table.pred td.n { font-family: var(--display); font-weight: 600; font-size: 17px; letter-spacing: -0.02em; white-space: nowrap; font-variant-numeric: tabular-nums; }
-table.pred td.x { font-family: var(--display); font-weight: 600; font-size: 17px; white-space: nowrap; text-align: right; font-variant-numeric: tabular-nums; }
-table.pred th.r { text-align: right; padding-right: 0; }
-table.pred td.x { padding-right: 0; }
-table.pred td .s { display: block; font-size: 12.5px; color: var(--quiet); margin-top: 2px; }
-table.pred tr.hi td { background: #f5f5f7; }
-table.pred tr.hi td:first-child { padding-left: 10px; border-radius: 8px 0 0 8px; }
-table.pred tr.hi td:last-child { padding-right: 10px; border-radius: 0 8px 8px 0; }
-.fine { font-size: 14px; color: var(--quiet); line-height: 1.55; margin-top: 30px; }
-footer { margin-top: 64px; padding-top: 16px; border-top: 1px solid var(--hair); font-size: 12.5px; color: var(--faint); line-height: 1.55; }
-footer p { margin-bottom: 8px; }
-footer b { color: var(--quiet); font-weight: 600; }
+/* panel 3 */
+.gap svg { width: 100%; height: auto; display: block; overflow: visible; }
+.gap text { font-family: var(--sans); font-size: 12px; fill: var(--ink2); letter-spacing: -0.01em; }
+.gap .sub { font-size: 11px; fill: var(--quiet); }
+.gap .ax { font-family: var(--mono); font-size: 10.5px; fill: var(--quiet); letter-spacing: 0; }
+.gap .em { font-weight: 600; fill: var(--ink); }
+.gap .mult { font-family: var(--display); font-size: 13px; font-weight: 600; fill: var(--ink); }
+
+sup.cite { font-size: 0.68em; line-height: 0; vertical-align: super; margin-left: 1px; letter-spacing: 0; white-space: nowrap; }
+sup.cite a { text-decoration: none; color: var(--faint); }
+sup.cite a:hover { color: var(--ink); }
+
+/* below the fold */
+.foot { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 2fr); gap: 32px; margin-top: clamp(28px, 6vh, 72px); padding-top: 14px; border-top: 1px solid var(--hair); font-size: 12px; line-height: 1.5; color: var(--quiet); }
+.foot h3 { font-size: 12px; font-weight: 600; color: var(--ink2); margin: 0 0 6px; }
+.foot p { margin: 0 0 8px; }
+.foot b { color: var(--ink2); font-weight: 600; }
+.refs { columns: 2; column-gap: 28px; margin: 0; padding-left: 20px; }
+.refs li { margin-bottom: 2px; break-inside: avoid; }
+.refs li:target { color: var(--ink); }
+.refs a { color: var(--quiet); }
 .pending { color: var(--faint); font-size: 13px; }
 
-@media (max-width: 760px) {
-  body { font-size: 16px; }
-  .masthead { margin-top: 36px; }
-  .abstract { font-size: 17px; }
-  .stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  .stats div:nth-child(3) { border-left: 0; }
-  .stats div:nth-child(n+3) { border-top: 1px solid var(--hair); }
-  .photos { grid-template-columns: 1fr 1fr; grid-template-rows: none; grid-auto-rows: 150px; }
-  .photos .ph.w { grid-column: span 2; grid-row: span 1; }
-  .photos .ph:first-child { grid-row: span 2; }
-  .hero { grid-template-columns: 1fr; }
-  .stage { height: 330px; }
-  h2 { font-size: 22px; margin-top: 48px; }
+@media (max-width: 1100px) {
+  .grid { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+  .p-gap { grid-column: span 2; max-width: 640px; }
+}
+@media (max-width: 720px) {
+  .grid { grid-template-columns: minmax(0, 1fr); gap: 36px; }
+  .p-gap { grid-column: auto; }
+  .stage { height: 270px; }
+  .photos { height: 110px; }
+  .foot { grid-template-columns: 1fr; }
+  .refs { columns: 1; }
 }
 </style>
 </head>
 <body>
-<main class="paper">
+<main class="poster">
   <div class="top">
     <svg viewBox="-64 -4 128 126.4" role="img" aria-label="Pine"><g fill="#1d1d1f"><path d="M1.05 4.55 C8.01 33.25 19.77 48.88 33.78 55.35 C34.86 55.85 34.70 57.45 33.52 57.65 C24.90 59.05 13.72 61.68 1.57 64.94 C0.54 65.21 -0.55 65.21 -1.58 64.93 C-13.73 61.68 -24.90 59.05 -33.52 57.650 C-34.70 57.45 -34.86 55.85 -33.78 55.35 C-19.77 48.88 -8.01 33.25 -1.05 4.55 C-0.78 3.45 0.78 3.45 1.05 4.55 Z"/><path d="M19.28 68.87 C29.04 92.32 41.73 102.99 55.48 104.89 C56.62 105.04 56.91 106.59 55.85 107.04 C20.16 122.19 -20.18 122.19 -55.87 107.03 C-56.92 106.58 -56.62 105.04 -55.48 104.89 C-41.73 102.98 -29.05 92.32 -19.29 68.88 C-18.80 67.72 -17.57 67.06 -16.36 67.35 C-11.94 68.42 -7.54 69.56 -3.15 70.73 C-1.08 71.28 1.08 71.28 3.15 70.73 C7.54 69.56 11.94 68.42 16.36 67.35 C17.57 67.06 18.80 67.72 19.28 68.87 Z"/></g></svg>
-    <b>Pine</b><span>Research</span><span class="sp"></span><span>October 2026</span>
+    <b>Pine</b><span>Research · October 2026</span><span class="sp"></span><a href="details.html">Full write-up</a>
   </div>
-
-  <header class="masthead">
-    <div class="eyebrow">Pine Engine · Research preview</div>
+  <header>
     <h1>High&#8209;quality full&#8209;body annotated motion data at scale</h1>
     <p class="claim" id="claim"></p>
   </header>
 
-  <div class="stats" id="stats"></div>
+  <div class="grid">
+    <section class="panel p-data">
+      <h2><span class="k">1</span><span id="h-data"></span></h2>
+      <div class="photos">
+        <div class="ph"><img src="img/hiphi-studio.jpg" alt="Four performers in motion-capture suits in the HiPHI studio" loading="eager"><span class="tag">HiPHI</span></div>
+        <div class="ph"><img src="img/hiphi-dance.jpg" alt="A HiPHI performer dancing in a motion-capture suit" loading="eager"><span class="tag">Dance</span></div>
+        <div class="ph"><img src="img/seed-stage.jpg" alt="BONES-SEED actors carrying a frame on a capture stage" loading="eager"><span class="tag">BONES-SEED</span></div>
+      </div>
+      <div class="hero">
+        <section class="side" id="captured">
+          <div class="lab"><b>Person</b> <span id="cap-src"></span></div>
+          <div class="stage" id="st-human" tabindex="0" role="button" aria-label="Pause"><canvas id="cv-human"></canvas></div>
+        </section>
+        <section class="side" id="robot3d">
+          <div class="lab"><b id="rb-title"></b> <span id="rb-src"></span></div>
+          <div class="stage" id="st-robot" tabindex="0" role="button" aria-label="Pause"></div>
+        </section>
+      </div>
+      <div class="chips" id="chips"></div>
+      <div class="hidden"><h3 id="cap-title"></h3><div id="traces"></div><p id="cap-left"></p><p id="cap-right"></p></div>
+    </section>
 
-  <figure class="wide">
-    <div class="photos">
-      <div class="ph w"><img src="img/hiphi-studio.jpg" alt="Four performers in motion-capture suits in the HiPHI studio" loading="eager"><span class="tag">HiPHI studio</span></div>
-      <div class="ph"><img src="img/hiphi-dance.jpg" alt="A HiPHI performer dancing in a motion-capture suit" loading="lazy"><span class="tag">Dance</span></div>
-      <div class="ph"><img src="img/seed-stage.jpg" alt="BONES-SEED actors carrying a frame on a capture stage" loading="lazy"><span class="tag">BONES-SEED stage</span></div>
-      <div class="ph"><img src="img/hiphi-carry.jpg" alt="A HiPHI performer carrying a box" loading="lazy"><span class="tag">Carrying</span></div>
-      <div class="ph"><img src="img/bandai-studio.jpg" alt="A performer in the Bandai Namco Research capture studio" loading="lazy"><span class="tag">Bandai Namco studio</span></div>
-    </div>
-  </figure>
-  <p class="figcap" id="cap1"></p>
+    <section class="panel p-chart">
+      <h2><span class="k">2</span>Body motion scales like text</h2>
+      <div class="chart" id="chart"></div>
+      <div class="legend"><span><i></i>measured</span><span><i class="o"></i>people never trained on</span><span><i class="band"></i>projected, model grown with data</span><span><i class="dot"></i>text, same growth</span></div>
+      <p class="big" id="k-chart"></p>
+    </section>
 
-  <figure class="wide">
-    <div class="hero">
-      <section class="side" id="captured">
-        <div class="lab"><b>Person</b> <span id="cap-src"></span></div>
-        <div class="stage" id="st-human" tabindex="0" role="button" aria-label="Pause"><canvas id="cv-human"></canvas></div>
-      </section>
-      <section class="side" id="robot3d">
-        <div class="lab"><b id="rb-title"></b> <span id="rb-src"></span></div>
-        <div class="stage" id="st-robot" tabindex="0" role="button" aria-label="Pause"></div>
-      </section>
-    </div>
-    <div class="chips" id="chips"></div>
-  </figure>
-  <p class="figcap" id="cap2"></p>
-  <div class="hidden"><h3 id="cap-title"></h3><div id="traces"></div><p id="cap-left"></p><p id="cap-right"></p></div>
+    <section class="panel p-gap">
+      <h2><span class="k">3</span>A GPT&#8209;3 moment needs about a million hours of body + camera</h2>
+      <div class="gap" id="gap"></div>
+      <p class="big" id="k-gap"></p>
+    </section>
+  </div>
 
-  <figure class="mid" id="scaling"><div class="chart" id="chart"></div></figure>
-  <p class="figcap" id="cap3"></p>
-
-  <h2 id="predictions">Predictions</h2>
-  <div class="tablewrap"><table class="pred" id="pred"></table></div>
-  <p class="figcap" id="cap4"></p>
-
-  <h2 id="findings">Findings</h2>
-  <ol class="findings" id="argument"></ol>
-  <p class="fine" id="fine"></p>
-
-  <footer>
-    <p id="credits"></p>
-  </footer>
+  <section class="foot">
+    <div><h3>Limits</h3><p id="fine"></p><p id="credits"></p></div>
+    <div><h3 id="references">References</h3><ol class="refs" id="refs"></ol></div>
+  </section>
 </main>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
@@ -354,51 +334,51 @@ function render(D, MODEL, BIN) {
   EDGES = D.skeleton.edges;
   const R = D.robot, rt = D.retarget[R.id], G = D.gpu, GS = G.shards;
   const p2 = G.phase2 || {}, SS = p2.seed_stats && p2.seed_stats.hours ? p2.seed_stats : { hours: 0, takes: 0, actors: 0 };
-  const hours = GS.hours + SS.hours, takes = GS.takes + SS.takes;
+  const hours = GS.hours + SS.hours;
   const people = Object.entries(GS.per_source).filter(([k]) => !k.startsWith("bandai")).reduce((t, [, v]) => t + v.subjects, 0) + SS.actors;
   const pf = (v) => (v >= 1e6 ? fmt(v / 1e6, v < 1e7 ? 1 : 0) + "M" : fmt(v / 1e3) + "k");
-  const top = G.ladder.concat(p2.runs || []).reduce((m, r) => Math.max(m, r.params), 0);
 
-  /* the curve: best model at each amount of data (held-out takes) and the same model on people never seen */
+  /* measured: best model at each amount of data (held-out takes), and people never trained on */
   const dl = G.data_ladder.filter((r) => r.fraction < 1).map((r) => [r.train_hours, r.val]);
   const full = G.ladder.reduce((m, r) => (r.val < m.val ? r : m), G.ladder[0]);
   const A = dl.concat([[full.train_hours, full.val]]).sort((a, b) => a[0] - b[0]);
   const np = (p2.runs || []).filter((r) => r.split && r.split.experiment === "HiPHI" && r.split.performers === 32);
   const byH = {}; for (const r of np) (byH[r.split.hours] = byH[r.split.hours] || []).push(r.test);
   const B = Object.entries(byH).map(([h, v]) => [+h, v.reduce((t, x) => t + x, 0) / v.length]).sort((a, b) => a[0] - b[0]);
-  const ols = (P) => {   // least squares on log10(x), log10(y); slope, intercept and the 80% prediction-of-mean band
+  const ols = (P) => {
     const n = P.length, X = P.map((p) => Math.log10(p[0])), Y = P.map((p) => Math.log10(p[1]));
     const mx = X.reduce((a, b) => a + b) / n, my = Y.reduce((a, b) => a + b) / n;
     const sxx = X.reduce((t, x) => t + (x - mx) ** 2, 0), b = X.reduce((t, x, i) => t + (x - mx) * (Y[i] - my), 0) / sxx, a = my - b * mx;
-    const s2 = X.reduce((t, x, i) => t + (Y[i] - a - b * x) ** 2, 0) / Math.max(1, n - 2);
-    const tq = { 1: 3.078, 2: 1.886, 3: 1.638, 4: 1.533, 5: 1.476 }[Math.max(1, n - 2)] || 1.4;
-    const at = (h) => 10 ** (a + b * Math.log10(h));
-    const band = (h) => { const x = Math.log10(h), se = Math.sqrt(s2 * (1 / n + (x - mx) ** 2 / sxx)); return [10 ** (a + b * x - tq * se), 10 ** (a + b * x + tq * se)]; };
-    return { a, b, at, band, se_b: Math.sqrt(s2 / sxx) };
+    return { a, b, at: (h) => 10 ** (a + b * Math.log10(h)) };
   };
-  const fa = ols(A), fb = B.length >= 2 ? ols(B) : null;
-  const H = 1e7, now = A[A.length - 1], predH = fa.at(H), bandH = fa.band(H);
-  const perDecade = 100 * (1 - 10 ** fa.b);
+  const fb = B.length >= 2 ? ols(B) : null, now = A[A.length - 1];
+  const pureX = now[1] / ols(A).at(1e7);
 
-  const fullFrames = GS.frames + SS.hours * 72000;
-  const E3 = (p2.runs || []).filter((r) => r.split && r.split.experiment === "E3");
-  const FL = E3.find((r) => r.split.flagship), RD = E3.find((r) => r.split.recipe === "dct16mix" && !r.split.flagship);
-  const sc = (r) => (r && r.pi_pass && r.pi_pass.dct16mix ? r.pi_pass.dct16mix : null);
-  const f8 = sc(FL), d8 = sc(RD);
-  const regOff = G.prediction ? 100 * Math.abs(1 - full.val / G.prediction.loss) : null;
+  /* forecast (scripts/forecast.py) */
+  const F = G.forecast, x7 = F.range[Object.keys(F.range).find((k) => +k === 1e7)], T7 = F.text.x_at_1e7.chinchilla;
+  const expN = Math.min(F.forms.additive.exp_N, F.forms.coupled.exp_N);
+  const BODY = 72000, VLO = 100 * 3600, VHI = 300 * 3600, NYM = 300;
+  const asH = (tok) => [tok / (VHI + BODY), tok / (VLO + BODY)];
+  const gpt3H = asH(300e9);
+  const round2 = (v) => fmt(Math.round(v / 100) * 100);
 
-  // stranger gap: error on people never trained on / error on new takes of trained people, every HiPHI phase-2 run
-  const hr = (p2.runs || []).filter((r) => r.split && r.split.experiment === "HiPHI"), gap = hr.length ? hr.reduce((t, r) => t + r.test / r.val, 0) / hr.length : 1.9;
-  const npSlope = fb ? fb.b : null;
-  const better = now[1] / predH, strangerBetter = now[1] / (gap * predH);
-  // reference points: text-model training sets read as frames, one token = one frame at 20 fps (72,000 per hour)
-  const TOK = (t) => t / 72000, GPT3 = TOK(300e9), CHIN = TOK(1.4e12);
-  const timesAt = (h) => now[1] / fa.at(h);
-  const Hg = 10 ** ((Math.log10(now[1] / gap) - fa.a) / fa.b);     // strangers predicted as well as known people are today
-  $("#claim").innerHTML = `Human motion data obeys a scaling law, like text. <b>Ten million hours is more frames than GPT-3 saw tokens; at that scale the law predicts a model ${fmt(better)}× more accurate than ours, and better on strangers than ours is on the people it trained on.</b>`;
-  $("#stats").innerHTML = [[fmt(hours) + " h", "of human motion"], [fmt(people), "people"], [`within ${fmt(Math.max(1, regOff))}%`, "of a prediction made before training"], [`${fmt(better)}×`, "lower error predicted at 10M hours"]]
-    .map(([b, s]) => `<div><b class="num">${b}</b><span>${s}</span></div>`).join("");
-  $("#cap1").innerHTML = `<b>Figure 1. The data: real people in capture suits.</b> HiPHI, BONES-SEED, Bandai Namco Research and LAFAN1; stills from the datasets' own videos.`;
+  const REFS = {
+    kaplan: ["Kaplan et al. 2020", "Scaling laws for neural language models", "https://arxiv.org/abs/2001.08361"],
+    hoffmann: ["Hoffmann et al. 2022", "Training compute-optimal large language models (Chinchilla)", "https://arxiv.org/abs/2203.15556"],
+    nymeria: ["Ma et al. 2024", "Nymeria: a massive collection of multimodal egocentric daily motion in the wild", "https://arxiv.org/abs/2406.09905"],
+    gen1: ["Generalist AI 2026", "GEN-1: scaling embodied foundation models to mastery", "https://generalistai.com/blog/gen-1"],
+    dyna2: ["Dyna Robotics 2026", "Dyna-2: a 1-million-hour scaling law for world-action models", "https://www.dyna.co/dyna-2"],
+    gpt3: ["Brown et al. 2020", "Language models are few-shot learners (GPT-3)", "https://arxiv.org/abs/2005.14165"],
+    gemini: ["Google", "Gemini API: video understanding, token counts", "https://ai.google.dev/gemini-api/docs/video-understanding"],
+    tesla: ["Kay 2025, Business Insider (via AOL)", "Inside the glass-walled Tesla lab where workers train the Optimus robot to act like a human", "https://www.aol.com/articles/inside-glass-walled-tesla-lab-101402958.html"],
+    xperience: ["Ropedia 2026", "Xperience-10M (dataset card)", "https://huggingface.co/datasets/ropedia-ai/xperience-10m"],
+    schaeffer: ["Schaeffer et al. 2023", "Are emergent abilities of large language models a mirage?", "https://arxiv.org/abs/2304.15004"],
+  };
+  const order = [];
+  const c = (...ks) => `<sup class="cite">${[...new Set(ks.map((k) => { if (!REFS[k]) throw new Error("no reference " + k); let i = order.indexOf(k); if (i < 0) { order.push(k); i = order.length - 1; } return i + 1; }))].sort((a, b) => a - b).map((x) => `<a href="#ref-${x}">${x}</a>`).join(",")}</sup>`;
+
+  $("#claim").innerHTML = `Human motion scales like text. <b>We forecast that humanoid robots reach their GPT&#8209;3 moment at about one million hours of full&#8209;body motion with head&#8209;camera video: ${round2(1e6 / NYM)}× the largest public set that measures both.</b>`;
+  $("#h-data").textContent = `${fmt(hours)} hours of real people, every frame on a humanoid`;
   /* hero: the captured take (left) and Unitree's own H2 model doing it (right) */
   class Robot3D {
     constructor(el, M, bin) {
@@ -507,87 +487,93 @@ function render(D, MODEL, BIN) {
   $("#cap-right").innerHTML = `The same take on Unitree's MJCF with its real link meshes, posed every frame by our inverse kinematics: ${fmt(rt.frames)} frames solved, feet within <b>${fmt(rt.feet_err_cm, 1)} cm</b> of the human's on average. Wrists and head held still. Tap either view to pause.`;
   pickTake(0);
 
-  $("#cap2").innerHTML = `<b>Figure 2. Every frame, on a humanoid.</b> A recorded person and the ${R.name} doing the same motion; ${fmt(fullFrames / 1e6, 1)} million frames solved on a GPU, feet within ${fmt(rt.feet_err_cm, 1)} cm.`;
 
-  /* the one chart */
+  /* panel 2: the curve */
   {
     const el = $("#chart");
-    const W = Math.max(400, Math.min(760, Math.round(el.clientWidth) || 640)), Hh = Math.round(Math.max(340, W * 0.68)), m = { l: 54, r: 18, t: 34, b: 46 };
-    const narrow = W < 560;
-    const x0 = 1, x1 = 8e7, y0 = 0.0015, y1 = 0.3;
+    const W = Math.max(320, Math.min(900, Math.round(el.clientWidth) || 560)), Hh = Math.round(Math.max(260, Math.min(W * 0.72, innerHeight * 0.46))), m = { l: 46, r: 12, t: 22, b: 36 };
+    const narrow = W < 470;
+    const x0 = 1, x1 = 3e7, y0 = 0.012, y1 = 0.25;
     const sx = (v) => m.l + (Math.log(v) - Math.log(x0)) / (Math.log(x1) - Math.log(x0)) * (W - m.l - m.r);
     const sy = (v) => Hh - m.b - (Math.log(v) - Math.log(y0)) / (Math.log(y1) - Math.log(y0)) * (Hh - m.t - m.b);
-    const s = svgEl("svg", { viewBox: `0 0 ${W} ${Hh}`, role: "img", "aria-label": "Prediction error against hours of training data, measured and extrapolated to ten million hours" }, el);
-    // the future region
+    const s = svgEl("svg", { viewBox: `0 0 ${W} ${Hh}`, role: "img", "aria-label": "Prediction error against hours of motion data: measured runs, and the projection to ten million hours next to the text-model trajectory" }, el);
     svgEl("rect", { x: sx(now[0]), y: m.t, width: sx(x1) - sx(now[0]), height: Hh - m.t - m.b, fill: "#f5f5f7" }, s);
-    for (const v of [0.002, 0.005, 0.01, 0.02, 0.05, 0.1, 0.2]) {
-      svgEl("line", { x1: m.l, x2: W - m.r, y1: sy(v), y2: sy(v), stroke: v === 0.002 ? HAIR : "#e8e8ed" }, s);
+    for (const v of [0.015, 0.02, 0.03, 0.05, 0.1, 0.2]) {
+      svgEl("line", { x1: m.l, x2: W - m.r, y1: sy(v), y2: sy(v), stroke: "#e8e8ed" }, s);
       const t = svgEl("text", { x: m.l - 8, y: sy(v) + 4, "text-anchor": "end" }, s); t.textContent = v;
     }
+    svgEl("line", { x1: m.l, x2: W - m.r, y1: Hh - m.b, y2: Hh - m.b, stroke: HAIR }, s);
     for (const [v, lab] of (narrow ? [[1, "1 h"], [100, "100"], [1e4, "10k"], [1e6, "1M"], [1e7, "10M"]] : [[1, "1 h"], [10, "10"], [100, "100"], [1e3, "1k"], [1e4, "10k"], [1e5, "100k"], [1e6, "1M"], [1e7, "10M"]])) {
       svgEl("line", { x1: sx(v), x2: sx(v), y1: Hh - m.b, y2: Hh - m.b + 4, stroke: HAIR }, s);
       const t = svgEl("text", { x: sx(v), y: Hh - m.b + 18, "text-anchor": "middle" }, s); t.textContent = lab;
     }
-    const xl = svgEl("text", { x: (m.l + W - m.r) / 2, y: Hh - 6, "text-anchor": "middle", class: "lbl" }, s); xl.textContent = "hours of motion data";
-    const yl = svgEl("text", { x: 13, y: (m.t + Hh - m.b) / 2, "text-anchor": "middle", class: "lbl", transform: `rotate(-90 13 ${(m.t + Hh - m.b) / 2})` }, s); yl.textContent = "prediction error";
-    // band, fit, extrapolation
-    const up = [], dn = [];
-    for (let h = A[0][0] * 0.7; h <= x1; h *= 1.12) { const [lo, hi] = fa.band(h); up.push([sx(h), sy(Math.min(y1, hi))]); dn.push([sx(h), sy(Math.max(y0, lo))]); }
-    svgEl("path", { d: path(up.concat(dn.reverse())) + " Z", fill: "rgba(29,29,31,0.07)" }, s);
-    const seg = (f, h0, h1, attrs) => { const p = []; for (let h = h0; h <= h1 * 1.0001; h *= 1.08) p.push([sx(h), sy(f.at(h))]); svgEl("path", Object.assign({ d: path(p), fill: "none" }, attrs), s); };
-    seg(fa, A[0][0] * 0.7, now[0], { stroke: INK, "stroke-width": 1.6 });
-    seg(fa, now[0], x1, { stroke: INK, "stroke-width": 1.6, "stroke-dasharray": "5 5" });
-    if (fb) { seg(fb, B[0][0] * 0.7, B[B.length - 1][0], { stroke: QUIET, "stroke-width": 1.3 }); seg(fb, B[B.length - 1][0], x1, { stroke: QUIET, "stroke-width": 1.1, "stroke-dasharray": "2 4" }); }
-    for (const p of A) svgEl("circle", { cx: sx(p[0]), cy: sy(p[1]), r: 4.2, fill: INK }, s);
-    for (const p of B) svgEl("circle", { cx: sx(p[0]), cy: sy(p[1]), r: 4, fill: "#fff", stroke: QUIET, "stroke-width": 1.5 }, s);
     const lab = (x, y, txt, cls = "lbl", anchor = "start") => { const t = svgEl("text", { x, y, "text-anchor": anchor, class: cls }, s); t.textContent = txt; return t; };
-    // legend, bottom left
-    const lx = m.l + 18, ly = sy(0.0035);
-    if (!narrow) {
-    svgEl("circle", { cx: lx, cy: ly - 4, r: 4.2, fill: INK }, s); lab(lx + 12, ly, narrow ? "held-out takes" : "held-out takes, best model at each size");
-    if (fb) { svgEl("circle", { cx: lx, cy: ly + 16, r: 4, fill: "#fff", stroke: QUIET, "stroke-width": 1.5 }, s); lab(lx + 12, ly + 20, "people never trained on"); }
-    svgEl("line", { x1: lx - 6, x2: lx + 6, y1: ly + 36, y2: ly + 36, stroke: INK, "stroke-width": 1.6, "stroke-dasharray": "4 3" }, s); lab(lx + 12, ly + 40, "fit carried forward, 80% band");
-    }
-    // markers: this run, ten million hours
-    svgEl("line", { x1: sx(now[0]), x2: sx(now[0]), y1: m.t, y2: Hh - m.b, stroke: HAIR }, s);
-    lab(sx(now[0]) + 8, m.t + 16, `this run: ${fmt(now[0])} h`);
-    svgEl("line", { x1: sx(H), x2: sx(H), y1: m.t, y2: Hh - m.b, stroke: INK, "stroke-dasharray": "2 3" }, s);
-    svgEl("circle", { cx: sx(H), cy: sy(predH), r: 5.5, fill: "#fff", stroke: INK, "stroke-width": 1.8 }, s);
-    // where text models trained, read as frames; and the generalization point on our own line
-    for (const [h, t, anc] of [[GPT3, "GPT-3", "end"], [CHIN, "Chinchilla", "start"]]) {
-      svgEl("line", { x1: sx(h), x2: sx(h), y1: m.t - 2, y2: Hh - m.b, stroke: QUIET, "stroke-width": 0.8, "stroke-dasharray": "1 3" }, s);
-      if (!narrow || anc === "end") lab(sx(h) + (anc === "end" ? -4 : 4), m.t - 4, t, "lbl", anc);
-    }
-    svgEl("rect", { x: sx(Hg) - 4.5, y: sy(fa.at(Hg)) - 4.5, width: 9, height: 9, fill: "#fff", stroke: INK, "stroke-width": 1.6, transform: `rotate(45 ${sx(Hg)} ${sy(fa.at(Hg))})` }, s);
-    lab(sx(Hg) + 10, sy(fa.at(Hg)) - 10, "generalization point");
-    for (const mh of [1e5, 1e6]) { const v = fa.at(mh); svgEl("circle", { cx: sx(mh), cy: sy(v), r: 2.6, fill: INK }, s); lab(sx(mh) + 4, sy(v) + 17, `${fmt(now[1] / v, 1)}×`, "lbl", "middle"); }
-    lab(sx(H) - 12, sy(predH) + 26, "10M hours", "big", "end");
-    lab(sx(H) - 12, sy(predH) + 44, `~${fmt(now[1] / predH)}× lower error`, "lbl", "end");
+    lab((m.l + W - m.r) / 2, Hh - 3, "hours of motion data", "lbl", "middle");
+    const yl = lab(10, (m.t + Hh - m.b) / 2, "prediction error", "lbl", "middle"); yl.setAttribute("transform", `rotate(-90 10 ${(m.t + Hh - m.b) / 2})`);
+    const hs = F.curve.hours, cl = (v) => Math.min(y1, Math.max(y0, v));
+    svgEl("path", { d: path(hs.map((h, i) => [sx(h), sy(cl(F.curve.hi[i]))]).concat(hs.map((h, i) => [sx(h), sy(cl(F.curve.lo[i]))]).reverse())) + " Z", fill: "rgba(29,29,31,0.09)" }, s);
+    svgEl("path", { d: path(hs.map((h, i) => [sx(h), sy(F.curve.mid[i])])), fill: "none", stroke: INK, "stroke-width": 1.6, "stroke-dasharray": "5 4" }, s);
+    svgEl("path", { d: path(hs.map((h, i) => [sx(h), sy(now[1] * F.text.chinchilla[i])])), fill: "none", stroke: QUIET, "stroke-width": 1.3, "stroke-dasharray": "1.5 3" }, s);
+    if (fb) { const q = []; for (let h = B[0][0]; h <= B[B.length - 1][0] * 1.0001; h *= 1.1) q.push([sx(h), sy(fb.at(h))]); svgEl("path", { d: path(q), fill: "none", stroke: QUIET, "stroke-width": 1.2 }, s); }
+    for (const p of B) svgEl("circle", { cx: sx(p[0]), cy: sy(p[1]), r: 4, fill: "#fff", stroke: QUIET, "stroke-width": 1.5 }, s);
+    for (const p of A) svgEl("circle", { cx: sx(p[0]), cy: sy(p[1]), r: 4.4, fill: INK }, s);
+    // the registered prediction, on the last measured point
+    const pr = G.prediction;
+    svgEl("line", { x1: sx(now[0]), x2: sx(now[0]), y1: sy(pr.hi), y2: sy(pr.lo), stroke: INK, "stroke-width": 1 }, s);
+    for (const v of [pr.lo, pr.hi]) svgEl("line", { x1: sx(now[0]) - 4, x2: sx(now[0]) + 4, y1: sy(v), y2: sy(v), stroke: INK, "stroke-width": 1 }, s);
+    lab(sx(now[0]) - 10, sy(now[1]) + 22, "prediction made", "lbl", "end");
+    lab(sx(now[0]) - 10, sy(now[1]) + 37, "before training", "lbl", "end");
+    const lo7 = x7.lo, hi7 = x7.hi;
+    svgEl("line", { x1: sx(1e7), x2: sx(1e7), y1: m.t, y2: Hh - m.b, stroke: INK, "stroke-dasharray": "2 3" }, s);
+    svgEl("line", { x1: sx(1e7), x2: sx(1e7), y1: sy(hi7), y2: sy(lo7), stroke: INK, "stroke-width": 2.4 }, s);
+    lab(sx(1e7) - 8, m.t + 14, "10M hours", "bigl", "end");
+    lab(sx(1e7) - 8, m.t + 31, `${fmt(x7.x_lo, 1)}–${fmt(x7.x_hi, 1)}× lower error`, "lbl", "end");
+    lab(sx(1e7) - 8, m.t + 47, `text, same growth: ${fmt(T7, 1)}×`, "lbl", "end").setAttribute("style", "fill:" + QUIET);
   }
+  $("#k-chart").innerHTML = `<b>Predicted before training: ${fmt(G.prediction.loss, 4)}. Measured: ${fmt(full.val, 4)}.</b> The same model-size exponent as text, ${fmt(expN, 3)} against 0.076${c("kaplan")}. Projected to 10M hours it improves as much as text does over the same growth${c("hoffmann")}; people it never saw improve at the same rate.`;
 
-  $("#cap3").innerHTML = `<b>Figure 3. More data, predictably less error.</b> Error of the model's next-200 ms prediction against hours of training data, both axes logarithmic. Black: best model at each amount of data; grey: people it never trained on. Dashed: the fit carried forward with its 80% band. Dotted verticals: GPT-3's and Chinchilla's training sets, counting one token as one frame.`;
-  const rows = [
-    [`${fmt(hours)} h`, "This run", `${fmt(now[0])} h used for training; error measured.`, "1×"],
-    [`≈${fmt(Math.round(Hg / 500) * 500)} h`, "Generalization point", `A person the model has never seen is predicted as well as a person it trained on is today.`, `${fmt(timesAt(Hg), 1)}×`],
-    [`${fmt(GPT3 / 1e6, 1)}M h`, "GPT-3's data, as frames", `300 billion tokens: the scale at which language models became few-shot generalists.`, `${fmt(timesAt(GPT3))}×`],
-    [`10M h`, "Pine's target", `About 5,000 people wearing a suit for a working year. Strangers ${fmt(strangerBetter)}× below today's error on known people; compute-optimal model ≈ ${fmt(10e6 * 72000 / 20 / 1e9)}B parameters.`, `${fmt(better)}×`, true],
-    [`${fmt(CHIN / 1e6)}M h`, "Chinchilla's data, as frames", `1.4 trillion tokens, about 20 per parameter for a 70B model.`, `${fmt(timesAt(CHIN))}×`],
-  ];
-  $("#pred").innerHTML = `<thead><tr><th>Hours of motion</th><th>What it means</th><th class="r">Error vs today</th></tr></thead><tbody>` +
-    rows.map((r) => `<tr${r[4] ? ' class="hi"' : ""}><td class="n">${r[0]}</td><td><b>${r[1]}</b><span class="s">${r[2]}</span></td><td class="x">${r[3] === "1×" ? "1×" : r[3] + " lower"}</td></tr>`).join("") + `</tbody>`;
-  $("#cap4").innerHTML = `Predicted from the Figure 3 fit (80% band at 10M hours: ${fmt(now[1] / bandH[1])}–${fmt(now[1] / bandH[0])}× lower). Text-model sizes from <a href="https://arxiv.org/abs/2005.14165">Brown et al. 2020</a> and <a href="https://arxiv.org/abs/2203.15556">Hoffmann et al. 2022</a>, read at one token per frame, 20 frames a second.`;
-  $("#argument").innerHTML = [
-    [`Motion obeys a scaling law, like text.`,
-     `Each 10× more motion cut error <b>${fmt(perDecade)}%</b> (log–log slope ${fmt(fa.b, 2)} ± ${fmt(fa.se_b, 2)}, ${fmt(A[0][0], 1)} → ${fmt(now[0])} h, no bend). Language models follow the same power law in data (<a href="https://arxiv.org/abs/2001.08361">Kaplan et al. 2020</a>; Chinchilla's data exponent: 0.28). The law predicted our ${pf(G.prediction.params)} model before training: <b>${fmt(G.prediction.loss, 4)} predicted, ${fmt(full.val, 4)} measured</b>.`],
-    [`It generalizes to people it has never seen.`,
-     `On 13 HiPHI performers held out entirely, error falls at the same rate (slope ${fmt(npSlope, 2)}), a constant <b>${fmt(gap, 1)}×</b> above known people at every scale, so the gap does not grow. On 61 held-out BONES-SEED actors, 8 → 400 training people cut it 21%.`],
-    [`Ten million hours is GPT-3 scale for the body.`,
-     `${fmt(10e6 * 72000 / 1e9)}B frames, between GPT-3's 300B and Chinchilla's 1.4T tokens. Predicted: <b>${fmt(better)}× lower error</b>, strangers included. HiPHI takes carry text descriptions and BONES-SEED action labels, so the same data trains instruction → whole-body motion.`],
-    [`Only wearables can collect it.`,
-     `Past about 100 people, more hours per person helped more than more people (4× hours: −35% on HiPHI). Ten million hours is <b>5,000 people in a suit for a working year</b>; studios record hundreds.`],
-  ].map(([c, e]) => `<li><div class="c">${c}</div><div class="e">${e}</div></li>`).join("");
-  $("#fine").innerHTML = `<b>Limits.</b> Predictions extrapolate 4.5 orders of magnitude and assume models grow with the data (here ${pf(G.ladder[0].params)} → ${pf(top)}). A frame (31 numbers) is not a word piece, so the text comparison is a scale reference, not an equivalence. Error is next-200 ms prediction on normalised joint features, not robot task success, and no text-conditioned model is trained yet.`;
-  $("#credits").innerHTML = `<b>Data and images.</b> HiPHI (Noitom Robotics) and BONES-SEED (Bones Studio), non-commercial research licences; Bandai Namco Research Motion Dataset (CC BY-NC 4.0); LAFAN1 (Ubisoft La Forge, CC BY-NC-ND 4.0); Unitree H2 model from unitree_mujoco (BSD-3-Clause). One ${G.gpu || "GPU"}, ${fmt(G.gpu_hours, 1)} GPU hours. Every run and table: <a href="details.html">full write-up</a>.`;
+  /* panel 3: the gap, hours on a log axis; each row a label over its bar */
+  {
+    const el = $("#gap");
+    const rows = [
+      ["Largest public set, measured body + camera", "Nymeria", NYM, null, "body"],
+      ["This run", "body only", hours, null, "body"],
+      ["GEN-1 pretraining", "wearables, no robot data", 5e5, null, ""],
+      ["Dyna-2", "head video; a hard task first solved at 1M h", 1e6, null, ""],
+      ["GPT-3's training set", "300B tokens, as body + camera hours", gpt3H[0], gpt3H[1], ""],
+      ["Forecast: GPT-3 moment", "body + head camera, 0.3–3M h", 3e5, 3e6, "fc"],
+    ];
+    const W = Math.max(300, Math.round(el.clientWidth) || 420), RH = Math.round(Math.max(44, Math.min(60, innerHeight * 0.058))), m = { l: 0, r: 46, t: 4, b: 24 };
+    const Hh = m.t + rows.length * RH + m.b, x0 = 10, x1 = 1e7;
+    const sx = (v) => m.l + (Math.log(v) - Math.log(x0)) / (Math.log(x1) - Math.log(x0)) * (W - m.l - m.r);
+    const ry = (i) => m.t + i * RH;
+    const s = svgEl("svg", { viewBox: `0 0 ${W} ${Hh}`, role: "img", "aria-label": "Hours of data: the largest public body-and-camera set, this run, published robot models, GPT-3's training set as hours, and the forecast" }, el);
+    const T = (x, y, txt, cls = "", anchor = "start") => { const t = svgEl("text", { x, y, "text-anchor": anchor, class: cls }, s); t.textContent = txt; return t; };
+    const yb = Hh - m.b;
+    svgEl("rect", { x: -6, y: ry(5) + 1, width: W + 6, height: RH - 2, rx: 7, fill: "#f2f2f5" }, s);
+    for (const [v, l] of [[10, "10 h"], [100, "100"], [1e3, "1k"], [1e4, "10k"], [1e5, "100k"], [1e6, "1M"], [1e7, "10M"]]) {
+      svgEl("line", { x1: sx(v), x2: sx(v), y1: m.t, y2: yb, stroke: "#ececf0" }, s);
+      if (W > 360 || v % 100 === 10 || v === 1e3 || v === 1e5 || v === 1e7) T(sx(v), yb + 16, l, "ax", "middle");
+    }
+    svgEl("line", { x1: sx(1e6), x2: sx(1e6), y1: m.t, y2: yb, stroke: INK, "stroke-width": 1, "stroke-dasharray": "2 3" }, s);
+    rows.forEach(([name, sub, a, b, kind], i) => {
+      const yt = ry(i) + 15, y = ry(i) + RH - 14, col = kind ? INK : "#a1a1a6";
+      const t = T(0, yt, name, kind ? "em" : ""); const sp = svgEl("tspan", { class: "sub" }, t); sp.textContent = "  " + sub;
+      if (b) {
+        svgEl("rect", { x: sx(x0), y: y - 3, width: sx(a) - sx(x0), height: 6, fill: kind ? "rgba(29,29,31,0.16)" : "#e8e8ed" }, s);
+        svgEl("rect", { x: sx(a), y: y - 6, width: sx(b) - sx(a), height: 12, rx: 6, fill: col }, s);
+      } else svgEl("rect", { x: sx(x0), y: y - 6, width: Math.max(2, sx(a) - sx(x0)), height: 12, rx: 3, fill: col }, s);
+    });
+    // how far the largest public set is from a million hours
+    const y0 = ry(0) + RH - 14;
+    svgEl("line", { x1: sx(NYM) + 4, x2: sx(1e6), y1: y0, y2: y0, stroke: INK, "stroke-width": 1, "stroke-dasharray": "3 3" }, s);
+    T(sx(1e6) + 6, y0 + 4.5, `${round2(1e6 / NYM)}×`, "mult");
+  }
+  $("#k-gap").innerHTML = `<b>About one million hours of full-body motion with head and wrist cameras, captioned automatically, plus a few hours of robot data per task.</b> GPT&#8209;3's scale in tokens${c("gpt3", "gemini")}, and where robot models trained on human data began solving hard tasks${c("gen1", "dyna2")}. Public today: ${NYM} hours${c("nymeria")}. Collected at 1,000 usable hours a year${c("tesla")}, it is 1,000 people wearing it for a year.`;
+
+  $("#fine").innerHTML = `The forecast is an argument from analogy, not a measurement. Our fits span ${fmt(A[0][0], 1)}–${fmt(now[0])} hours and ${pf(G.ladder[0].params)}–${pf(full.params)} parameters, carried 4.5 orders of magnitude; a single power law through the four best runs would predict ${fmt(pureX)}× at 10M hours, fits that separate model size from data give ${fmt(x7.x_lo, 1)}–${fmt(x7.x_hi, 1)}×, which we use. Tokens are a scale reference: a body frame (31 numbers) is not a word piece; video at 100–300 tokens a second, 1 frame/s with audio${c("gemini")}. Emergence in language models depends partly on how it is measured${c("schaeffer")}. GEN-1 and Dyna-2 are company reports, not peer-reviewed. Xperience-10M (10,000 h) pairs video with body pose estimated from a head rig, not measured${c("xperience")}. Error is next-200 ms prediction on joint features, not robot task success; no camera- or text-conditioned model is trained yet.`;
+  $("#credits").innerHTML = `<b>Data and images.</b> HiPHI (Noitom Robotics) and BONES-SEED (Bones Studio), non-commercial research licences; Bandai Namco Research Motion Dataset (CC BY-NC 4.0); LAFAN1 (Ubisoft La Forge, CC BY-NC-ND 4.0); ${R.name} model from unitree_mujoco (BSD-3-Clause), ${fmt(people)} people, every frame solved on a GPU with feet within ${fmt(rt.feet_err_cm, 1)} cm. One ${G.gpu || "GPU"}, ${fmt(G.gpu_hours, 1)} GPU hours.`;
+  $("#refs").innerHTML = order.map((k, i) => { const [a, t, u] = REFS[k]; return `<li id="ref-${i + 1}">${a}. <a href="${u}">${t}</a>.</li>`; }).join("");
   requestAnimationFrame(tick);
 }
 })();
