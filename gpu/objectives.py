@@ -95,6 +95,6 @@ def check_against_pi_pass(obj: ChunkObjective, lib=np, Bm=None, to_lib=None, to_
     fut = np.stack([w[:, 1 + j:T + 1 + j] for j in range(obj.H)], 2)
     want = np.einsum("hk,bthd->btkd", obj.B, np.where(mask[:, None, None, :] > 0, fut - w[:, :T, None, :], fut))
     out["targets_mixed"] = float(np.abs(got - want).max())
-    full = to_np(obj.decode(lib, Bm, to_lib(got[:, -1].reshape(8, -1)), to_lib(x[:, -1])))
+    full = to_np(obj.decode(lib, Bm, to_lib(got[:, -1].reshape(8, -1).astype(np.float32)), to_lib(x[:, -1])))
     out["roundtrip_mixed"] = float(np.abs(full - (obj.B @ obj.B.T @ fut[:, -1])).max())  # projection of the truth
     return out

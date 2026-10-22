@@ -122,6 +122,8 @@ def draw(cs, base, P, hours, seed):
             if n < MIN_LEN:
                 continue
             split[i] = "train"; length[i] = n; need -= n
+    if "train" not in split:
+        return None
     return split, length, [str(p) for p in people]
 
 
