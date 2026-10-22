@@ -1,0 +1,6 @@
+https://noitom-robotics.github.io/hiphi/static/images/dataset-card/HiPHI_motion_examples.webp
+https://noitom-robotics.github.io/hiphi/static/images/dataset-card/real_world_deployment.webp
+https://noitom-robotics.github.io/hiphi/static/images/dataset-card/scaling_behavior.webp
+https://noitom-robotics.github.io/hiphi/static/videos/HiPHI_demo_video_web.mp4
+https://cdn-thumbnails.huggingface.co/social-thumbnails/datasets/bones-studio/seed.png
+https://cdn-thumbnails.huggingface.co/social-thumbnails/datasets/noitomrobotics/HiPHI.png
