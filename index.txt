@@ -1,0 +1,24 @@
+001.mp4 https://bones.studio/assets/dataset_case.mp4 ISO Media, MP4 v2 [ISO 14496-14]
+002.jpg https://bones.studio/assets/posters/home_hero_poster-d.jpg HTML document, Unicode text, UTF-8 text, with very long line
+003.mp4 https://res.cloudinary.com/ddozo4yn9/video/upload/f_auto:video/BONES_SEED_HUM2ROBOT_Multicam_Mosaic_ab5urv.mp4 WebM
+004.mp4 https://res.cloudinary.com/ddozo4yn9/video/upload/f_auto:video/CustomData_720p_-_10s_mi8zcf.mp4 WebM
+005.mp4 https://res.cloudinary.com/ddozo4yn9/video/upload/f_auto:video/Gaming_-_720p_wzbug8.mp4 WebM
+006.mp4 https://res.cloudinary.com/ddozo4yn9/video/upload/f_auto:video/Humanoid_Robotics_720p_dcklrr.mp4 WebM
+007.mp4 https://res.cloudinary.com/ddozo4yn9/video/upload/f_auto:video/SONIC-720p-10s_tg119z.mp4 WebM
+008.mp4 https://res.cloudinary.com/ddozo4yn9/video/upload/f_auto:video/Viewport_v01_mini_zotafk.mp4 WebM
+009.mp4 https://res.cloudinary.com/ddozo4yn9/video/upload/f_auto:video/bones_home_bg-d_xfxujn.mp4 WebM
+010.mp4 https://res.cloudinary.com/ddozo4yn9/video/upload/f_auto:video/bonsai_v2_FullHD_a9sbcc.mp4 WebM
+011.mp4 https://res.cloudinary.com/ddozo4yn9/video/upload/f_auto:video/render_laptops_720p_wcslt6.mp4 WebM
+012.mp4 https://res.cloudinary.com/ddozo4yn9/video/upload/f_auto:video/web-new-section_sdava2.mp4 WebM
+013.mp4 https://res.cloudinary.com/mcqwiqtz/video/upload/v1788252907/ALL_title_white.mp4 ISO Media, MP4 Base Media v1 [ISO 14496-12:2003]
+014.mp4 https://res.cloudinary.com/mcqwiqtz/video/upload/v1789045057/ARDY_title_white.mp4 ISO Media, MP4 Base Media v1 [ISO 14496-12:2003]
+015.mp4 https://res.cloudinary.com/mcqwiqtz/video/upload/v1789045133/KIMODO_title_white.mp4 ISO Media, MP4 Base Media v1 [ISO 14496-12:2003]
+016.mp4 https://res.cloudinary.com/mcqwiqtz/video/upload/v1789045588/Motionbricks_title_white.mp4 ISO Media, MP4 Base Media v1 [ISO 14496-12:2003]
+017.mp4 https://res.cloudinary.com/mcqwiqtz/video/upload/v1789046158/SONIC_title_white.mp4 ISO Media, MP4 Base Media v1 [ISO 14496-12:2003]
+018.mp4 https://res.cloudinary.com/mcqwiqtz/video/upload/v1789046160/VLK_title_white.mp4 ISO Media, MP4 Base Media v1 [ISO 14496-12:2003]
+019.mp4 https://noitom-robotics.github.io/hiphi/static/videos/HiPHI_demo_video_web.mp4?v=20260819 ISO Media, MP4 Base Media v1 [ISO 14496-12:2003]
+020.mp4 https://bones.studio/assets/dataset_case.mp4 ISO Media, MP4 v2 [ISO 14496-14]
+021.jpg https://bones.studio/assets/posters/home_hero_poster-d.jpg HTML document, Unicode text, UTF-8 text, with very long line
+022.webp https://noitom-robotics.github.io/hiphi/static/images/dataset-card/HiPHI_motion_examples.webp RIFF (little-endian) data, Web/P image, VP8 encoding, 3400x1
+023.webp https://noitom-robotics.github.io/hiphi/static/images/dataset-card/real_world_deployment.webp RIFF (little-endian) data, Web/P image
+024.png https://arxiv.org/html/2608.16222v2/figures/exp/real_experiment.png PNG image data, 4725 x 1947, 8-bit/color RGBA, non-interlace
