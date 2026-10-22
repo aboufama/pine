@@ -1,0 +1,30 @@
+[2026-10-22 00:57:50Z] phase 2: 1.42 h budget, sweep runs 2XL x 30 steps
+[2026-10-22 00:57:50Z] HiPHI: 44 performers in the pool (0 h), 5 held out; H = 0.042 h
+[2026-10-22 00:57:50Z] == HiPHI_P4_H0.042_s0 (2XL, 30 steps): {"dataset": "hiphi", "experiment": "HiPHI", "performers": 4, "hours": 0.042, "seed": 0}
+[2026-10-22 00:58:08Z]    HiPHI_P4_H0.042_s0 exited 0 after 0.3 min
+[2026-10-22 00:58:08Z] == HiPHI_P8_H0.042_s0 (2XL, 30 steps): {"dataset": "hiphi", "experiment": "HiPHI", "performers": 8, "hours": 0.042, "seed": 0}
+[2026-10-22 00:58:26Z]    HiPHI_P8_H0.042_s0 exited 0 after 0.3 min
+[2026-10-22 00:58:26Z] == HiPHI_P16_H0.042_s0 (2XL, 30 steps): {"dataset": "hiphi", "experiment": "HiPHI", "performers": 16, "hours": 0.042, "seed": 0}
+[2026-10-22 00:58:44Z]    HiPHI_P16_H0.042_s0 exited 0 after 0.3 min
+[2026-10-22 00:58:44Z] == HiPHI_P32_H0.042_s0 (2XL, 30 steps): {"dataset": "hiphi", "experiment": "HiPHI", "performers": 32, "hours": 0.042, "seed": 0}
+[2026-10-22 00:58:59Z]    HiPHI_P32_H0.042_s0 exited 0 after 0.3 min
+[2026-10-22 00:58:59Z] skip HiPHI_P32_H0.0105_s0: fewer than 32 performers with 0.00 h
+[2026-10-22 00:58:59Z] == HiPHI_P32_H0.168_s0 (2XL, 30 steps): {"dataset": "hiphi", "experiment": "HiPHI", "performers": 32, "hours": 0.168, "seed": 0}
+[2026-10-22 00:59:17Z]    HiPHI_P32_H0.168_s0 exited 0 after 0.3 min
+[2026-10-22 00:59:17Z] SEED: 36 performers in the pool (4 h), 4 held out; H = 1 h
+[2026-10-22 00:59:17Z] == SEED_P8_H1_s0 (2XL, 30 steps): {"dataset": "seed", "experiment": "SEED", "performers": 8, "hours": 1.0, "seed": 0}
+[2026-10-22 00:59:34Z]    SEED_P8_H1_s0 exited 0 after 0.3 min
+[2026-10-22 00:59:34Z] == SEED_P16_H1_s0 (2XL, 30 steps): {"dataset": "seed", "experiment": "SEED", "performers": 16, "hours": 1.0, "seed": 0}
+[2026-10-22 00:59:52Z]    SEED_P16_H1_s0 exited 0 after 0.3 min
+[2026-10-22 00:59:52Z] == SEED_P32_H1_s0 (2XL, 30 steps): {"dataset": "seed", "experiment": "SEED", "performers": 32, "hours": 1.0, "seed": 0}
+[2026-10-22 01:00:09Z]    SEED_P32_H1_s0 exited 0 after 0.3 min
+[2026-10-22 01:00:09Z] skip SEED_P128_H0.25_s0: fewer than 128 performers with 0.00 h
+[2026-10-22 01:00:09Z] skip SEED_P128_H4_s0: fewer than 128 performers with 0.03 h
+[2026-10-22 01:00:09Z] == E3_recipe_next4 (2XL, 5090 steps): {"dataset": "all", "experiment": "E3", "hours": 4.3, "seed": 0, "recipe": "next4"}
+[2026-10-22 01:06:30Z]    E3_recipe_next4 exited 0 after 6.4 min
+[2026-10-22 01:06:30Z] == E3_recipe_dct16mix (2XL, 5090 steps): {"dataset": "all", "experiment": "E3", "hours": 4.3, "seed": 0, "recipe": "dct16mix"}
+[2026-10-22 01:14:13Z]    E3_recipe_dct16mix exited 0 after 7.7 min
+[2026-10-22 01:14:13Z] flagship 5XL: 4000 steps on 4 h, 1.14 h left, ~43,081 tok/s
+[2026-10-22 01:14:13Z] == E3_flagship (5XL, 4000 steps): {"dataset": "all", "experiment": "E3", "hours": 4.3, "seed": 0, "recipe": "dct16mix", "flagship": true}
+[2026-10-22 01:33:34Z]    E3_flagship exited 0 after 19.3 min
+[2026-10-22 01:33:34Z] phase 2 done: 11 runs; SEED ok
