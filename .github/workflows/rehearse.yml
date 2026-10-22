@@ -1,0 +1,44 @@
+name: rehearse2
+on:
+  push:
+    branches: [engine-rehearse2]
+concurrency:
+  group: rehearse2
+  cancel-in-progress: true
+permissions:
+  contents: write
+jobs:
+  rehearse:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: engine-rehearse2
+          path: rh
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: install
+        shell: bash
+        run: |
+          pip install -q --index-url https://download.pytorch.org/whl/cpu torch==2.4.1
+          pip install -q numpy scipy huggingface_hub zstandard
+          python -c "import torch, numpy; print('torch', torch.__version__, 'numpy', numpy.__version__)"
+      - name: rehearse2
+        shell: bash
+        run: bash rh/rehearse.sh 2>&1 | tee rehearse.log
+        env:
+          PUSH_URL: https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}
+      - name: publish
+        if: always()
+        shell: bash
+        run: |
+          mkdir -p out && cp rehearse.log out/ 2>/dev/null || true
+          cp -r ws/logs out/logs 2>/dev/null || true
+          mkdir -p out/runs && cp -r ws/runs/gpu/. out/runs/ 2>/dev/null || true
+          find out/runs -name "*.pt" -delete 2>/dev/null || true
+          cp ws/data/shards/stats.json out/ 2>/dev/null || true
+          cd out && git init -q && git checkout -q -b engine-rehearse-results && git add -A
+          git -c user.name=rehearse -c user.email=rehearse@users.noreply.github.com commit -q -m "rehearsal $(date -u +%FT%TZ)"
+          git push -q -f "https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}" HEAD:engine-rehearse2-results
